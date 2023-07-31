@@ -6,6 +6,76 @@
   "description": "",
   "glyphs": [
     {
+      "icon_id": "129335",
+      "name": "video",
+      "font_class": "video",
+      "unicode": "e901",
+      "unicode_decimal": 59649
+    },
+    {
+      "icon_id": "4933449",
+      "name": "主页",
+      "font_class": "zhuye",
+      "unicode": "e76e",
+      "unicode_decimal": 59246
+    },
+    {
+      "icon_id": "5023641",
+      "name": "播放",
+      "font_class": "bofang",
+      "unicode": "e648",
+      "unicode_decimal": 58952
+    },
+    {
+      "icon_id": "5835463",
+      "name": "点赞",
+      "font_class": "dianzan",
+      "unicode": "e60b",
+      "unicode_decimal": 58891
+    },
+    {
+      "icon_id": "7568826",
+      "name": "24gf-bubble3",
+      "font_class": "24gf-bubble3",
+      "unicode": "e957",
+      "unicode_decimal": 59735
+    },
+    {
+      "icon_id": "11381461",
+      "name": "图片",
+      "font_class": "tupian1",
+      "unicode": "e6b9",
+      "unicode_decimal": 59065
+    },
+    {
+      "icon_id": "13053964",
+      "name": "评论",
+      "font_class": "pinglun",
+      "unicode": "e618",
+      "unicode_decimal": 58904
+    },
+    {
+      "icon_id": "19449176",
+      "name": "收藏",
+      "font_class": "shoucang",
+      "unicode": "e649",
+      "unicode_decimal": 58953
+    },
+    {
+      "icon_id": "26535251",
+      "name": "图片",
+      "font_class": "tupian2",
+      "unicode": "e64a",
+      "unicode_decimal": 58954
+    },
+    {
+      "icon_id": "34166777",
+      "name": "气泡",
+      "font_class": "qipao",
+      "unicode": "e611",
+      "unicode_decimal": 58897
+    },
+    {
       "icon_id": "36534240",
       "name": "电脑",
       "font_class": "diannao",

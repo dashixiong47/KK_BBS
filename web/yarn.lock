@@ -574,11 +574,6 @@
   dependencies:
     "@hapi/hoek" "^9.0.0"
 
-"@heroicons/react@^2.0.18":
-  version "2.0.18"
-  resolved "https://registry.npmmirror.com/@heroicons/react/-/react-2.0.18.tgz#f80301907c243df03c7e9fd76c0286e95361f7c1"
-  integrity sha512-7TyMjRrZZMBPa+/5Y8lN0iyvUU/01PeMGX2+RE7cQWpEUIcb4QotzUObFkJDejj/HUH4qjP/eQ0gzzKs2f+6Yw==
-
 "@ioredis/commands@^1.1.1":
   version "1.2.0"
   resolved "https://registry.npmmirror.com/@ioredis/commands/-/commands-1.2.0.tgz#6d61b3097470af1fdbbe622795b8921d42018e11"
