@@ -1,17 +1,21 @@
 <script setup>
-const colorMode = useColorMode();
+import { useRouter } from "nuxt/app";
+let router = useRouter();
+console.log(router);
+const { locale } = useI18n();
 </script>
 <template>
-  <div class="test">cs测试</div>
-  <p class="p-4 pb-2">
-    <select
-      v-model="colorMode.preference"
-      class="border w-24 h-8 dark:bg-gray-900 dark:text-white dark:border-gray-700"
-    >
-      <option value="system">System</option>
-      <option value="light">Light</option>
-      <option value="dark">Dark</option>
-    </select>
-  </p>
+  <!-- <div>
+    <form>
+      <select v-model="locale">
+        <option value="en">en</option>
+        <option value="zh">zh</option>
+      </select>
+      <p>{{ $t("welcome") }}</p>
+    </form>
+  </div> -->
+  <div class="h-full">
+    <TopicList />
+  </div>
 </template>
 <style lang="postcss"></style>

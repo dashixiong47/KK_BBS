@@ -1,6 +1,7 @@
 <template>
   <div>
-    <TitleCard title="More Pages" :list="list"/>
+    <TitleCard title="More Pages" :list="list" class="mb-5 h-80 "/>
+    <TitleCard title="More Pages" :list="list" class="mb-5 h-80 "/>
   </div>
 </template>
 

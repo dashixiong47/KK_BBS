@@ -2,9 +2,43 @@
 @tailwind components;
 @tailwind utilities;
 
-body{
-    @apply min-h-screen bg-white dark:bg-gray-800 dark:text-gray-200;
+body {
+    @apply min-h-screen bg-[#fbfcfe] dark:bg-gray-800 dark:text-gray-200;
 }
-#__nuxt{
+
+#__nuxt {
     @apply h-screen flex flex-col;
+}
+
+/* 设置滚动条的宽度 */
+*::-webkit-scrollbar {
+    width: 0;
+    /* 宽度 */
+    height: 0;
+    /* 高度，对于水平滚动条 */
+}
+
+/* 设置滚动条的宽度 */
+*:hover::-webkit-scrollbar {
+    width: 8px;
+    /* 宽度 */
+    height: 8px;
+    /* 高度，对于水平滚动条 */
+}
+
+/* 设置滚动条的轨道样式 */
+::-webkit-scrollbar-track {
+    @apply bg-gray-200;
+    /* 使用 Tailwind 的背景颜色类 */
+}
+
+/* 设置滚动条的滑块样式 */
+::-webkit-scrollbar-thumb {
+    @apply bg-gray-500 rounded-full;
+    /* 使用 Tailwind 的背景颜色和圆角类 */
+}
+
+/* 滑块hover样式 */
+::-webkit-scrollbar-thumb:hover {
+    @apply bg-gray-600;
 }

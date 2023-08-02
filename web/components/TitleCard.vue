@@ -1,7 +1,7 @@
 <template>
-  <div class="bg-white w-60 shadow-center rounded-2xl px-5 py-3 text-gray-400">
-    <div class="">More Pages</div>
-    <ul class="w-full h-full">
+  <div class="bg-white dark:bg-blue-300 dark:text-white w-60 flex flex-col shadow-center rounded-2xl px-5 py-3 text-gray-400">
+    <div class="h-6 ">More Pages</div>
+    <ul class="w-full h-full overflow-y-auto">
       <li v-for="item in list">
         <NuxtLink to="#" class="my-4 w-full flex items-center">
           <div
@@ -19,5 +19,6 @@
 </template>
 
 <script setup>
+defineProps({})
 const list = [0, 1, 2, 3, 4, 0, 1, 2, 3, 4];
 </script>
