@@ -1,7 +1,6 @@
 <script setup>
 import { useRouter } from "nuxt/app";
 let router = useRouter();
-console.log(router);
 const { locale } = useI18n();
 </script>
 <template>

@@ -1,5 +1,8 @@
 <template>
-  <div class="bg-gray-500 ">12112312</div>
+  <div class="flex flex-col items-end ">
+    <TitleCard title="More Pages" :list="list" class="mb-5 h-80" />
+    <TitleCard title="More Pages" :list="list" class="mb-5 h-80" />
+  </div>
 </template>
 
 <script setup></script>

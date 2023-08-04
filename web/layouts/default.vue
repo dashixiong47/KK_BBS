@@ -1,10 +1,10 @@
 <template>
   <PcNav />
-  <div class="h-full grid grid-cols-12 p-5">
-    <LeftBox class="col-span-3 md:col-span-4 lg:col-span-3 hidden sm:block" />
-    <main class="col-span-12 md:col-span-8 lg:col-span-6">
+  <div class="h-full grid grid-cols-24 p-5">
+    <LeftBox class="hidden sm:block md:col-span-6 lg:col-span-6 xl:col-span-5" />
+    <main class="col-span-24 md:col-span-18 lg:col-span-18 xl:col-span-14">
       <NuxtPage />
     </main>
-    <RightBox class="col-span-3 hidden lg:block" />
+    <RightBox class="col-span-5 hidden xl:flex" />
   </div>
 </template>

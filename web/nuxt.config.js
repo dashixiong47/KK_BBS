@@ -4,8 +4,11 @@ export default defineNuxtConfig({
   modules: [
     '@nuxtjs/tailwindcss',
     '@nuxtjs/color-mode',
-    '@pinia/nuxt',
     '@nuxtjs/i18n',
+    '@pinia/nuxt',
+  ],
+  plugins: [
+    '~/plugins/global-directives.js'
   ],
   head() {
     const i18nHead = this.$nuxtI18nHead({ addSeoAttributes: true });
