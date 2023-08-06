@@ -8,7 +8,7 @@ export default defineNuxtConfig({
     '@pinia/nuxt',
   ],
   plugins: [
-    '~/plugins/global-directives.js'
+    '~/plugins/global-directives.js',
   ],
   head() {
     const i18nHead = this.$nuxtI18nHead({ addSeoAttributes: true });

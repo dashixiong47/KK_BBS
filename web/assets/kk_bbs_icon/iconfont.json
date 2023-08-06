@@ -6,6 +6,41 @@
   "description": "",
   "glyphs": [
     {
+      "icon_id": "765849",
+      "name": "地址",
+      "font_class": "shouye",
+      "unicode": "e64b",
+      "unicode_decimal": 58955
+    },
+    {
+      "icon_id": "1305097",
+      "name": "IP",
+      "font_class": "IP",
+      "unicode": "e64c",
+      "unicode_decimal": 58956
+    },
+    {
+      "icon_id": "4933314",
+      "name": "分享2",
+      "font_class": "fenxiang",
+      "unicode": "e725",
+      "unicode_decimal": 59173
+    },
+    {
+      "icon_id": "4933443",
+      "name": "右翻页",
+      "font_class": "youfanye",
+      "unicode": "e76a",
+      "unicode_decimal": 59242
+    },
+    {
+      "icon_id": "4933458",
+      "name": "左翻页",
+      "font_class": "zuofanye",
+      "unicode": "e773",
+      "unicode_decimal": 59251
+    },
+    {
       "icon_id": "129335",
       "name": "video",
       "font_class": "video",

@@ -1,6 +1,6 @@
 <template>
   <nav
-    class="shadow-md border-b h-16 content-center px-5 grid grid-cols-2 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-4"
+    class="shadow-md border-b h-16 box-content flex-shrink-0 content-center px-5 grid grid-cols-2 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-4"
   >
     <div class="md:col-span-1">
       <NuxtLink to="#" class="flex items-center h-full">

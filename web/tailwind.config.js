@@ -14,7 +14,20 @@ module.exports = {
     theme: {
         extend: {
             colors: {
-                primary: defaultTheme.colors.green
+                primary: defaultTheme.colors.green,
+                'dark-1': '#1f2937',
+                'dark-2': '#374151',
+                'dark-3': '#4b5563',
+                'dark-4': '#6b7280',
+                'dark-5': '#9ca3af',
+                'dark-6': '#d1d5db',
+                'light-1': '#ffffff',
+                'light-2': '#f9fafb',
+                'light-3': '#e5e7eb',
+                'light-4': '#d1d5db',
+                'light-5': '#9ca3af',
+                'light-6': '#6b7280',
+
             },
             boxShadow: {
                 'center': '0 0 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1)'
@@ -26,7 +39,16 @@ module.exports = {
                 'span-14': 'span 14 / span 24',
                 'span-16': 'span 16 / span 24',
                 'span-18': 'span 18 / span 24',
+                'span-22': 'span 22 / span 24',
                 'span-24': 'span 24 / span 24',
+            },
+            gridColumnEnd: {
+                '19': '19',
+                '20': '20',
+                '21': '21',
+                '22': '22',
+                '24': '24',
+                '25': '25',
             }
         }
     },

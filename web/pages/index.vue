@@ -2,6 +2,9 @@
 import { useRouter } from "nuxt/app";
 let router = useRouter();
 const { locale } = useI18n();
+import useMobileDetect from "~/composables/useMobileDetect";
+
+const { isMobile } = useMobileDetect();
 </script>
 <template>
   <!-- <div>
@@ -13,6 +16,7 @@ const { locale } = useI18n();
       <p>{{ $t("welcome") }}</p>
     </form>
   </div> -->
+
   <div class="h-full">
     <TopicList />
   </div>
