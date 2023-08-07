@@ -2,9 +2,9 @@
   <!-- 导航 -->
   <PcNav class="z-10" />
   <div class="h-full grid grid-cols-24 p-5 overflow-y-scroll relative z-0">
-    <LeftBox class="fixed hidden md:block" />
+    <LeftBox class="fixed hidden xl:block" />
     <main
-      class="mx-auto col-start-1 col-span-24 md:col-start-7 md:col-end-25 xl:col-start-6 xl:col-end-20 grid grid-cols-3"
+      class="mx-auto col-start-1 col-span-24 xl:col-start-6 xl:col-end-20 grid grid-cols-3"
     >
       <NuxtPage class="mr-2 col-span-3 sm:col-span-2" />
       <AdditionalPanel class="hidden sm:block col-span-1 h-full" />
