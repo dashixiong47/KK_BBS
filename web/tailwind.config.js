@@ -14,19 +14,26 @@ module.exports = {
     theme: {
         extend: {
             colors: {
-                primary: defaultTheme.colors.green,
                 'dark-1': '#1f2937',
                 'dark-2': '#374151',
                 'dark-3': '#4b5563',
                 'dark-4': '#6b7280',
                 'dark-5': '#9ca3af',
                 'dark-6': '#d1d5db',
+                'dark-7': '#e5e7eb',
+                'dark-8': '#f3f4f6',
+
                 'light-1': '#ffffff',
                 'light-2': '#f9fafb',
                 'light-3': '#e5e7eb',
                 'light-4': '#d1d5db',
                 'light-5': '#9ca3af',
                 'light-6': '#6b7280',
+                'light-7': '#4b5563',
+                'light-8': '#374151',
+                'primary':'#333333',
+                'secondary':'#666666',
+                'general':'#999999',
 
             },
             boxShadow: {

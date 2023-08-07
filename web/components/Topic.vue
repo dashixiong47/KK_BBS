@@ -7,10 +7,12 @@
         <span class="text-xs text-gray-400">发布时间</span>
       </div>
       <div>
-        <span class="mr-5">
+        <span class="mr-5 text-light-5 text-xs">
           <Icon name="icon-kejian" class="mr-1" />{{ formatNumber(11111) }}
         </span>
-        <span><Icon name="icon-shouye" class="mr-1" />上海</span>
+        <span class="text-light-5 text-xs">
+          <Icon name="icon-shouye" class="mr-1" />上海
+        </span>
       </div>
     </div>
   </div>
@@ -115,7 +117,7 @@ const images = [
   },
 ];
 const listContainer = ref(null);
-const items = ref(Array(9).fill(null));
+const items = ref(Array(3).fill(null));
 const itemsToShow = ref([...items.value]);
 import useMobileDetect from "~/composables/useMobileDetect";
 import useFormatNumber from "~/composables/useFormatNumber";
