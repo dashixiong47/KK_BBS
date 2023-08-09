@@ -20,41 +20,25 @@
         {{ checkInStatus ? "已签到" : "立即签到" }}
       </button>
     </div>
-    <div class="flex my-4 pb-4 border-b">
+    <div class="flex my-4">
       <div
         v-for="(step, index) in steps"
         :key="index"
-        class="flex-1 text-center"
+        class="relative flex-1 text-center text-sm text-light-2 dark:text-light-1"
       >
         <div
-          :class="[
-            currentStep >= index + 1 ? 'bg-blue-500' : 'bg-gray-300',
-            'w-5 h-5 rounded-full mx-auto',
-          ]"
+          :class="[currentStep >= index + 1 ? 'bg-blue-500' : 'bg-gray-200']"
+          class="w-5 h-5 rounded-full mx-auto z-10 relative"
         >
           {{ index + 1 }}
         </div>
         <div
           v-if="index < steps.length - 1"
-          class="flex-1 border-t -m-2 ml-10"
-          :class="
-            currentStep > index + 1 ? 'border-blue-500' : 'border-gray-300'
-          "
+          :class="[currentStep >= index + 1 ? 'bg-blue-500' : 'bg-gray-200']"
+          class="absolute z-9 w-full h-1 left-1/2 top-1/2 -translate-y-1/2"
         ></div>
       </div>
     </div>
-    <p class="border-b pb-2 mb-2 font-semibold">签到排行榜</p>
-    <ul>
-      <li v-for="iten in 6" class="border-b flex items-center justify-between py-2">
-        <div>
-          头像
-          <!-- <div>name</div> -->
-        </div>
-        <button class="text-sm flex items-center border rounded-md px-5 py-1">
-          关注
-        </button>
-      </li>
-    </ul>
   </div>
 </template>
 
@@ -64,7 +48,7 @@ const steps = ref([1, 2, 3, 4, 5, 6, 7]);
 const { currentStep } = defineProps({
   currentStep: {
     type: Number,
-    default: 1,
+    default: 2,
   },
 });
 </script>

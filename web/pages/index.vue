@@ -1,10 +1,11 @@
 <script setup>
 import { useRouter } from "nuxt/app";
+import useMobileDetect from "~/composables/useMobileDetect";
 let router = useRouter();
 const { locale } = useI18n();
-import useMobileDetect from "~/composables/useMobileDetect";
 
 const { isMobile } = useMobileDetect();
+console.log(router);
 </script>
 <template>
   <!-- <div>
@@ -16,9 +17,7 @@ const { isMobile } = useMobileDetect();
       <p>{{ $t("welcome") }}</p>
     </form>
   </div> -->
-
-  <div class="h-full">
-    <TopicList />
-  </div>
+  
+  <TopicList />
 </template>
 <style lang="postcss"></style>

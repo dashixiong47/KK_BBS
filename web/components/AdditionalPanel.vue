@@ -3,8 +3,11 @@
     <Card class="mb-5">
       <CheckIn />
     </Card>
-    <Card>
+    <Card class="mb-5">
       <Announcement />
+    </Card>
+    <Card>
+      <Ranking />
     </Card>
   </div>
 </template>

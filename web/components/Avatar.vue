@@ -21,5 +21,5 @@ const sizeClass = computed(() => {
 </script>
 
 <template>
-  <div class="rounded-full bg-slate-200" :class="sizeClass"></div>
+  <div class="rounded-full bg-slate-200 flex-shrink-0" :class="sizeClass"></div>
 </template>

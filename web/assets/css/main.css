@@ -23,17 +23,17 @@ body {
 
 /* 设置滚动条的宽度 */
 *::-webkit-scrollbar {
-    width: 8px;
+    width: 5px;
     /* 宽度 */
-    height: 8px;
+    height: 5px;
     /* 高度，对于水平滚动条 */
 }
 
 /* 设置滚动条的宽度 */
 *:hover::-webkit-scrollbar {
-    width: 8px;
+    width: 5px;
     /* 宽度 */
-    height: 8px;
+    height: 5px;
     /* 高度，对于水平滚动条 */
 }
 

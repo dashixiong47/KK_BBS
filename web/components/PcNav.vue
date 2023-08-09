@@ -16,7 +16,7 @@
     <div class="hidden lg:flex items-center col-span-2">
       <Search />
       <ul class="w-4/6 h-full flex items-center px-5">
-        <li>
+        <li v-for="item in 3" class="mr-2">
           <button class="bg-gray-300 rounded-full w-10 h-10">
             <Icon name="icon-shouye" size="text-2xl mx-1"></Icon>
           </button>
@@ -24,11 +24,14 @@
       </ul>
     </div>
     <div class="md:col-span-1 flex items-center justify-end">
-      <Icon name="icon-xiaoxi" size="text-2xl mx-2"></Icon>
+      <Icon name="icon-pinglun" size="text-2xl mx-2"></Icon>
       <Icon name="icon-xiaoxi" size="text-2xl mx-2"></Icon>
       <Icon name="icon-shezhi" size="text-2xl mx-2"></Icon>
-      <Switcher/>
-      <Avatar class="ml-4"/>
+      <Switcher />
+      <NuxtLink :to="`user/1`">
+        <Avatar class="ml-4" />
+      </NuxtLink>
+      <!-- <div class="absolute">1212</div> -->
     </div>
   </nav>
 </template>
