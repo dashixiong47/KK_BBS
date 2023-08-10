@@ -4,7 +4,7 @@
 
 /* 记住几个口诀：padding magin取值 8px 16px 24px，font-size：12px 14px 16px，color：#333 #666 #999 */
 body {
-    @apply h-screen bg-light-1 dark:bg-dark-1 dark:text-light-1;
+    @apply h-screen bg-light-2 dark:bg-dark-1 ;
 }
 
 #__nuxt {

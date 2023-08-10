@@ -31,7 +31,7 @@
         :class="getClassName(images.length, index)"
       >
         <Image
-          class="w-full h-full object-cover absolute inset-0"
+          class="rounded-2xl object-cover absolute inset-0"
           :source="item.url"
           alt=""
           srcset=""
