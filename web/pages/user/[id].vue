@@ -12,7 +12,11 @@
           <Topic />
         </li>
       </ul>
-      <div class="col-span-3">{{ isMobile }}</div>
+      <div class="col-span-3">
+        <Card>
+          {{ isMobile }}
+        </Card>
+      </div>
     </div>
   </div>
 </template>

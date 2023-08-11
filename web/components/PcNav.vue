@@ -3,7 +3,7 @@
     class="shadow-md border-b h-16 box-content flex-shrink-0 content-center px-5 grid grid-cols-2 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-4"
   >
     <div class="md:col-span-1">
-      <NuxtLink to="#" class="flex items-center h-full">
+      <KLink to="/" class="flex items-center h-full">
         <img
           class="h-8 mr-5"
           src="https://hxsj.in/_nuxt/img/logo.5c704a9.png"
@@ -11,7 +11,7 @@
           srcset=""
         />
         KK_BBS
-      </NuxtLink>
+      </KLink>
     </div>
     <div class="hidden lg:flex items-center col-span-2">
       <Search />
@@ -28,9 +28,9 @@
       <Icon name="icon-xiaoxi" size="text-2xl mx-2"></Icon>
       <Icon name="icon-shezhi" size="text-2xl mx-2"></Icon>
       <Switcher />
-      <NuxtLink :to="`user/1`">
+      <KLink :to="`/user/1`">
         <Avatar class="ml-4" />
-      </NuxtLink>
+      </KLink>
       <!-- <div class="absolute">1212</div> -->
     </div>
   </nav>

@@ -5,7 +5,7 @@
     <div class="p-2 flex-shrink-0 border-b">More Pages</div>
     <ul class="w-full h-full overflow-y-auto hidden-scrollbar">
       <li v-for="item in list" class="hover:bg-blue-100 rounded-2xl h-12 flex items-center px-2">
-        <NuxtLink to="#" class="my-4 w-full flex items-center">
+        <KLink to="#" class="my-4 w-full flex items-center">
           <div
             class="flex-shrink-0 w-10 h-10 flex items-center justify-center rounded-full bg-gradient-to-t from-indigo-200 via-purple-200 to-pink-200"
           >
@@ -14,7 +14,7 @@
           <span class="ml-3 text-md w-full truncate whitespace-nowrap hover:text-blue-400"
             >1212</span
           >
-        </NuxtLink>
+        </KLink>
       </li>
     </ul>
   </div>

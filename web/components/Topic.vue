@@ -3,7 +3,7 @@
     <Avatar />
     <div class="w-full ml-2 flex items-center justify-between">
       <div class="flex flex-col items-start">
-        <NuxtLink to="#" class="text-md font-bold"> 名称 </NuxtLink>
+        <KLink to="#" class="text-md font-bold"> 名称 </KLink>
         <span class="text-xs text-gray-400">发布时间</span>
       </div>
       <div>
@@ -16,7 +16,7 @@
       </div>
     </div>
   </div>
-  <NuxtLink to="#" class="">
+  <KLink to="/topic/1" class="">
     <p class="text-md mb-3">这里是标题</p>
     <div class="text-gray-400 text-sm dark:text-dark-6">
       Lorem ipsum dolor sit amet,consectetur adipiscing elit. Morbi nulla
@@ -38,7 +38,7 @@
         />
       </li>
     </ul>
-  </NuxtLink>
+  </KLink>
   <ul
     class="w-full h-6 flex overflow-x-auto"
     :class="{
@@ -50,7 +50,7 @@
       <li
         class="mr-5 flex-shrink-0 rounded-2xl border bg-light-2 px-2 text-sm flex items-center text-light-5 dark:text-dark-2"
       >
-        <NuxtLink to="#"> #分类{{ index }} </NuxtLink>
+        <KLink to="#"> #分类{{ index }} </KLink>
       </li>
     </template>
   </ul>
