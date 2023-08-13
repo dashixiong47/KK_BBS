@@ -8,7 +8,7 @@ const { isMobile } = useMobileDetect();
 console.log(router);
 </script>
 <template>
-  <div>
+  <!-- <div>
     <form>
       <select v-model="locale">
         <option value="en">en</option>
@@ -16,7 +16,7 @@ console.log(router);
       </select>
       <p>{{ $t("welcome") }}</p>
     </form>
-  </div>
+  </div> -->
   
   <TopicList />
 </template>

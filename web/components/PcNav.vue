@@ -15,10 +15,25 @@
     </div>
     <div class="hidden lg:flex items-center col-span-2">
       <Search />
-      <ul class="w-4/6 h-full flex items-center px-5">
-        <li v-for="item in 3" class="mr-2">
+      <ul class="w-4/6 h-full flex items-center px-5 text-blue-400">
+        <li class="mr-2">
           <button class="bg-gray-300 rounded-full w-10 h-10">
-            <Icon name="icon-shouye" size="text-2xl mx-1"></Icon>
+            <Icon name="icon-zhuye" size="text-2xl mx-1"></Icon>
+          </button>
+        </li>
+        <li class="mr-2">
+          <button class="bg-gray-300 rounded-full w-10 h-10">
+            <Icon name="icon-neirong" size="text-2xl mx-1"></Icon>
+          </button>
+        </li>
+        <li class="mr-2">
+          <button class="bg-gray-300 rounded-full w-10 h-10">
+            <Icon name="icon-video" size="text-2xl mx-1"></Icon>
+          </button>
+        </li>
+        <li class="mr-2">
+          <button class="bg-gray-300 rounded-full w-10 h-10">
+            <Icon name="icon-wendang" size="text-2xl mx-1"></Icon>
           </button>
         </li>
       </ul>

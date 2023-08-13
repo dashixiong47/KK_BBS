@@ -123,6 +123,12 @@ import useMobileDetect from "~/composables/useMobileDetect";
 import useFormatNumber from "~/composables/useFormatNumber";
 const { formatNumber } = useFormatNumber();
 const { isMobile } = useMobileDetect();
+/**
+ * @argument {number} length
+ * @argument {number} index
+ * @returns {string}
+ * @description 根据图片数量和索引返回对应的样式
+ */
 const getClassName = (length, index) => {
   switch (length) {
     case 1:
