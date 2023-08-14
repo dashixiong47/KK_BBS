@@ -25,9 +25,12 @@
           </div>
           <div class="border-t mt-5 py-5">测试内容</div>
         </Card>
+        <Card class="mt-5">
+          <Comments />
+        </Card>
       </div>
       <div class="hidden sm:col-span-3 sm:block m-1">
-        <Card>
+        <Card class="sticky top-0">
           <p class="border-b pb-2 mb-2 font-bold">附件</p>
           <ul>
             <li>121212</li>

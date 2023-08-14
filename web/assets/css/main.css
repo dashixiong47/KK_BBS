@@ -4,8 +4,9 @@
 
 /* 记住几个口诀：padding magin取值 8px 16px 24px，font-size：12px 14px 16px，color：#333 #666 #999 */
 body {
-    @apply h-screen text-dark-1 bg-light-2 dark:bg-dark-1  dark:text-light-1;
+    @apply h-screen font-mono text-dark-1 bg-light-2 dark:bg-dark-1 dark:text-light-1;
 }
+
 
 #__nuxt {
     @apply h-screen flex flex-col overflow-hidden;

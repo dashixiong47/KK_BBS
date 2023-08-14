@@ -18,7 +18,9 @@
       <ul class="w-4/6 h-full flex items-center px-5 text-blue-400">
         <li class="mr-2">
           <button class="bg-gray-300 rounded-full w-10 h-10">
-            <Icon name="icon-zhuye" size="text-2xl mx-1"></Icon>
+            <KLink to="/">
+              <Icon name="icon-zhuye" size="text-2xl mx-1"></Icon>
+            </KLink>
           </button>
         </li>
         <li class="mr-2">
@@ -39,7 +41,7 @@
       </ul>
     </div>
     <div class="md:col-span-1 flex items-center justify-end">
-      <Icon name="icon-pinglun" size="text-2xl mx-2"></Icon>
+      <Icon @click="test" name="icon-pinglun" size="text-2xl mx-2"></Icon>
       <Icon name="icon-xiaoxi" size="text-2xl mx-2"></Icon>
       <Icon name="icon-shezhi" size="text-2xl mx-2"></Icon>
       <Switcher />
@@ -51,4 +53,15 @@
   </nav>
 </template>
 
-<script setup></script>
+<script setup>
+import useNotice from "~/composables/useNotice";
+const { notice } = useNotice();
+const test = () => {
+  notice({
+    title: "标题",
+    content:
+      "一、放下大概就是这样，即使我们没在一起，我也会好好的，谢谢时间惊艳了那段有你的记忆，也谢谢现在更努力变好的自己。",
+    autoClose: false,
+  });
+};
+</script>

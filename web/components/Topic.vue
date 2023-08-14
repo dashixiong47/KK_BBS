@@ -2,7 +2,7 @@
   <div class="flex mb-5">
     <Avatar />
     <div class="w-full ml-2 flex items-center justify-between">
-      <div class="flex flex-col items-start">
+      <div class=" flex flex-col items-start">
         <KLink to="#" class="text-md font-bold"> 名称 </KLink>
         <span class="text-xs text-gray-400">发布时间</span>
       </div>

@@ -6,6 +6,20 @@
   "description": "",
   "glyphs": [
     {
+      "icon_id": "749276",
+      "name": "close",
+      "font_class": "close",
+      "unicode": "e64f",
+      "unicode_decimal": 58959
+    },
+    {
+      "icon_id": "11770322",
+      "name": "home",
+      "font_class": "home",
+      "unicode": "e66d",
+      "unicode_decimal": 58989
+    },
+    {
       "icon_id": "1314975",
       "name": "金币",
       "font_class": "jinbi",

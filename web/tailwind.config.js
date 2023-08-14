@@ -31,9 +31,9 @@ module.exports = {
                 'light-6': '#6b7280',
                 'light-7': '#4b5563',
                 'light-8': '#374151',
-                'primary':'#333333',
-                'secondary':'#666666',
-                'general':'#999999',
+                'primary': '#333333',
+                'secondary': '#666666',
+                'general': '#999999',
 
             },
             boxShadow: {
@@ -58,7 +58,33 @@ module.exports = {
                 '23': '23',
                 '24': '24',
                 '25': '25',
-            }
+            },
+            keyframes: {
+                widthToZero: {
+                    to: {
+                        width: '0%'
+                    }
+                },
+                slideInFromRight: {
+                    '0%': { transform: 'translateX(100%)' },
+                    '100%': { transform: 'translateX(0) translateY(var(--translate-y, 0))' }, // 使用CSS变量
+                },
+                slideOutToLeft: {
+                    from: {
+                        transform: 'translateX(0)',
+                        opacity: 1,
+                    },
+                    to: {
+                        transform: 'translateX(100%)',
+                        opacity: 0,
+                    },
+                }
+
+            },
+            animation: {
+                slideInFromRight: 'slideInFromRight 0.5s forwards',
+                slideOutToLeft: 'slideOutToLeft 0.3s forwards',
+            },
         }
     },
     plugins: [],
