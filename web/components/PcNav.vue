@@ -1,6 +1,6 @@
 <template>
   <nav
-    class="shadow-md border-b h-16 box-content flex-shrink-0 content-center px-5 grid grid-cols-2 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-4"
+    class="glass shadow-md border-b h-16 box-content flex-shrink-0 content-center px-5 grid grid-cols-2 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-4"
   >
     <div class="md:col-span-1">
       <KLink to="/" class="flex items-center h-full">
@@ -41,7 +41,10 @@
       </ul>
     </div>
     <div class="md:col-span-1 flex items-center justify-end">
-      <Icon @click="test" name="icon-pinglun" size="text-2xl mx-2"></Icon>
+      <button class="text-sm mr-2 text-blue-400" @click="setLoginStatus">
+        登录/注册
+      </button>
+      <Icon @click="test" name="icon-pinglun" size="text-2xl"></Icon>
       <Icon name="icon-xiaoxi" size="text-2xl mx-2"></Icon>
       <Icon name="icon-shezhi" size="text-2xl mx-2"></Icon>
       <Switcher />
@@ -51,10 +54,18 @@
       <!-- <div class="absolute">1212</div> -->
     </div>
   </nav>
+  <Login v-if="loginStatus" />
 </template>
 
 <script setup>
 import useNotice from "~/composables/useNotice";
+import { useLoginStore } from "~/stores/main.js";
+const store = useLoginStore();
+const loginStatus = computed(() => store.getLoginStatus);
+const setLoginStatus = () => {
+  store.setLoginStatus();
+};
+
 const { notice } = useNotice();
 const test = () => {
   notice({

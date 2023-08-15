@@ -18,9 +18,4 @@
 </template>
 
 <script setup>
-import { useCounterStore } from "~/stores/main.js";
-// 获取pinia实例
-const store = useCounterStore();
-const { count } = store;
-console.log(count);
 </script>

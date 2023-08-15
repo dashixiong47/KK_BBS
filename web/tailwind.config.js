@@ -87,6 +87,20 @@ module.exports = {
             },
         }
     },
-    plugins: [],
+    plugins: [
+        function ({ addUtilities }) {
+            const newUtilities = {
+                '.glass': {
+                    backgroundColor: 'rgba(255, 255, 255, 0.1)',  // 亮色模式下的背景色
+                    backdropFilter: 'blur(16px) saturate(180%)',
+                },
+                '.dark .glass': {
+                    backgroundColor: 'rgba(0, 0, 0, 0.2)',  // 暗色模式下的背景色
+                    backdropFilter: 'blur(16px) saturate(180%)',
+                }
+            }
+            addUtilities(newUtilities, ['responsive', 'hover']);
+        },
+    ],
 }
 
