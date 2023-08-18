@@ -10,6 +10,7 @@ export default defineNuxtConfig({
   ],
   plugins: [
     '~/plugins/global-directives.js',
+     { src: '~/plugins/ckeditor.js', mode: 'client' }
   ],
   head() {
     const i18nHead = this.$nuxtI18nHead({ addSeoAttributes: true });

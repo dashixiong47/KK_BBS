@@ -27,9 +27,6 @@
             <CKEditor />
           </div>
         </Card>
-        <Card class="mt-5">
-          <Comments />
-        </Card>
       </div>
       <div class="hidden sm:col-span-3 sm:block m-1">
         <Card class="sticky top-0">

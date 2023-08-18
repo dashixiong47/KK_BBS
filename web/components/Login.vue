@@ -16,7 +16,7 @@
             }"
             @click="changeLoginType(0)"
           >
-            密码登录
+            {{$t("login-passwordLogin")}}
           </div>
           <div
             class="cursor-pointer text-center text-lg pl-5"
@@ -25,30 +25,30 @@
             }"
             @click="changeLoginType(1)"
           >
-            验证码登录
+            {{$t("login-codeLogin")}}
           </div>
         </div>
         <div
           class="h-11 p-2 border rounded-t-md text-sm overflow-hidden flex items-center"
         >
-          <label class="flex-shrink-0 mr-2 w-12 text-center">账号</label>
+          <label class="flex-shrink-0 mr-2 w-12 text-center">{{$t("login-account")}}</label>
           <input
             type="text"
             class="w-full focus:outline-none"
-            placeholder="请输入邮箱账号"
+            :placeholder="$t('login-enterYourAccount')"
           />
-          <button v-if="loginType" class="flex-shrink-0 text-xs text-light-5 cursor-pointer">发送验证码</button>
+          <button v-if="loginType" class="flex-shrink-0 text-xs text-light-5 cursor-pointer">{{ $t("login-sendCode") }}</button>
         </div>
         <div
           class="h-11 p-2 border rounded-b-md border-t-0 text-sm overflow-hidden flex items-center"
         >
           <label class="flex-shrink-0 mr-2 w-12 text-center">
-            {{ loginType ? "验证码" : "密码" }}
+            {{ loginType ? $t("login-code") : $t("login-password") }}
           </label>
           <input
             :type="pwdOptions[pwdType].type"
             class="w-full focus:outline-none"
-            :placeholder="!loginType ? '请输入密码' : '请输入验证码'"
+            :placeholder="!loginType ? $t('login-enterYourPassword') : $t('login-enterYourCode')"
           />
           <Icon
             v-if="!loginType"
@@ -63,7 +63,7 @@
             v-if="!loginType"
             @click="changeLoginType(1)"
           >
-            注册
+            {{ $t('login-register')}}
           </button>
           <button
             class="border p-2 rounded-md col-span-1 text-white bg-blue-400"
@@ -71,7 +71,7 @@
               'col-span-2': loginType,
             }"
           >
-            登录
+          {{ $t('login-login')}}
           </button>
         </div>
       </form>

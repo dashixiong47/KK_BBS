@@ -41,9 +41,10 @@
       </ul>
     </div>
     <div class="md:col-span-1 flex items-center justify-end">
-      <button class="text-sm mr-2 text-blue-400" @click="setLoginStatus">
+      <!-- <button class="text-sm mr-2 text-blue-400" @click="setLoginStatus">
         登录/注册
-      </button>
+      </button> -->
+      <KLink :to="`/topic/create`">发表</KLink>
       <Icon @click="test" name="icon-pinglun" size="text-2xl"></Icon>
       <Icon name="icon-xiaoxi" size="text-2xl mx-2"></Icon>
       <Icon name="icon-shezhi" size="text-2xl mx-2"></Icon>
