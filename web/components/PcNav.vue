@@ -55,7 +55,10 @@
       <!-- <div class="absolute">1212</div> -->
     </div>
   </nav>
-  <Login v-if="loginStatus" />
+  <teleport to="body">
+    <Login v-if="loginStatus" />
+  </teleport>
+  
 </template>
 
 <script setup>

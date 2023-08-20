@@ -78,25 +78,57 @@ module.exports = {
                         transform: 'translateX(100%)',
                         opacity: 0,
                     },
+                },
+                scaleUpFromRightBottom: {
+                    '0%': { transform: 'scale(0)' },
+                    '100%': { transform: 'scale(1)' }
+                },
+                scaleDownToRightBottom: {
+                    '0%': { transform: 'scale(1)' },
+                    '100%': { transform: 'scale(0)' }
                 }
 
             },
             animation: {
                 slideInFromRight: 'slideInFromRight 0.5s forwards',
                 slideOutToLeft: 'slideOutToLeft 0.3s forwards',
+                scaleUpFromRightBottom: 'scaleUpFromRightBottom 0.5s forwards',
+                scaleDownToRightBottom: 'scaleDownToRightBottom 0.5s forwards'
             },
         }
     },
     plugins: [
+        function ({ addBase }) {
+            addBase({
+                ':root': {
+                    '--blur-value': '16px',  // 默认值
+                    '--dark-blur-value': '16px',  // 暗色模式下的值
+                    '--saturate-value': '180%',  // 默认值
+                    '--bg-color': 'rgba(255, 255, 255, 0.1)',  // 背景色
+                    '--dark-bg-color': 'rgba(0, 0, 0, 0.2)',  // 暗色模式下的背景色
+                }
+            });
+        },
         function ({ addUtilities }) {
             const newUtilities = {
                 '.glass': {
-                    backgroundColor: 'rgba(255, 255, 255, 0.1)',  // 亮色模式下的背景色
-                    backdropFilter: 'blur(16px) saturate(180%)',
+                    position: 'relative',
+                    overflow: 'hidden',
                 },
-                '.dark .glass': {
+                '.glass::before': {
+                    content: '""',
+                    position: 'absolute',
+                    top: 0,
+                    left: 0,
+                    right: 0,
+                    bottom: 0,
+                    zIndex: -1,  // 确保伪元素在内容下面
+                    backgroundColor: 'rgba(255, 255, 255, 0.1)',  // 亮色模式下的背景色
+                    backdropFilter: 'blur(var(--blur-value)) saturate(var(--saturate-value))',
+                },
+                '.dark .glass::before': {
                     backgroundColor: 'rgba(0, 0, 0, 0.2)',  // 暗色模式下的背景色
-                    backdropFilter: 'blur(16px) saturate(180%)',
+                    backdropFilter: 'blur(var(--dark-blur-value)) saturate(var(--saturate-value))',
                 }
             }
             addUtilities(newUtilities, ['responsive', 'hover']);

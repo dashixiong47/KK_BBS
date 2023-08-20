@@ -1,30 +1,12 @@
 <template>
   <div class="">
-    <!-- <p>id: {{ $route.params.id }}</p> -->
     <div class="grid grid-cols-9">
       <div class="h-full m-1 col-span-9 sm:col-span-6">
         <Card>
-          <div class="flex">
-            <Avatar />
-            <div class="w-full ml-2 flex items-center justify-between">
-              <div class="flex flex-col items-start">
-                <KLink to="#" class="text-md font-bold"> 名称 </KLink>
-                <span class="text-xs text-gray-400">发布时间</span>
-              </div>
-              <div>
-                <span class="mr-5 text-light-5 text-xs">
-                  <Icon name="icon-kejian" class="mr-1" />{{
-                    formatNumber(11111)
-                  }}
-                </span>
-                <span class="text-light-5 text-xs">
-                  <Icon name="icon-shouye" class="mr-1" />上海
-                </span>
-              </div>
-            </div>
-          </div>
+          <div class="text-xl font-bold">发帖子</div>
           <div class="border-t mt-5 py-5">
-            <CKEditor />
+            <Editor class="mb-5" />
+            <Editor />
           </div>
         </Card>
       </div>

@@ -24,7 +24,6 @@
             </div>
           </div>
           <div class="border-t mt-5 py-5">
-            <CKEditor />
           </div>
         </Card>
         <Card class="mt-5">

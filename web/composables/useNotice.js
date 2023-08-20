@@ -27,7 +27,7 @@ export default function useNotice() {
         <div class="text-sm">${content}</div>`;
         div.innerHTML = html;
 
-        div.className = `custom-notice transition-transform duration-300 ease-in-out p-4 rounded-xl overflow-hidden w-80 min-h-[80px] bg-gray-100 text-gray-900 shadow-md`;
+        div.className = `glass text-dark-1 dark:text-light-1 transition-transform duration-300 ease-in-out p-4 rounded-xl overflow-hidden w-80 min-h-[80px] text-gray-900 shadow-md`;
         div.style.setProperty('--translate-y', `${noticeCount * 20}px`);
         div.classList.add('animate-slideInFromRight');
         div.dataset.position = noticeCount;
