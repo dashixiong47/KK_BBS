@@ -76,7 +76,7 @@ const test = () => {
     title: "标题",
     content:
       "一、放下大概就是这样，即使我们没在一起，我也会好好的，谢谢时间惊艳了那段有你的记忆，也谢谢现在更努力变好的自己。",
-    autoClose: false,
+    autoClose: true,
   });
 };
 </script>

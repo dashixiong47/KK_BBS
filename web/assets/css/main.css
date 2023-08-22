@@ -6,13 +6,18 @@
 body {
     @apply h-screen font-mono dark:bg-dark-1 dark:text-light-1;
     /* background-image: url('https://images.hxsj.in/test/1.jpg'); */
-    background-image: url('~/assets/images/1.jpg');
+    /* background-image: url('~/assets/images/1.jpg'); */
+    background-image: var(--bg-body-img);
     background-size: 100% 100%;
     background-repeat: no-repeat;
-
 }
+
+.dark>body {
+    background-image: var(--dark-bg-body-img);
+}
+
 #__nuxt {
-    @apply h-screen flex flex-col overflow-hidden ;
+    @apply h-screen flex flex-col overflow-hidden;
 }
 
 .hidden-scrollbar::-webkit-scrollbar {

@@ -79,36 +79,138 @@ module.exports = {
                         opacity: 0,
                     },
                 },
+                // 右下方向
+                scaleDownToRightBottom: {
+                    '0%': { transform: 'scale(1)' },
+                    '100%': { transform: 'scale(0)' }
+                },
+                // 右上方向
+                scaleDownToRightTop: {
+                    '0%': { transform: 'scale(1)' },
+                    '100%': { transform: 'scale(0) translateY(-100%)' }
+                },
+                // 左下方向
+                scaleDownToLeftBottom: {
+                    '0%': { transform: 'scale(1)' },
+                    '100%': { transform: 'scale(0) translateX(-100%)' }
+                },
+                // 左上方向
+                scaleDownToLeftTop: {
+                    '0%': { transform: 'scale(1)' },
+                    '100%': { transform: 'scale(0) translate(-100%, -100%)' }
+                },
+                // 上方向
+                scaleDownToTop: {
+                    '0%': { transform: 'scale(1)' },
+                    '100%': { transform: 'scale(0) translateY(-50%)' }
+                },
+                // 下方向
+                scaleDownToBottom: {
+                    '0%': { transform: 'scale(1)' },
+                    '100%': { transform: 'scale(0) translateY(50%)' }
+                },
+                // 左方向
+                scaleDownToLeft: {
+                    '0%': { transform: 'scale(1)' },
+                    '100%': { transform: 'scale(0) translateX(-50%)' }
+                },
+                // 右方向
+                scaleDownToRight: {
+                    '0%': { transform: 'scale(1)' },
+                    '100%': { transform: 'scale(0) translateX(50%)' }
+                },
+                // 右下方向
                 scaleUpFromRightBottom: {
                     '0%': { transform: 'scale(0)' },
                     '100%': { transform: 'scale(1)' }
                 },
-                scaleDownToRightBottom: {
-                    '0%': { transform: 'scale(1)' },
-                    '100%': { transform: 'scale(0)' }
+                // 右上方向
+                scaleUpFromRightTop: {
+                    '0%': { transform: 'scale(0) translateY(-100%)' },
+                    '100%': { transform: 'scale(1)' }
+                },
+                // 左下方向
+                scaleUpFromLeftBottom: {
+                    '0%': { transform: 'scale(0) translateX(-100%)' },
+                    '100%': { transform: 'scale(1)' }
+                },
+                // 左上方向
+                scaleUpFromLeftTop: {
+                    '0%': { transform: 'scale(0) translate(-100%, -100%)' },
+                    '100%': { transform: 'scale(1)' }
+                },
+                // 上方向
+                scaleUpFromTop: {
+                    '0%': { transform: 'scale(0) translateY(-50%)' },
+                    '100%': { transform: 'scale(1)' }
+                },
+                // 下方向
+                scaleUpFromBottom: {
+                    '0%': { transform: 'scale(0) translateY(50%)' },
+                    '100%': { transform: 'scale(1)' }
+                },
+                // 左方向
+                scaleUpFromLeft: {
+                    '0%': { transform: 'scale(0) translateX(-50%)' },
+                    '100%': { transform: 'scale(1)' }
+                },
+                // 右方向
+                scaleUpFromRight: {
+                    '0%': { transform: 'scale(0) translateX(50%)' },
+                    '100%': { transform: 'scale(1)' }
                 }
 
             },
             animation: {
                 slideInFromRight: 'slideInFromRight 0.5s forwards',
                 slideOutToLeft: 'slideOutToLeft 0.3s forwards',
+                // 右下方向
+                scaleDownToRightBottom: 'scaleDownToRightBottom 0.5s forwards',
+                // 右上方向
+                scaleDownToRightTop: 'scaleDownToRightTop 0.5s forwards',
+                // 左下方向
+                scaleDownToLeftBottom: 'scaleDownToLeftBottom 0.5s forwards',
+                // 左上方向
+                scaleDownToLeftTop: 'scaleDownToLeftTop 0.5s forwards',
+                // 上方向
+                scaleDownToTop: 'scaleDownToTop 0.5s forwards',
+                // 下方向
+                scaleDownToBottom: 'scaleDownToBottom 0.5s forwards',
+                // 左方向
+                scaleDownToLeft: 'scaleDownToLeft 0.5s forwards',
+                // 右方向
+                scaleDownToRight: 'scaleDownToRight 0.5s forwards',
+                // 右下方向
                 scaleUpFromRightBottom: 'scaleUpFromRightBottom 0.5s forwards',
-                scaleDownToRightBottom: 'scaleDownToRightBottom 0.5s forwards'
-            },
+                // 右上方向
+                scaleUpFromRightTop: 'scaleUpFromRightTop 0.5s forwards',
+                // 左下方向
+                scaleUpFromLeftBottom: 'scaleUpFromLeftBottom 0.5s forwards',
+                // 左上方向
+                scaleUpFromLeftTop: 'scaleUpFromLeftTop 0.5s forwards',
+                // 上方向
+                scaleUpFromTop: 'scaleUpFromTop 0.5s forwards',
+                // 下方向
+                scaleUpFromBottom: 'scaleUpFromBottom 0.5s forwards',
+                // 左方向
+                scaleUpFromLeft: 'scaleUpFromLeft 0.5s forwards',
+                // 右方向
+                scaleUpFromRight: 'scaleUpFromRight 0.5s forwards'
+            }
         }
     },
     plugins: [
-        function ({ addBase }) {
-            addBase({
-                ':root': {
-                    '--blur-value': '16px',  // 默认值
-                    '--dark-blur-value': '16px',  // 暗色模式下的值
-                    '--saturate-value': '180%',  // 默认值
-                    '--bg-color': 'rgba(255, 255, 255, 0.1)',  // 背景色
-                    '--dark-bg-color': 'rgba(0, 0, 0, 0.2)',  // 暗色模式下的背景色
-                }
-            });
-        },
+        // function ({ addBase }) {
+        //     addBase({
+        //         ':root': {
+        //             '--blur-value': '16px',  // 默认值
+        //             '--dark-blur-value': '16px',  // 暗色模式下的值
+        //             '--saturate-value': '180%',  // 默认值
+        //             '--bg-color': 'rgba(255, 255, 255, 0.1)',  // 背景色
+        //             '--dark-bg-color': 'rgba(0, 0, 0, 0.2)',  // 暗色模式下的背景色
+        //         }
+        //     });
+        // },
         function ({ addUtilities }) {
             const newUtilities = {
                 '.glass': {
@@ -123,12 +225,21 @@ module.exports = {
                     right: 0,
                     bottom: 0,
                     zIndex: -1,  // 确保伪元素在内容下面
-                    backgroundColor: 'rgba(255, 255, 255, 0.1)',  // 亮色模式下的背景色
+                    backgroundColor: 'var(--bg-color)',  // 亮色模式下的背景色
                     backdropFilter: 'blur(var(--blur-value)) saturate(var(--saturate-value))',
+                    transform: 'translateZ(0)'
                 },
+                '.textColorBlack': {
+                    color: 'var(--text-color-black)',
+                }
+            }
+            addUtilities(newUtilities, ['responsive', 'hover']);
+        },
+        function ({ addUtilities }) {
+            const newUtilities = {
                 '.dark .glass::before': {
-                    backgroundColor: 'rgba(0, 0, 0, 0.2)',  // 暗色模式下的背景色
-                    backdropFilter: 'blur(var(--dark-blur-value)) saturate(var(--saturate-value))',
+                    backgroundColor: 'var(--dark-bg-color)',  // 暗色模式下的背景色
+                    backdropFilter: 'blur(var(--dark-blur-value)) saturate(var(--dark-saturate-value))',
                 }
             }
             addUtilities(newUtilities, ['responsive', 'hover']);

@@ -1,5 +1,5 @@
 <template>
-  <div class="relative ">
+  <div class="relative">
     <button
       class="relative z-10 bg-blue-500 hover:bg-blue-700 text-white font-bold w-10 h-10 rounded-full"
       @click="change"
@@ -13,7 +13,7 @@
     >
       <div
         v-if="showPopup"
-        class="glass p-5 rounded-2xl w-96 h-96 !absolute right-0 bottom-0 origin-bottom-right"
+        class="glass p-5 rounded-2xl w-80 h-96 !absolute right-0 bottom-0 origin-bottom-right"
       >
         <slot />
       </div>
@@ -34,9 +34,11 @@ let { index } = defineProps({
     default: 0,
   },
 });
+let emit = defineEmits(["change"]);
 function change() {
   showPopup.value = !showPopup.value;
   actived.value = index;
+  emit("change", showPopup.value);
 }
 watch(
   () => actived.value,
