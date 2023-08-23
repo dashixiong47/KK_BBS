@@ -43,6 +43,7 @@ export default defineNuxtConfig({
   css: [
     '~/assets/kk_bbs_icon/iconfont.css',
     '~/assets/css/main.css',
+    '~/assets/css/tippy.css',
   ],
   postcss: {
     plugins: {

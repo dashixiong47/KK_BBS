@@ -25,6 +25,8 @@
     "lozad": "^1.16.0",
     "postcss": "^8.4.27",
     "tailwindcss": "^3.3.3",
-    "tinymce": "^6.6.2"
+    "tinymce": "^6.6.2",
+    "tippy.js": "^6.3.7",
+    "vue-tippy": "v6"
   }
 }

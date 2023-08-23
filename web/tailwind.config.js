@@ -37,7 +37,7 @@ module.exports = {
 
             },
             boxShadow: {
-                'center': '0 0 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1)'
+                'center': '0 0px 20px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1)'
             },
             gridTemplateColumns: {
                 '24': 'repeat(24, minmax(0, 1fr))',
@@ -213,36 +213,40 @@ module.exports = {
         // },
         function ({ addUtilities }) {
             const newUtilities = {
-                '.glass': {
-                    position: 'relative',
-                    overflow: 'hidden',
+           
+                '.primary-text': {
+                    color: 'var(--primary-text)'
                 },
-                '.glass::before': {
-                    content: '""',
-                    position: 'absolute',
-                    top: 0,
-                    left: 0,
-                    right: 0,
-                    bottom: 0,
-                    zIndex: -1,  // 确保伪元素在内容下面
-                    backgroundColor: 'var(--bg-color)',  // 亮色模式下的背景色
-                    backdropFilter: 'blur(var(--blur-value)) saturate(var(--saturate-value))',
-                    transform: 'translateZ(0)'
+                '.regular-text': {
+                    color: 'var(--regular-text)'
                 },
-                '.textColorBlack': {
-                    color: 'var(--text-color-black)',
+                '.secondary-text': {
+                    color: 'var(--secondary-text)'
+                },
+                '.placeholder-text': {
+                    color: 'var(--placeholder-text)'
+                },
+                '.border-primary': {
+                    borderColor: 'var(--border-primary)'
+                },
+                '.border-light': {
+                    borderColor: 'var(--border-light)'
+                },
+                '.border-lighter': {
+                    borderColor: 'var(--border-lighter)'
+                },
+                '.border-extralight': {
+                    borderColor: 'var(--border-extralight)'
                 }
             }
-            addUtilities(newUtilities, ['responsive', 'hover']);
-        },
-        function ({ addUtilities }) {
-            const newUtilities = {
-                '.dark .glass::before': {
-                    backgroundColor: 'var(--dark-bg-color)',  // 暗色模式下的背景色
-                    backdropFilter: 'blur(var(--dark-blur-value)) saturate(var(--dark-saturate-value))',
-                }
-            }
-            addUtilities(newUtilities, ['responsive', 'hover']);
+            // 创建暗色模式的工具类
+            const darkUtilities = Object.keys(newUtilities).reduce((acc, key) => {
+                // 删除 . 的前缀
+                key = key.replace(/^\./, '');
+                acc[`.dark .${key}`] = { color: `var(--dark-${key})` };
+                return acc;
+            }, {});
+            addUtilities({...newUtilities,...darkUtilities}, ['responsive', 'hover']);
         },
     ],
 }

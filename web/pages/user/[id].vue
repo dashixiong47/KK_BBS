@@ -7,7 +7,7 @@
       <ul class="h-full m-1 col-span-6">
         <li
           v-for="item in 10"
-          class="w-full p-5 rounded-2xl mb-5 shadow-center dark:bg-dark-2"
+          class="w-full p-5 rounded-2xl mb-5 dark:bg-dark-2"
         >
           <Topic />
         </li>

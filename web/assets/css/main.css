@@ -16,6 +16,26 @@ body {
     background-image: var(--dark-bg-body-img);
 }
 
+.glass,.tippy-box[data-theme~='glass']{
+    @apply relative overflow-hidden shadow-center
+}
+
+.glass::before,.tippy-box[data-theme~='glass']::before {
+    @apply absolute left-0 top-0 right-0 bottom-0 -z-[1];
+    content: '';
+    background-color: var(--bg-color);
+    backdrop-filter: blur(var(--blur-value)) saturate(var(--saturate-value));
+    transform: translateZ(0);
+}
+
+.dark .glass::before,.dark .tippy-box[data-theme~='glass']::before {
+    background-color: var(--dark-bg-color);
+    backdrop-filter: blur(var(--dark-blur-value)) saturate(var(--dark-saturate-value));
+}
+
+
+
+
 #__nuxt {
     @apply h-screen flex flex-col overflow-hidden;
 }

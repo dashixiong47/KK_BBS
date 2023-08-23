@@ -1,17 +1,16 @@
 <template>
   <div>
-    <p class="border-b py-2 mb-2 font-semibold">签到</p>
+    <p class="border-b py-2 mb-2 font-semibold primary-text">签到</p>
 
-    <div class="flex justify-between border-b pb-2">
+    <div class="flex justify-between border-b pb-2 primary-text">
       <span class="text-sm flex items-center">
         <Icon name="icon-jinbi" class="mr-2" />
         1111
       </span>
       <button
-        class="text-sm flex items-center border rounded-md px-5 py-1"
+        class="glass before:rounded-md text-sm flex items-center rounded-md px-5 py-1 "
         :class="{
-          'text-blue-400': checkInStatus,
-          'border-blue-400': checkInStatus,
+          'color-primary': checkInStatus,
           'cursor-not-allowed': checkInStatus,
         }"
         :disabled="checkInStatus"

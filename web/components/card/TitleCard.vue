@@ -1,6 +1,6 @@
 <template>
   <div
-    class="glass text-light-5 w-60 flex flex-col shadow-center rounded-2xl px-5 py-3 dark:text-light-1"
+    class="glass text-light-5 w-60 flex flex-col rounded-2xl px-5 py-3 dark:text-light-1"
   >
     <div class="p-2 flex-shrink-0 border-b">More Pages</div>
     <ul class="w-full h-full overflow-y-auto hidden-scrollbar">

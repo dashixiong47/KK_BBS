@@ -3,22 +3,22 @@
     <Avatar />
     <div class="w-full ml-2 flex items-center justify-between">
       <div class=" flex flex-col items-start">
-        <KLink to="#" class="text-md font-bold"> 名称 </KLink>
-        <span class="text-xs text-gray-400">发布时间</span>
+        <KLink to="#" class="text-md font-bold primary-text"> 名称 </KLink>
+        <span class="text-xs secondary-text">发布时间</span>
       </div>
       <div>
-        <span class="mr-5 text-light-5 text-xs">
+        <span class="mr-5 regular-text text-xs">
           <Icon name="icon-kejian" class="mr-1" />{{ formatNumber(11111) }}
         </span>
-        <span class="text-light-5 text-xs">
+        <span class="regular-text text-xs">
           <Icon name="icon-shouye" class="mr-1" />上海
         </span>
       </div>
     </div>
   </div>
   <KLink to="/topic/1" class="">
-    <p class="text-md mb-3">这里是标题</p>
-    <div class="text-gray-400 text-sm dark:text-dark-6">
+    <p class="text-md mb-3 primary-text">这里是标题</p>
+    <div class="regular-text text-sm">
       Lorem ipsum dolor sit amet,consectetur adipiscing elit. Morbi nulla
       dolor,ornare at commodo non,feugiat non nisi. Phasellus faucibus mollis
       pharetra. Proin blandit ac massa sed rhoncus See more
@@ -48,7 +48,7 @@
   >
     <template v-for="(item, index) in itemsToShow">
       <li
-        class="mr-5 flex-shrink-0 rounded-2xl border bg-light-2 px-2 text-sm flex items-center text-light-5 dark:text-dark-2"
+        class="mr-5 flex-shrink-0 rounded-2xl border bg-light-2 px-2 text-sm flex items-center secondary-text"
       >
         <KLink to="#"> #分类{{ index }} </KLink>
       </li>
@@ -56,7 +56,7 @@
   </ul>
   <div class="my-2 grid grid-cols-12">
     <button
-      class="col-span-3 py-2 flex items-center justify-center rounded-lg font-medium text-sm text-dark-1 dark:text-light-2 hover:bg-light-3 dark:hover:bg-light-4 dark:hover:text-dark-2"
+      class="col-span-3 py-2 flex items-center justify-center rounded-lg font-medium text-sm primary-text  hover:bg-light-3 dark:hover:bg-light-4 dark:hover:text-dark-2"
       :class="{
         '!text-blue-400': true,
       }"
@@ -66,19 +66,19 @@
       <span v-if="!isMobile"> 点赞</span>
     </button>
     <button
-      class="col-span-3 py-2 flex items-center justify-center rounded-lg font-medium text-sm text-dark-1 dark:text-light-2 hover:bg-light-3 dark:hover:bg-light-4 dark:hover:text-dark-2"
+      class="col-span-3 py-2 flex items-center justify-center rounded-lg font-medium text-sm primary-text  hover:bg-light-3 dark:hover:bg-light-4 dark:hover:text-dark-2"
     >
       <Icon name="icon-pinglun"></Icon> <span class="mx-1">123</span>
       <span v-if="!isMobile">评论</span>
     </button>
     <button
-      class="col-span-3 py-2 flex items-center justify-center rounded-lg font-medium text-sm text-dark-1 dark:text-light-2 hover:bg-light-3 dark:hover:bg-light-4 dark:hover:text-dark-2"
+      class="col-span-3 py-2 flex items-center justify-center rounded-lg font-medium text-sm primary-text  hover:bg-light-3 dark:hover:bg-light-4 dark:hover:text-dark-2"
     >
       <Icon name="icon-dianzan"></Icon> <span class="mx-1">123</span>
       <span v-if="!isMobile"> 点赞</span>
     </button>
     <button
-      class="col-span-3 py-2 flex items-center justify-center rounded-lg font-medium text-sm text-dark-1 dark:text-light-2 hover:bg-light-3 dark:hover:bg-light-4 dark:hover:text-dark-2"
+      class="col-span-3 py-2 flex items-center justify-center rounded-lg font-medium text-sm primary-text  hover:bg-light-3 dark:hover:bg-light-4 dark:hover:text-dark-2"
     >
       <Icon name="icon-shoucang"></Icon> <span class="mx-1">123</span>
       <span v-if="!isMobile"> 收藏</span>

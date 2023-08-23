@@ -17,7 +17,6 @@ console.log(router);
       <p>{{ $t("welcome") }}</p>
     </form>
   </div> -->
-  <input type="range" min="0" max="100"  />
   <TopicList />
 </template>
 <style lang="postcss"></style>

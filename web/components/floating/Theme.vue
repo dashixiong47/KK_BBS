@@ -1,36 +1,40 @@
 <template>
   <Floating :index="index" @change="colorPicker = !colorPicker">
-    <div class="flex justify-between">
+    <!-- <div class="flex justify-between">
       <div class="bg-slate-400 rounded-2xl overflow-hidden w-1/2 text-center">
         Light
       </div>
       <div class="rounded-2xl w-1/2 text-center">Dark</div>
+    </div> -->
+    <div class="overflow-y-auto h-full hidden-scrollbar">
+      <div class="flex items-center justify-between">
+        <label class="primary-text w-20">透明度</label>
+        <input
+          type="range"
+          :value="getThemeValue.blurValue"
+          @input="updateValue($event, 'blur-value')"
+          min="0"
+          max="20"
+        />
+      </div>
+      <div class="flex items-center justify-between" v-for="(val, key) of colorObj">
+        <label class="primary-text w-32">{{ val }}</label>
+        <Popover>
+          <div
+            class="w-10 h-5 border border-base"
+            :style="{
+              backgroundColor: getThemeValue[key],
+            }"
+          ></div>
+          <template #content>
+            <ColorPicker
+              :color="getThemeValue[key]"
+              @change="(v) => changeColor(key, v)"
+            />
+          </template>
+        </Popover>
+      </div>
     </div>
-    <div>
-      <label>透明度</label>
-      <input
-        type="range"
-        :value="getThemeValue.blurValue"
-        @input="updateValue($event, 'blur-value')"
-        min="0"
-        max="20"
-      />
-    </div>
-    <input type="color" />
-    <div>
-      <label>背景颜色</label>
-      <ColorPicker
-        v-if="colorPicker"
-        :color="getThemeValue.bgColor"
-        @change="changeColor"
-      />
-    </div>
-    <Popover>
-      <button>按钮</button>
-      <template #content>
-        <div>内容</div>
-      </template>
-    </Popover>
   </Floating>
 </template>
 
@@ -67,6 +71,17 @@ let { index } = defineProps({
     default: 0,
   },
 });
+let colorObj = {
+  bgColor: "背景颜色", // 背景颜色
+  primaryText: "主文本颜色", // 主文本颜色
+  regularText: "常规文本颜色", // 常规文本颜色
+  secondaryText: "次要文本颜色", // 次要文本颜色
+  placeholderText: "占位符文本颜色", // 占位符文本颜色
+  borderBase: "基础边框颜色", // 基础边框颜色
+  borderLight: "浅边框颜色", // 浅边框颜色
+  borderLighter: "更浅边框颜色", // 更浅边框颜色
+  borderExtraLight: "极浅边框颜色", // 极浅边框颜色
+};
 useHead({
   script: {
     class: "irojs",
@@ -106,10 +121,10 @@ function updateValue(event, key) {
     [key]: value,
   });
 }
-function changeColor(rgbaString) {
-  getThemeValue.value.bgColor = rgbaString;
+function changeColor(name, rgbaString) {
+  getThemeValue.value[name] = rgbaString;
   changeCssVariables({
-    "bg-color": rgbaString,
+    [toKebabCase(name)]: rgbaString,
   });
 }
 /*
