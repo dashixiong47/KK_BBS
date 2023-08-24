@@ -1,0 +1,215 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="GoORMHelperCache">
+    <option name="schemaMapping">
+      <map>
+        <entry key="Login">
+          <value>
+            <set>
+              <option value="file://$PROJECT_DIR$/apis/login.go" />
+            </set>
+          </value>
+        </entry>
+        <entry key="Model">
+          <value>
+            <set>
+              <option value="file://$PROJECT_DIR$/models/models.go" />
+            </set>
+          </value>
+        </entry>
+        <entry key="MyController">
+          <value>
+            <set>
+              <option value="file://$PROJECT_DIR$/apis/test.go" />
+              <option value="file://$PROJECT_DIR$/router/register.go" />
+              <option value="file://$PROJECT_DIR$/router/router.go" />
+            </set>
+          </value>
+        </entry>
+        <entry key="MyController2">
+          <value>
+            <set>
+              <option value="file://$PROJECT_DIR$/apis/test.go" />
+            </set>
+          </value>
+        </entry>
+        <entry key="ResponseData">
+          <value>
+            <set>
+              <option value="file://$PROJECT_DIR$/utils/respond.go" />
+            </set>
+          </value>
+        </entry>
+        <entry key="Settings">
+          <value>
+            <set>
+              <option value="file://$PROJECT_DIR$/config/config.go" />
+            </set>
+          </value>
+        </entry>
+        <entry key="User">
+          <value>
+            <set>
+              <option value="file://$PROJECT_DIR$/models/models.go" />
+            </set>
+          </value>
+        </entry>
+      </map>
+    </option>
+    <option name="scannedPathMapping">
+      <map>
+        <entry key="file://$PROJECT_DIR$/apis/login.go">
+          <value>
+            <ScannedPath>
+              <option name="lastModified" value="1692872426241" />
+              <option name="schema">
+                <list>
+                  <option value="Login" />
+                </list>
+              </option>
+            </ScannedPath>
+          </value>
+        </entry>
+        <entry key="file://$PROJECT_DIR$/apis/test.go">
+          <value>
+            <ScannedPath>
+              <option name="lastModified" value="1692869894932" />
+              <option name="schema">
+                <list>
+                  <option value="MyController" />
+                  <option value="MyController2" />
+                </list>
+              </option>
+            </ScannedPath>
+          </value>
+        </entry>
+        <entry key="file://$PROJECT_DIR$/config.go">
+          <value>
+            <ScannedPath>
+              <option name="lastModified" value="1692846220404" />
+            </ScannedPath>
+          </value>
+        </entry>
+        <entry key="file://$PROJECT_DIR$/config/config.go">
+          <value>
+            <ScannedPath>
+              <option name="lastModified" value="1692867837690" />
+              <option name="schema">
+                <list>
+                  <option value="Settings" />
+                </list>
+              </option>
+            </ScannedPath>
+          </value>
+        </entry>
+        <entry key="file://$PROJECT_DIR$/db/postgresql.go">
+          <value>
+            <ScannedPath>
+              <option name="lastModified" value="1692869942514" />
+            </ScannedPath>
+          </value>
+        </entry>
+        <entry key="file://$PROJECT_DIR$/main.go">
+          <value>
+            <ScannedPath>
+              <option name="lastModified" value="1692869888044" />
+            </ScannedPath>
+          </value>
+        </entry>
+        <entry key="file://$PROJECT_DIR$/middleware.go">
+          <value>
+            <ScannedPath>
+              <option name="lastModified" value="1692864705619" />
+            </ScannedPath>
+          </value>
+        </entry>
+        <entry key="file://$PROJECT_DIR$/middleware/middleware.go">
+          <value>
+            <ScannedPath>
+              <option name="lastModified" value="1692865018653" />
+            </ScannedPath>
+          </value>
+        </entry>
+        <entry key="file://$PROJECT_DIR$/models/models.go">
+          <value>
+            <ScannedPath>
+              <option name="lastModified" value="1692870188108" />
+              <option name="schema">
+                <list>
+                  <option value="Model" />
+                  <option value="User" />
+                </list>
+              </option>
+            </ScannedPath>
+          </value>
+        </entry>
+        <entry key="file://$PROJECT_DIR$/router/register.go">
+          <value>
+            <ScannedPath>
+              <option name="lastModified" value="1692871634773" />
+            </ScannedPath>
+          </value>
+        </entry>
+        <entry key="file://$PROJECT_DIR$/router/router.go">
+          <value>
+            <ScannedPath>
+              <option name="lastModified" value="1692872438607" />
+            </ScannedPath>
+          </value>
+        </entry>
+        <entry key="file://$PROJECT_DIR$/utils/call-back.go">
+          <value>
+            <ScannedPath>
+              <option name="lastModified" value="1692865043792" />
+            </ScannedPath>
+          </value>
+        </entry>
+        <entry key="file://$PROJECT_DIR$/utils/jwt.go">
+          <value>
+            <ScannedPath>
+              <option name="lastModified" value="1692861119152" />
+            </ScannedPath>
+          </value>
+        </entry>
+        <entry key="file://$PROJECT_DIR$/utils/print.go">
+          <value>
+            <ScannedPath>
+              <option name="lastModified" value="1692859354615" />
+            </ScannedPath>
+          </value>
+        </entry>
+        <entry key="file://$PROJECT_DIR$/utils/respond.go">
+          <value>
+            <ScannedPath>
+              <option name="lastModified" value="1692865772429" />
+              <option name="schema">
+                <list>
+                  <option value="ResponseData" />
+                </list>
+              </option>
+            </ScannedPath>
+          </value>
+        </entry>
+        <entry key="file://$PROJECT_DIR$/../../chengtong/vshots-console-server/router/sys-router.go">
+          <value>
+            <ScannedPath>
+              <option name="lastModified" value="1692854230175" />
+            </ScannedPath>
+          </value>
+        </entry>
+      </map>
+    </option>
+    <option name="tableStructMapping">
+      <map>
+        <entry key="login" value="Login" />
+        <entry key="model" value="Model" />
+        <entry key="my_controller" value="MyController" />
+        <entry key="my_controller2" value="MyController2" />
+        <entry key="response_data" value="ResponseData" />
+        <entry key="settings" value="Settings" />
+        <entry key="user" value="User" />
+      </map>
+    </option>
+    <option name="lastTimeChecked" value="1692845997068" />
+  </component>
+</project>

@@ -1,0 +1,26 @@
+application:
+  # dev开发环境 test测试环境 prod线上环境
+  mode: dev
+  # 服务器ip，默认使用
+  host: 0.0.0.0
+  # 端口号
+  port: 8080
+  # jwt 密钥
+  signingKey: KYYbng4o9I1jJFqOC6wL9JL9vjt7
+  # jwt 过期时间 单位：秒
+  tokenTimeout: 36000
+postgresql:
+    host: 127.0.0.1
+    port: 5432
+    user: root
+    password: 123456
+    database: kk_bbs
+    sslmode: disable
+redis:
+    host: 127.0.0.1
+    port: 6379
+    password: 123456
+    database: 0
+    maxIdle: 30
+    maxActive: 30
+    idleTimeout: 300

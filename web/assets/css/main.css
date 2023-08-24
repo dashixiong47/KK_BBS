@@ -4,7 +4,7 @@
 
 /* 记住几个口诀：padding magin取值 8px 16px 24px，font-size：12px 14px 16px，color：#333 #666 #999 */
 body {
-    @apply h-screen font-mono dark:bg-dark-1 dark:text-light-1;
+    @apply h-screen font-sans dark:bg-dark-1 dark:text-light-1;
     /* background-image: url('https://images.hxsj.in/test/1.jpg'); */
     /* background-image: url('~/assets/images/1.jpg'); */
     background-image: var(--bg-body-img);

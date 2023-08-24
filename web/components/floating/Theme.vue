@@ -17,7 +17,10 @@
           max="20"
         />
       </div>
-      <div class="flex items-center justify-between" v-for="(val, key) of colorObj">
+      <div
+        class="flex items-center justify-between"
+        v-for="(val, key) of colorObj"
+      >
         <label class="primary-text w-32">{{ val }}</label>
         <Popover>
           <div
@@ -73,11 +76,17 @@ let { index } = defineProps({
 });
 let colorObj = {
   bgColor: "背景颜色", // 背景颜色
+  // 常用颜色
+  colorPrimary: "主要颜色", // 主要颜色
+  colorSuccess: "成功颜色", // 成功颜色
+  colorWarning: "警告颜色", // 警告颜色
+  colorDanger: "危险颜色", // 危险颜色
+  colorInfo: "信息颜色", // 信息颜色
   primaryText: "主文本颜色", // 主文本颜色
   regularText: "常规文本颜色", // 常规文本颜色
   secondaryText: "次要文本颜色", // 次要文本颜色
   placeholderText: "占位符文本颜色", // 占位符文本颜色
-  borderBase: "基础边框颜色", // 基础边框颜色
+  borderBasis: "基础边框颜色", // 基础边框颜色
   borderLight: "浅边框颜色", // 浅边框颜色
   borderLighter: "更浅边框颜色", // 更浅边框颜色
   borderExtraLight: "极浅边框颜色", // 极浅边框颜色

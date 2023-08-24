@@ -8,7 +8,7 @@
         1111
       </span>
       <button
-        class="glass before:rounded-md text-sm flex items-center rounded-md px-5 py-1 "
+        class="glass before:rounded-md border text-sm flex items-center rounded-md px-5 py-1 "
         :class="{
           'color-primary': checkInStatus,
           'cursor-not-allowed': checkInStatus,

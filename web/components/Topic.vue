@@ -56,7 +56,7 @@
   </ul>
   <div class="my-2 grid grid-cols-12">
     <button
-      class="col-span-3 py-2 flex items-center justify-center rounded-lg font-medium text-sm primary-text  hover:bg-light-3 dark:hover:bg-light-4 dark:hover:text-dark-2"
+      class="col-span-3 py-2 flex items-center justify-center rounded-lg font-medium text-sm primary-text hover:glass border border-[rgba(0,0,0,0)] hover:border-[#ffffff] hover:shadow-center"
       :class="{
         '!text-blue-400': true,
       }"
@@ -66,19 +66,19 @@
       <span v-if="!isMobile"> 点赞</span>
     </button>
     <button
-      class="col-span-3 py-2 flex items-center justify-center rounded-lg font-medium text-sm primary-text  hover:bg-light-3 dark:hover:bg-light-4 dark:hover:text-dark-2"
+      class="col-span-3 py-2 flex items-center justify-center rounded-lg font-medium text-sm primary-text hover:glass border border-[rgba(0,0,0,0)] hover:border-[#ffffff] hover:shadow-center"
     >
       <Icon name="icon-pinglun"></Icon> <span class="mx-1">123</span>
       <span v-if="!isMobile">评论</span>
     </button>
     <button
-      class="col-span-3 py-2 flex items-center justify-center rounded-lg font-medium text-sm primary-text  hover:bg-light-3 dark:hover:bg-light-4 dark:hover:text-dark-2"
+      class="col-span-3 py-2 flex items-center justify-center rounded-lg font-medium text-sm primary-text hover:glass border border-[rgba(0,0,0,0)] hover:border-[#ffffff] hover:shadow-center"
     >
       <Icon name="icon-dianzan"></Icon> <span class="mx-1">123</span>
       <span v-if="!isMobile"> 点赞</span>
     </button>
     <button
-      class="col-span-3 py-2 flex items-center justify-center rounded-lg font-medium text-sm primary-text  hover:bg-light-3 dark:hover:bg-light-4 dark:hover:text-dark-2"
+      class="col-span-3 py-2 flex items-center justify-center rounded-lg font-medium text-sm primary-text hover:glass border border-[rgba(0,0,0,0)] hover:border-[#ffffff] hover:shadow-center"
     >
       <Icon name="icon-shoucang"></Icon> <span class="mx-1">123</span>
       <span v-if="!isMobile"> 收藏</span>

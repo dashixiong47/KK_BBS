@@ -11,7 +11,7 @@
           <!-- <div>name</div> -->
         </div>
         <button
-          class="text-sm flex items-center border border-base primary-text rounded-md px-5 py-1"
+          class="glass text-[--color-primary] dark:text-[--dark-color-primary] text-sm flex items-center border border-base rounded-md px-5 py-1"
         >
           关注
         </button>

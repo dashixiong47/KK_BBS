@@ -213,7 +213,6 @@ module.exports = {
         // },
         function ({ addUtilities }) {
             const newUtilities = {
-           
                 '.primary-text': {
                     color: 'var(--primary-text)'
                 },
@@ -226,8 +225,8 @@ module.exports = {
                 '.placeholder-text': {
                     color: 'var(--placeholder-text)'
                 },
-                '.border-primary': {
-                    borderColor: 'var(--border-primary)'
+                '.border-basis': {
+                    borderColor: 'var(--border-basis)'
                 },
                 '.border-light': {
                     borderColor: 'var(--border-light)'

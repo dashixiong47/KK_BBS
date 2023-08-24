@@ -1,0 +1,37 @@
+version: '3.1'
+
+services:
+
+  # Redis 容器配置
+  redis:
+    image: redis:latest
+    container_name: my-redis
+    command: redis-server --requirepass 123456 # 设置密码
+    ports:
+      - "6379:6379"
+    volumes:
+      - ./redis-data:/data
+    restart: always
+    networks:
+      - my-network
+
+  # PostgreSQL 容器配置
+  postgres:
+    image: postgres:latest
+    container_name: my-postgres
+    environment:
+      POSTGRES_USER: root
+      POSTGRES_PASSWORD: 123456
+      POSTGRES_DB: kk_bbs
+    ports:
+      - "5432:5432"
+    volumes:
+      - ./postgres-data:/var/lib/postgresql/data
+    restart: always
+    networks:
+      - my-network
+
+
+# 自定义网络配置，使容器能够相互通信
+networks:
+  my-network:
