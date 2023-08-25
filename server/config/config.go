@@ -8,10 +8,11 @@ import (
 
 type Settings struct {
 	Application struct {
-		Mode       string `yaml:"mode"`
-		Host       string `yaml:"host"`
-		Port       int    `yaml:"port"`
-		SigningKey string `yaml:"signingKey"`
+		Mode         string `yaml:"mode"`
+		Host         string `yaml:"host"`
+		Port         int    `yaml:"port"`
+		SigningKey   string `yaml:"signingKey"`
+		TokenTimeout int    `yaml:"tokenTimeout"`
 	} `yaml:"application"`
 	Postgresql struct {
 		Host     string `yaml:"host"`

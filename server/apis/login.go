@@ -1,6 +1,7 @@
 package apis
 
 import (
+	"github.com/dashixiong47/KK_BBS/server"
 	"github.com/dashixiong47/KK_BBS/utils"
 	"github.com/gin-gonic/gin"
 )
@@ -8,14 +9,22 @@ import (
 type Login struct {
 	Ctx *gin.Context
 }
+type user struct {
+	Username string `json:"username" binding:"required"`
+	Password string `json:"password" binding:"required"`
+}
 
-func (c *Login) Post() {
-	var info map[string]string
+func (c *Login) Post() utils.ResponseData {
+	var info user
 	err := c.Ctx.ShouldBindJSON(&info)
 	if err != nil {
-		utils.JsonFail(c.Ctx, "参数错误")
-		return
+		return utils.JsonFail("参数错误")
 	}
-
-	utils.JsonSuccess(c.Ctx, info)
+	md5 := utils.MD5(info.Password)
+	var loginServer server.LoginServer
+	userInfo, err := loginServer.Login(info.Username, md5)
+	if err != nil {
+		return utils.JsonFail("用户名或密码错误")
+	}
+	return utils.JsonSuccess(userInfo)
 }

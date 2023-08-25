@@ -22,12 +22,29 @@ func Respond(c *gin.Context, code int, message string, data interface{}) {
 	c.JSON(http.StatusOK, response)
 }
 
-// 成功响应
-func JsonSuccess(g *gin.Context, data interface{}) {
-	Respond(g, 200, "success", data)
+// JsonSuccess 成功响应
+func JsonSuccess(data interface{}) ResponseData {
+	return ResponseData{
+		Code:    200,
+		Message: "success",
+		Data:    data,
+	}
 }
 
-// 失败响应
-func JsonFail(g *gin.Context, message string) {
-	Respond(g, 500, message, nil)
+// JsonError 失败响应
+func JsonError(code int, message string) ResponseData {
+	return ResponseData{
+		Code:    code,
+		Message: message,
+		Data:    nil,
+	}
+}
+
+// JsonFail 失败响应
+func JsonFail(message string) ResponseData {
+	return ResponseData{
+		Code:    500,
+		Message: message,
+		Data:    nil,
+	}
 }

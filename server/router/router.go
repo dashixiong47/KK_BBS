@@ -41,11 +41,16 @@ func RegisterRoutes(router *gin.RouterGroup, ctrl interface{}) {
 				// 设置 Ctx 字段的值
 				v.Elem().FieldByName("Ctx").Set(reflect.ValueOf(ctx))
 				method := v.MethodByName(methodName) // 根据方法名获取方法
+				var resultValues []reflect.Value
 				if state {
 					id := ctx.Param("id")
-					method.Call([]reflect.Value{reflect.ValueOf(id)})
+					resultValues = method.Call([]reflect.Value{reflect.ValueOf(id)})
 				} else {
-					method.Call(nil)
+					resultValues = method.Call(nil)
+				}
+				if len(resultValues) > 0 {
+					firstReturnValue := resultValues[0].Interface()
+					ctx.JSON(200, firstReturnValue)
 				}
 			})
 		}

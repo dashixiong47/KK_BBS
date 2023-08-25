@@ -7,8 +7,8 @@ application:
   port: 8080
   # jwt 密钥
   signingKey: KYYbng4o9I1jJFqOC6wL9JL9vjt7
-  # jwt 过期时间 单位：秒
-  tokenTimeout: 36000
+  # jwt 过期时间 单位：分钟
+  tokenTimeout: 60
 postgresql:
     host: 127.0.0.1
     port: 5432
