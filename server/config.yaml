@@ -9,6 +9,8 @@ application:
   signingKey: KYYbng4o9I1jJFqOC6wL9JL9vjt7
   # jwt 过期时间 单位：分钟
   tokenTimeout: 60
+  #id混淆
+  idConfusion: 123456
 postgresql:
     host: 127.0.0.1
     port: 5432

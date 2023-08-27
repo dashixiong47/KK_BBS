@@ -23,9 +23,9 @@ func init() {
 func registerRoutes(r *gin.Engine) {
 	v1 := r.Group("/v1/api")
 	v1.Use(middleware.AuthMiddleware())
-	RegisterRoutes(v1, &apis.MyController{}) // 调用 RegisterRoutes 函数注册 MyController 的方法
 	// 不需要认证的路由
 	noCheck := r.Group("/v1/api")
 	RegisterRoutes(noCheck, &apis.Login{})
+	RegisterRoutes(noCheck, &apis.MyController{}) // 调用 RegisterRoutes 函数注册 MyController 的方法
 
 }

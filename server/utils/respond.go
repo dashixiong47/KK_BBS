@@ -40,6 +40,15 @@ func JsonError(code int, message string) ResponseData {
 	}
 }
 
+// JsonParameterError 参数错误
+func JsonParameterError(message string) ResponseData {
+	return ResponseData{
+		Code:    400,
+		Message: message,
+		Data:    nil,
+	}
+}
+
 // JsonFail 失败响应
 func JsonFail(message string) ResponseData {
 	return ResponseData{
