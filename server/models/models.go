@@ -2,7 +2,7 @@ package models
 
 import (
 	"github.com/dashixiong47/KK_BBS/db"
-	"github.com/dashixiong47/KK_BBS/utils/print"
+	"github.com/dashixiong47/KK_BBS/utils/klog"
 	"gorm.io/gorm"
 	"time"
 )
@@ -26,6 +26,13 @@ type User struct {
 	Status       int          `json:"status" gorm:"size:1;"`                                        // 用户状态
 	Model
 }
+
+//// AfterFind 钩子，用于在查找之后解密 Email
+//func (u *User) AfterFind(tx *gorm.DB) (err error) {
+//	id, _ := utils.DecryptID(strconv.Itoa(int(u.ID)))
+//	u.ID = uint(id)
+//	return
+//}
 
 // Post 帖子
 type Post struct {
@@ -94,17 +101,17 @@ type File struct {
 func init() {
 	initData()
 	autoMigrate()
-	print.Info("Successfully connected to database!")
+	klog.Info("Successfully connected to database!")
 }
 func initData() {
 	if !db.DB.Migrator().HasTable(&User{}) {
 		err := db.DB.Migrator().CreateTable(&User{})
 		if err != nil {
-			print.Error("Failed to connect to database: %v", err)
+			klog.Error("Failed to connect to database: %v", err)
 		}
 		db.DB.Create(&User{
 			Username: "admin",
-			Password: "123456",
+			Password: "e10adc3949ba59abbe56e057f20f883e", //123456
 			Role:     &db.IntArray{1, 2, 3},
 		})
 	}
@@ -113,6 +120,6 @@ func autoMigrate() {
 	// 自动迁移
 	err := db.DB.AutoMigrate(&Post{}, &PostDefault{}, &PostVideo{}, &PostImage{}, &PostText{}, &Tag{}, &File{})
 	if err != nil {
-		print.Info("Failed to connect to database: %v", err)
+		klog.Info("Failed to connect to database: %v", err)
 	}
 }

@@ -51,14 +51,11 @@ func (a *IntArray) Value() (driver.Value, error) {
 
 // Scan 实现 sql.Scanner 接口
 func (a *IntArray) Scan(src interface{}) error {
-	asBytes, ok := src.([]byte)
+	asString, ok := src.(string)
 	if !ok {
 		return fmt.Errorf("Scan source was not []byte")
 	}
-
-	asString := string(asBytes)
 	items := strings.Split(asString[1:len(asString)-1], ",")
-
 	*a = make(IntArray, len(items))
 	for i, v := range items {
 		_, err := fmt.Sscan(v, &(*a)[i])

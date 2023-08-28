@@ -1,7 +1,6 @@
 package apis
 
 import (
-	"github.com/dashixiong47/KK_BBS/models"
 	"github.com/dashixiong47/KK_BBS/server"
 	"github.com/dashixiong47/KK_BBS/utils"
 	"github.com/gin-gonic/gin"
@@ -15,7 +14,7 @@ type user struct {
 	Password string `json:"password" binding:"required"`
 }
 
-// 登录
+// Post 登录
 func (c *Login) Post() utils.ResponseData {
 	var info user
 	err := c.Ctx.ShouldBindJSON(&info)
@@ -29,14 +28,4 @@ func (c *Login) Post() utils.ResponseData {
 		return utils.JsonFail("用户名或密码错误")
 	}
 	return utils.JsonSuccess(userInfo)
-}
-
-// 注册
-func (c *Login) PostRegister() utils.ResponseData {
-	var userInfo models.User
-	err := c.Ctx.ShouldBindJSON(&userInfo)
-	if err != nil {
-		return utils.JsonParameterError(err.Error())
-	}
-	return utils.JsonSuccess("cg")
 }

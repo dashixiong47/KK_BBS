@@ -41,12 +41,12 @@
       </ul>
     </div>
     <div class="md:col-span-1 flex items-center justify-end">
-      <!-- <button class="text-sm mr-2 text-blue-400" @click="setLoginStatus">
+      <button class="text-sm mr-2 text-blue-400" @click="setLoginStatus">
         登录/注册
-      </button> -->
+      </button>
       <KLink :to="`/topic/create`">发表</KLink>
       <Icon @click="test" name="icon-pinglun" size="text-2xl"></Icon>
-      <Icon name="icon-xiaoxi" size="text-2xl mx-2"></Icon>
+      <Icon @click="test2" name="icon-xiaoxi" size="text-2xl mx-2"></Icon>
       <Icon name="icon-shezhi" size="text-2xl mx-2"></Icon>
       <Switcher />
       <KLink :to="`/user/1`">
@@ -56,13 +56,12 @@
     </div>
   </nav>
   <teleport to="body">
-    <Login v-if="loginStatus" />
+    <Login />
   </teleport>
   
 </template>
 
 <script setup>
-import useNotice from "~/composables/useNotice";
 import { useLoginStore } from "~/stores/main.js";
 const store = useLoginStore();
 const loginStatus = computed(() => store.getLoginStatus);
@@ -71,6 +70,7 @@ const setLoginStatus = () => {
 };
 
 const { notice } = useNotice();
+const { login } = useApi();
 const test = () => {
   notice({
     title: "标题",
@@ -78,5 +78,8 @@ const test = () => {
       "一、放下大概就是这样，即使我们没在一起，我也会好好的，谢谢时间惊艳了那段有你的记忆，也谢谢现在更努力变好的自己。",
     autoClose: true,
   });
+};
+const test2 = () => {
+  login()
 };
 </script>

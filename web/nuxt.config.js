@@ -40,6 +40,14 @@ export default defineNuxtConfig({
     },
     vueI18n: './i18n.config.js', // if you are using custom path, default 
   },
+  nitro: {
+    devProxy: {
+      "/api": {
+        target: "http://localhost:8080", // 这里是接口地址
+        changeOrigin: true,
+      },
+    },
+  },
   css: [
     '~/assets/kk_bbs_icon/iconfont.css',
     '~/assets/css/main.css',
