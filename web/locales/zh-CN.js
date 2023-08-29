@@ -18,4 +18,7 @@ export default {
     'comments-new': '最新',
     'comments-reply': '回复',
     'subComments-reply': '回复',
+
+
+    'default':"默认"
 }

@@ -17,5 +17,5 @@ export default {
     'comments-reply': 'Reply',
     'subComments-reply': 'Reply',
 
-
+    'default':"default"
 }

@@ -6,7 +6,6 @@
 
 <script setup>
 import { ref, onMounted, onBeforeUnmount, createApp } from "vue";
-import MyDialogContent from "./MyDialogContent.vue";
 let content = ref("");
 let texteditor = ref(null);
 
@@ -79,7 +78,7 @@ const initializeEditor = () => {
     ],
     skin: "oxide", // 使用 oxide 主题
     toolbar:
-      "undo redo | bold italic underline | emoticons fontselect fontsizeselect forecolor backcolor | align accordion | numlist bullist outdent indent | link unlink uploadimages image media table | blockquote hr removeformat | preview fullscreen", // 添加 'image' 按钮到工具栏
+      "undo redo | bold italic underline | emoticons fontselect fontsizeselect forecolor backcolor | align accordion | numlist bullist outdent indent | link unlink image media table | blockquote hr removeformat | preview fullscreen", // 添加 'image' 按钮到工具栏
     menubar: false,
     branding: false,
     quickbars_image_toolbar: "rotateimage",
@@ -113,12 +112,6 @@ function registerEventHandlers(editor) {
       }
     },
   });
-  editor.ui.registry.addButton("uploadimages", {
-    text: "Upload Images",
-    onAction: function () {
-      openImageUploadDialog(editor);
-    },
-  });
 }
 async function getDialogContentHtml() {
   // 创建一个临时的 DOM 元素
@@ -133,44 +126,6 @@ async function getDialogContentHtml() {
 }
 
 /**
- * 打开图片上传对话框
- *
- * @param {tinymce.Editor} editor
- */
-async function openImageUploadDialog(editor) {
-  const contentHtml = await getDialogContentHtml();
-  editor.windowManager.open({
-    title: "Upload Multiple Images",
-    body: {
-      type: "panel",
-      items: [
-        {
-          type: "htmlpanel",
-          html: contentHtml,
-        },
-      ],
-    },
-    buttons: [
-      {
-        type: "cancel",
-        text: "Cancel",
-      },
-      {
-        type: "submit",
-        text: "Insert",
-        primary: true,
-      },
-    ],
-    onSubmit: function (api) {
-      const data = api.getData();
-      // 这里你可以处理图片上传逻辑
-      // 并在完成后使用 editor.insertContent 插入图片到编辑器
-      api.close();
-    },
-  });
-}
-
-/**
  * 自定义图片上传处理器
  *
  * @param {BlobInfo} blobInfo
@@ -182,26 +137,26 @@ const customImageUploadHandler = (blobInfo, progress) =>
   new Promise((resolve, reject) => {
     // 创建 XMLHttpRequest 对象
     const xhr = new XMLHttpRequest();
-
+  
     // 初始化 POST 请求，并指定上传处理器 URL
-    xhr.open("POST", "postAcceptor.php");
-
+    xhr.open("POST", "http://localhost:8080/api/v1/upload");
+    xhr.setRequestHeader("Authorization", localStorage.getItem("token"));
     // 监听上传进度并报告
     xhr.upload.onprogress = (e) => progress((e.loaded / e.total) * 100);
 
     // 当请求完成时处理响应
     xhr.onload = () => {
-      resolve("https://images.hxsj.in/test/1.jpg");
-      // if (xhr.status >= 200 && xhr.status < 300) {
-      //   const json = JSON.parse(xhr.responseText);
-      //   if (json && typeof json.location === "string") {
-      //     resolve(json.location);
-      //   } else {
-      //     reject("无效的 JSON 响应: " + xhr.responseText);
-      //   }
-      // } else {
-      //   reject("HTTP 错误: " + xhr.status);
-      // }
+      // resolve("https://images.hxsj.in/test/1.jpg");
+      if (xhr.status >= 200 && xhr.status < 300) {
+        const json = JSON.parse(xhr.responseText);
+        if (json && typeof json.location === "string") {
+          resolve(json.location);
+        } else {
+          reject("无效的 JSON 响应: " + xhr.responseText);
+        }
+      } else {
+        reject("HTTP 错误: " + xhr.status);
+      }
     };
 
     // 请求失败时的处理

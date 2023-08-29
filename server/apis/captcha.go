@@ -11,7 +11,7 @@ type Captcha struct {
 }
 
 func (c *Captcha) Get() utils.ResponseData {
-	id, s, err := captcha.GenerateCaptcha(c.Ctx)
+	id, s, err := captcha.GenerateCaptcha()
 	if err != nil {
 		return utils.JsonFail("生成验证码失败")
 
@@ -22,10 +22,10 @@ func (c *Captcha) Get() utils.ResponseData {
 	})
 }
 
-func (c *Captcha) Post() utils.ResponseData {
-	verify := captcha.VerifyCaptcha(c.Ctx)
-	if !verify {
-		return utils.JsonParameterError("验证码错误")
-	}
-	return utils.JsonSuccess(nil)
-}
+//func (c *Captcha) Post() utils.ResponseData {
+//	verify := captcha.VerifyCaptcha(c.Ctx)
+//	if !verify {
+//		return utils.JsonParameterError("验证码错误")
+//	}
+//	return utils.JsonSuccess(nil)
+//}

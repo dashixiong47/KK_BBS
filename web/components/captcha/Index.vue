@@ -1,16 +1,21 @@
 <template>
-  <img :src="captchaUrl" alt="" srcset="" />
+  <img :src="captchaUrl" alt="" srcset="" @click="init" />
 </template>
 
 <script setup>
-let { captcha } = useApi();
+import { captcha } from '~/api';
 let captchaUrl = ref("");
 let captchaId = ref("");
+let emit=defineEmits(["captchaId"])
 async function init() {
   let res = await captcha();
-  console.log(res);
   captchaUrl.value = res.captcha;
+  captchaId.value = res.captchaId;
+  emit("captchaId",captchaId.value)
 }
-init();
+init()
+defineExpose({
+  init
+})
 
 </script>

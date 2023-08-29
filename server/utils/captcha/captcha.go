@@ -1,7 +1,6 @@
 package captcha
 
 import (
-	"github.com/gin-gonic/gin"
 	"github.com/mojocn/base64Captcha"
 )
 
@@ -12,7 +11,7 @@ type InputCaptcha struct {
 
 var store = base64Captcha.DefaultMemStore
 
-func GenerateCaptcha(c *gin.Context) (captchaId string, b64s string, err error) {
+func GenerateCaptcha() (captchaId string, b64s string, err error) {
 	// 创建图片验证码配置
 	driver := base64Captcha.DriverString{
 		Height:          80,
@@ -32,8 +31,6 @@ func GenerateCaptcha(c *gin.Context) (captchaId string, b64s string, err error) 
 	return id, b64s, nil
 
 }
-func VerifyCaptcha(c *gin.Context) bool {
-	var Captcha InputCaptcha
-	_ = c.ShouldBindJSON(&Captcha)
-	return store.Verify(Captcha.CaptchaId, Captcha.Value, true)
+func VerifyCaptcha(captchaId, value string) bool {
+	return store.Verify(captchaId, value, true)
 }

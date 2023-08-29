@@ -23,6 +23,9 @@ redis:
     port: 6379
     password: 123456
     database: 0
-    maxIdle: 30
-    maxActive: 30
-    idleTimeout: 300
+    poolSize: 50
+    minIdleConns: 10
+    maxConnAge: 5
+    poolTimeout: 30
+    idleTimeout: 5
+    idleCheckFrequency: 60

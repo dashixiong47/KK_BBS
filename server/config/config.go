@@ -24,13 +24,16 @@ type Settings struct {
 		Sslmode  string `yaml:"sslmode"`
 	} `yaml:"postgresql"`
 	Redis struct {
-		Host        string `yaml:"host"`
-		Port        int    `yaml:"port"`
-		Password    string `yaml:"password"`
-		Database    int    `yaml:"database"`
-		MaxIdle     int    `yaml:"maxIdle"`
-		MaxActive   int    `yaml:"maxActive"`
-		IdleTimeout int    `yaml:"idleTimeout"`
+		Host               string `yaml:"host"`
+		Port               int    `yaml:"port"`
+		Password           string `yaml:"password"`
+		Database           int    `yaml:"database"`
+		PooSize            int    `yaml:"pooSize"`
+		MinIdleConns       int    `yaml:"minIdleConns"`
+		MaxConnAge         int    `yaml:"maxConnAge"`
+		PoolTimeout        int    `yaml:"poolTimeout"`
+		IdleTimeout        int    `yaml:"idleTimeout"`
+		IdleCheckFrequency int    `yaml:"idleCheckFrequency"`
 	} `yaml:"redis"`
 }
 

@@ -31,6 +31,7 @@
             {{ $t("login-codeLogin") }}
           </div>
         </div>
+
         <div
           class="h-11 p-2 border rounded-t-md text-sm overflow-hidden flex items-center"
         >
@@ -44,6 +45,7 @@
             :placeholder="$t('login-enterYourAccount')"
           />
           <button
+            type="button" 
             v-if="loginType"
             class="flex-shrink-0 text-xs text-light-5 cursor-pointer"
           >
@@ -82,28 +84,58 @@
           >
             {{ $t("login-register") }}
           </button>
-          <button
-            class="border p-2 rounded-md col-span-1 text-white bg-blue-400"
+          <Popover
+            class="col-span-1"
             :class="{
               'col-span-2': loginType,
             }"
           >
-            {{ $t("login-login") }}
-          </button>
+            <button
+              type="button"
+              class="border p-2 w-full rounded-md text-white bg-blue-400"
+            >
+              {{ $t("login-login") }}
+            </button>
+            <template #content>
+              <div class="flex rounded-lg shadow-center overflow-hidden">
+                <Captcha
+                  ref="captchaRef"
+                  @captchaId="setCaptchaId"
+                  class="h-10"
+                />
+                <input
+                  v-model="form.code"
+                  maxlength="4"
+                  @input="
+                    () => {
+                      if (form.code.length === 4) {
+                        handleSubmit();
+                      }
+                    }
+                  "
+                  class="w-20 p-2 focus:outline-none"
+                  type="text"
+                />
+              </div>
+            </template>
+          </Popover>
         </div>
-        <Captcha />
       </form>
     </div>
   </div>
 </template>
 
 <script setup>
-import { useLoginStore } from "~/stores/main.js";
-const loginStatus = computed(() => store.getLoginStatus);
-let { login } = useApi();
-const store = useLoginStore();
+import { login } from '~/api';
+import { useLoginStore,useUserStore } from "~/stores/main.js";
 const { notice } = useNotice();
 
+const loginStore = useLoginStore();
+const loginStatus = computed(() => loginStore.getLoginStatus);
+
+const userStore = useUserStore();
+let captchaId = ref("");
+let captchaRef = ref(null);
 let form = ref({
   username: "",
   password: "",
@@ -123,13 +155,13 @@ let pwdOptions = {
     form: "code",
   },
 };
-
 const close = () => {
-  store.setLoginStatus();
+  loginStore.setLoginStatus();
 };
 const show = () => {
   pwdType.value = pwdType.value === 0 ? 1 : 0;
 };
+
 const changeLoginType = (type) => {
   if (type) {
     pwdType.value = 1;
@@ -138,30 +170,42 @@ const changeLoginType = (type) => {
   }
   loginType.value = type;
 };
-const handleSubmit = async (event) => {
-  event.preventDefault(); // 阻止表单的默认提交行为
-  switch (loginType.value) {
-    case 0:
-      break;
 
-    default:
-      break;
+const setCaptchaId = (id) => {
+  captchaId.value = id;
+};
+const handleSubmit = async () => {
+  // event.preventDefault(); // 阻止表单的默认提交行为
+  if (form.value.username === "" || form.value.password === "") {
+    notice({
+      title: "提示",
+      content: "请输入用户名和密码",
+      autoClose: true,
+    });
+    return;
   }
   try {
-    let data = await login(form.value);
+    let data = await login({
+      ...form.value,
+      loginType: loginType.value,
+      captchaId: captchaId.value,
+    });
     localStorage.setItem("token", data.token);
-    store.setLoginStatus();
+    localStorage.setItem("userInfo", JSON.stringify(data));
+    loginStore.setLoginStatus();
     notice({
       title: "提示",
       content: "登录成功",
       autoClose: true,
     });
+    userStore.setUserInfo(data);
   } catch (error) {
     notice({
       title: "提示",
       content: "用户名或密码错误",
       autoClose: true,
     });
+    captchaRef.value.init();
   }
 };
 </script>

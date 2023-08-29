@@ -9,14 +9,17 @@
 
 <script setup>
 import { Tippy, setDefaultProps } from "vue-tippy";
+let { placement } = defineProps({
+  placement: {
+    type: String,
+    default: "top",
+  },
+});
 setDefaultProps({
-  placement: "top",
+  placement: placement,
   interactive: true,
   trigger: "click",
   appendTo: document.body,
   theme: "glass",
 });
-function change() {
-  console.log("change");
-}
 </script>

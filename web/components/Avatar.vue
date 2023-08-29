@@ -4,6 +4,10 @@ let props = defineProps({
     type: Number,
     default: 1,
   },
+  url: {
+    type: String,
+    default: "",
+  },
 });
 const sizeClass = computed(() => {
   switch (props.size) {
@@ -17,5 +21,10 @@ const sizeClass = computed(() => {
 </script>
 
 <template>
-  <div class=" shadow-center rounded-full bg-slate-200 flex-shrink-0" :class="sizeClass"></div>
+  <div
+    class="shadow-center rounded-full bg-slate-200 flex-shrink-0"
+    :class="sizeClass"
+  >
+    <img :src="url" alt="" srcset="" />
+  </div>
 </template>

@@ -89,12 +89,21 @@ type Tag struct {
 	Model
 }
 
+// File 文件
 type File struct {
 	ID       uint   `json:"id" gorm:"primaryKey;AUTO_INCREMENT"`
-	Md5      string `json:"md5" gorm:"size:255;not null"`       // 文件md5
-	FileName string `json:"file_name" gorm:"size:255;not null"` // 文件名
-	Type     string `json:"type" gorm:"size:255;not null"`      // 文件类型
-	Url      string `json:"url" gorm:"size:255;not null"`       // 文件地址
+	Md5      string `json:"md5" gorm:"size:255;not null;index:index_md5"` // 文件md5
+	FileName string `json:"file_name" gorm:"size:255;not null"`           // 文件名
+	Type     string `json:"type" gorm:"size:255;not null"`                // 文件类型
+	Url      string `json:"url" gorm:"size:255;not null"`                 // 文件地址
+	Model
+}
+
+// Group 分组
+type Group struct {
+	ID   uint   `json:"id" gorm:"primaryKey;AUTO_INCREMENT"`
+	Name string `json:"name" gorm:"size:10;not null;unique;index:index_name"` // 分组名
+	Icon string `json:"icon" gorm:"size:255;not null"`                        // 分组图标
 	Model
 }
 
@@ -113,6 +122,15 @@ func initData() {
 			Username: "admin",
 			Password: "e10adc3949ba59abbe56e057f20f883e", //123456
 			Role:     &db.IntArray{1, 2, 3},
+		})
+	}
+	if !db.DB.Migrator().HasTable(&Group{}) {
+		err := db.DB.Migrator().CreateTable(&Group{})
+		if err != nil {
+			klog.Error("Failed to connect to database: %v", err)
+		}
+		db.DB.Create(&Group{
+			Name: "默认分组",
 		})
 	}
 }

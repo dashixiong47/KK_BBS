@@ -5,7 +5,7 @@ let router = useRouter();
 const { locale } = useI18n();
 
 const { isMobile } = useMobileDetect();
-console.log(router);
+// console.log(router);
 </script>
 <template>
   <!-- <div>

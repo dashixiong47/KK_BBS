@@ -15,7 +15,9 @@
     </div>
     <div class="hidden lg:flex items-center col-span-2">
       <Search />
-      <ul class="w-4/6 h-full flex items-center px-5 text-[--color-primary] dark:text-[--dark-color-primary]">
+      <ul
+        class="w-4/6 h-full flex items-center px-5 text-[--color-primary] dark:text-[--dark-color-primary]"
+      >
         <li class="mr-2">
           <button class="glass border rounded-full w-10 h-10">
             <KLink to="/">
@@ -41,16 +43,14 @@
       </ul>
     </div>
     <div class="md:col-span-1 flex items-center justify-end">
-      <button class="text-sm mr-2 text-blue-400" @click="setLoginStatus">
-        登录/注册
-      </button>
       <KLink :to="`/topic/create`">发表</KLink>
       <Icon @click="test" name="icon-pinglun" size="text-2xl"></Icon>
-      <Icon @click="test2" name="icon-xiaoxi" size="text-2xl mx-2"></Icon>
+      <Icon  name="icon-xiaoxi" size="text-2xl mx-2"></Icon>
       <Icon name="icon-shezhi" size="text-2xl mx-2"></Icon>
       <Switcher />
-      <KLink :to="`/user/1`">
-        <Avatar class="ml-4" />
+      <KLink class="ml-4  w-11 h-11" :to="`/user/1`">
+        <Avatar v-if="userInfo.token" :url="userInfo.avatar" class="w-full h-full" />
+        <button v-else @click="setLoginStatus">登录/注册</button>
       </KLink>
       <!-- <div class="absolute">1212</div> -->
     </div>
@@ -58,19 +58,20 @@
   <teleport to="body">
     <Login />
   </teleport>
-  
 </template>
 
 <script setup>
-import { useLoginStore } from "~/stores/main.js";
+import { useLoginStore, useUserStore } from "~/stores/main.js";
 const store = useLoginStore();
-const loginStatus = computed(() => store.getLoginStatus);
+const userStore = useUserStore();
+
+const userInfo = computed(() => userStore.getUserInfo);
 const setLoginStatus = () => {
   store.setLoginStatus();
 };
 
 const { notice } = useNotice();
-const { login } = useApi();
+
 const test = () => {
   notice({
     title: "标题",
@@ -79,7 +80,14 @@ const test = () => {
     autoClose: true,
   });
 };
-const test2 = () => {
-  login()
-};
+onMounted(async () => {
+  try {
+    let userInfoStr = localStorage.getItem("userInfo");
+    if (userInfoStr) {
+      userStore.setUserInfo(JSON.parse(userInfoStr));
+    }
+    // let res = await getUserInfo();
+    // console.log(res);
+  } catch (error) {}
+});
 </script>

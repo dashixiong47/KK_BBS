@@ -41,19 +41,36 @@ func JsonError(code int, message string) ResponseData {
 }
 
 // JsonParameterError 参数错误
-func JsonParameterError(message string) ResponseData {
+func JsonParameterError(message ...string) ResponseData {
+	defaultMessage := "参数错误"
+	var responseMessage string
+
+	if len(message) > 0 && message[0] != "" {
+		responseMessage = message[0]
+	} else {
+		responseMessage = defaultMessage
+	}
 	return ResponseData{
 		Code:    400,
-		Message: message,
+		Message: responseMessage,
 		Data:    nil,
 	}
 }
 
 // JsonFail 失败响应
-func JsonFail(message string) ResponseData {
+func JsonFail(message ...string) ResponseData {
+	defaultMessage := "操作失败"
+	var responseMessage string
+
+	if len(message) > 0 && message[0] != "" {
+		responseMessage = message[0]
+	} else {
+		responseMessage = defaultMessage
+	}
+
 	return ResponseData{
 		Code:    500,
-		Message: message,
+		Message: responseMessage,
 		Data:    nil,
 	}
 }
