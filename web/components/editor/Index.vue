@@ -1,14 +1,25 @@
 <template>
-  <div>
+  <div class="shadow-center rounded-xl">
     <div ref="texteditor"></div>
   </div>
 </template>
 
 <script setup>
-import { ref, onMounted, onBeforeUnmount, createApp } from "vue";
-let content = ref("");
+import { ref, onMounted, onBeforeUnmount } from "vue";
+import { upload } from "~/api/upload";
+let { placeholder } = defineProps({
+  moduleValue: {
+    type: String,
+    default: "",
+  },
+  placeholder: {
+    type: String,
+    default: "请输入内容",
+  },
+});
+let emit = defineEmits("update:moduleValue");
 let texteditor = ref(null);
-
+let editorInstance;
 // 监听内容变化
 onMounted(() => {
   initTinyMCE();
@@ -54,6 +65,7 @@ const initializeEditor = () => {
     target: texteditor.value,
     height: 500,
     language: "zh-Hans",
+    placeholder: placeholder,
     statusbar: false, // 状态栏
     plugins: [
       "advlist",
@@ -83,7 +95,16 @@ const initializeEditor = () => {
     branding: false,
     quickbars_image_toolbar: "rotateimage",
     // 上传图片
-    images_upload_handler: customImageUploadHandler,
+    images_upload_handler: (blobInfo, progress) => {
+      return new Promise(async (resolve, reject) => {
+        try {
+          let res = await upload(blobInfo, progress);
+          resolve(res.url);
+        } catch (error) {
+          reject(error);
+        }
+      });
+    },
     setup: registerEventHandlers,
   });
 };
@@ -95,78 +116,46 @@ const initializeEditor = () => {
  * @see https://www.tiny.cloud/docs/advanced/events/
  */
 function registerEventHandlers(editor) {
-  editor.ui.registry.addButton("rotateimage", {
-    text: "",
-    icon: "rotate-left", // 使用 TinyMCE 的内置图标
-    onAction: function () {
-      const selectedNode = editor.selection.getNode();
-      if (selectedNode && selectedNode.tagName === "IMG") {
-        const currentRotation =
-          parseInt(selectedNode.style.transform.replace(/[^0-9]/g, "")) || 0;
-        const newRotation = (currentRotation + 90) % 360;
-        editor.dom.setStyle(
-          selectedNode,
-          "transform",
-          `rotate(${newRotation}deg)`
-        );
-      }
-    },
+  editorInstance = editor;
+  editor.on("Change", (e) => {
+    emit("update:moduleValue", editor.getContent());
   });
+  // editor.ui.registry.addButton("rotateimage", {
+  //   text: "",
+  //   icon: "rotate-left", // 使用 TinyMCE 的内置图标
+  //   onAction: function () {
+  //     const selectedNode = editor.selection.getNode();
+  //     if (selectedNode && selectedNode.tagName === "IMG") {
+  //       const currentRotation =
+  //         parseInt(selectedNode.style.transform.replace(/[^0-9]/g, "")) || 0;
+  //       const newRotation = (currentRotation + 90) % 360;
+  //       editor.dom.setStyle(
+  //         selectedNode,
+  //         "transform",
+  //         `rotate(${newRotation}deg)`
+  //       );
+  //     }
+  //   },
+  // });
 }
-async function getDialogContentHtml() {
-  // 创建一个临时的 DOM 元素
-  const container = document.createElement("div");
-
-  // 使用 createApp 方法挂载 Vue 组件到这个临时的 DOM 元素
-  const app = createApp(MyDialogContent);
-  app.mount(container);
-
-  // 返回 HTML 内容
-  return container.innerHTML;
-}
-
-/**
- * 自定义图片上传处理器
- *
- * @param {BlobInfo} blobInfo
- * @param {function} progress
- * @returns {Promise}
- * @see https://www.tiny.cloud/docs/configure/file-image-upload/#images_upload_handler
- */
-const customImageUploadHandler = (blobInfo, progress) =>
-  new Promise((resolve, reject) => {
-    // 创建 XMLHttpRequest 对象
-    const xhr = new XMLHttpRequest();
-  
-    // 初始化 POST 请求，并指定上传处理器 URL
-    xhr.open("POST", "http://localhost:8080/api/v1/upload");
-    xhr.setRequestHeader("Authorization", localStorage.getItem("token"));
-    // 监听上传进度并报告
-    xhr.upload.onprogress = (e) => progress((e.loaded / e.total) * 100);
-
-    // 当请求完成时处理响应
-    xhr.onload = () => {
-      // resolve("https://images.hxsj.in/test/1.jpg");
-      if (xhr.status >= 200 && xhr.status < 300) {
-        const json = JSON.parse(xhr.responseText);
-        if (json && typeof json.location === "string") {
-          resolve(json.location);
-        } else {
-          reject("无效的 JSON 响应: " + xhr.responseText);
-        }
-      } else {
-        reject("HTTP 错误: " + xhr.status);
-      }
-    };
-
-    // 请求失败时的处理
-    xhr.onerror = () => reject("XHR 请求失败，错误码: " + xhr.status);
-
-    // 构建 FormData 对象并添加要上传的文件
-    const formData = new FormData();
-    formData.append("file", blobInfo.blob(), blobInfo.filename());
-
-    // 发送请求
-    xhr.send(formData);
+// 定义一个函数来删除上传失败的图片
+const removeFailedImage = (blobUri) => {
+  // 使用 TinyMCE 的 API 执行一个事务以删除图片
+  editorInstance.undoManager.transact(() => {
+    // 使用 TinyMCE 的 DOM API 查找并删除图片
+    const imgElement = editorInstance.dom.select(`img[src="${blobUri}"]`)[0];
+    if (imgElement) {
+      editorInstance.dom.remove(imgElement);
+    }
   });
+};
+
+// 获取所有图片
+const getAllImages = () => {
+  const images = editorInstance.dom.select("img");
+  return Array.from(images).map((img) => img.src);
+};
+defineExpose({
+  getAllImages,
+});
 </script>

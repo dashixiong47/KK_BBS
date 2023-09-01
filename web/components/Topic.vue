@@ -2,16 +2,16 @@
   <div class="flex mb-5">
     <Avatar />
     <div class="w-full ml-2 flex items-center justify-between">
-      <div class=" flex flex-col items-start">
+      <div class="flex flex-col items-start">
         <KLink to="#" class="text-md font-bold primary-text"> 名称 </KLink>
         <span class="text-xs secondary-text">发布时间</span>
       </div>
       <div>
         <span class="mr-5 regular-text text-xs">
-          <Icon name="icon-kejian" class="mr-1" />{{ formatNumber(11111) }}
+          <Icon name="tabler:eye" class="mr-1" />{{ formatNumber(11111) }}
         </span>
         <span class="regular-text text-xs">
-          <Icon name="icon-shouye" class="mr-1" />上海
+          <Icon name="ic:round-location-on" class="mr-1" />上海
         </span>
       </div>
     </div>
@@ -61,26 +61,29 @@
         '!text-blue-400': true,
       }"
     >
-      <Icon name="icon-dianzan"> </Icon>
+      <Icon name="icon-park-solid:thumbs-up" size="1rem" />
       <span class="mx-1">{{ formatNumber(1000) }}</span>
       <span v-if="!isMobile"> 点赞</span>
     </button>
     <button
       class="col-span-3 py-2 flex items-center justify-center rounded-lg font-medium text-sm primary-text hover:glass border border-[rgba(0,0,0,0)] hover:border-[#ffffff] hover:shadow-center"
     >
-      <Icon name="icon-pinglun"></Icon> <span class="mx-1">123</span>
+      <Icon name="icon-park-solid:message-one" size="1rem" />
+      <span class="mx-1">123</span>
       <span v-if="!isMobile">评论</span>
     </button>
     <button
       class="col-span-3 py-2 flex items-center justify-center rounded-lg font-medium text-sm primary-text hover:glass border border-[rgba(0,0,0,0)] hover:border-[#ffffff] hover:shadow-center"
     >
-      <Icon name="icon-dianzan"></Icon> <span class="mx-1">123</span>
+      <Icon name="icon-park-solid:thumbs-up" size="1rem" />
+      <span class="mx-1">123</span>
       <span v-if="!isMobile"> 点赞</span>
     </button>
     <button
       class="col-span-3 py-2 flex items-center justify-center rounded-lg font-medium text-sm primary-text hover:glass border border-[rgba(0,0,0,0)] hover:border-[#ffffff] hover:shadow-center"
     >
-      <Icon name="icon-shoucang"></Icon> <span class="mx-1">123</span>
+      <Icon name="icon-park-solid:collection-files" size="1rem" />
+      <span class="mx-1">123</span>
       <span v-if="!isMobile"> 收藏</span>
     </button>
   </div>

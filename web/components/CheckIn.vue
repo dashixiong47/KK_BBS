@@ -4,7 +4,7 @@
 
     <div class="flex justify-between border-b pb-2 primary-text">
       <span class="text-sm flex items-center">
-        <Icon name="icon-jinbi" class="mr-2" />
+        <Icon name="healthicons:coins" class="mr-2" size="1.5rem" />
         1111
       </span>
       <button
@@ -15,7 +15,7 @@
         }"
         :disabled="checkInStatus"
       >
-        <Icon name="icon-qiandao" class="mr-2" />
+        <Icon name="ph:calendar-check" class="mr-2" />
         {{ checkInStatus ? "已签到" : "立即签到" }}
       </button>
     </div>

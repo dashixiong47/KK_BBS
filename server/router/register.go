@@ -13,13 +13,9 @@ func init() {
 	r := gin.Default() // 创建一个 Gin 实例
 	r.Static("/files", "./files")
 
-	//// 全局使用 CORS 中间件
-	//_config := cors.DefaultConfig()
-	//_config.AllowAllOrigins = true // 允许所有域名访问
-	//_config.AllowMethods = []string{"GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"}
-	//_config.AllowHeaders = []string{"Origin", "Content-Length", "Content-Type"}
-	//
-	//r.Use(cors.New(_config))
+	if config.SettingsConfig.Application.Mode == "dev" {
+		r.Use(crossAllow)
+	}
 
 	r.Use(middleware.Logger())
 	port := fmt.Sprintf(":%d", config.SettingsConfig.Application.Port)
@@ -35,6 +31,7 @@ func registerRoutes(r *gin.Engine) {
 	v1.Use(middleware.AuthMiddleware())
 	RegisterRoutes(v1, &apis.User{})
 	RegisterRoutes(v1, &apis.Upload{})
+	RegisterRoutes(v1, &apis.Post{})
 
 	// 不需要认证的路由
 	noCheck := r.Group("/api/v1")
@@ -42,4 +39,18 @@ func registerRoutes(r *gin.Engine) {
 	RegisterRoutes(noCheck, &apis.Login{})
 	RegisterRoutes(noCheck, &apis.Group{})
 
+}
+
+func crossAllow(c *gin.Context) {
+	c.Writer.Header().Set("Access-Control-Allow-Origin", "*")
+	c.Writer.Header().Set("Access-Control-Allow-Credentials", "true")
+	c.Writer.Header().Set("Access-Control-Allow-Headers", "Content-Type, Content-Length, Accept-Encoding, X-CSRF-Token, Authorization, accept, origin")
+	c.Writer.Header().Set("Access-Control-Allow-Methods", "POST, OPTIONS, GET, PUT")
+
+	if c.Request.Method == "OPTIONS" {
+		c.AbortWithStatus(204)
+		return
+	}
+
+	c.Next()
 }

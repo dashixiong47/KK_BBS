@@ -11,7 +11,12 @@ body {
     background-size: 100% 100%;
     background-repeat: no-repeat;
 }
-
+::placeholder {
+    color: var(--placeholder-text)!important;
+}
+.dark ::placeholder {
+    color: var(--dark-placeholder-text) !important;
+}
 .dark>body {
     background-image: var(--dark-bg-body-img);
 }

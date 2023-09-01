@@ -1,11 +1,7 @@
 <template>
   <div class="relative">
-    <button
-      class="relative z-10 bg-blue-500 hover:bg-blue-700 text-white font-bold w-10 h-10 rounded-full"
-      @click="change"
-    >
-      <Icon name="icon-zhutise" />
-    </button>
+  
+    <slot></slot>
     <transition
       name="scale-transition"
       enter-active-class="animate-scaleUpFromRightBottom"
@@ -15,7 +11,7 @@
         v-if="showPopup"
         class="glass p-5 rounded-2xl w-80 h-96 !absolute right-0 bottom-0 origin-bottom-right"
       >
-        <slot />
+        <slot name="content"/>
       </div>
     </transition>
   </div>

@@ -7,6 +7,7 @@ export default defineNuxtConfig({
     '@nuxtjs/color-mode',
     '@nuxtjs/i18n',
     '@pinia/nuxt',
+    'nuxt-icon'
   ],
   plugins: [
     '~/plugins/global-directives.js',

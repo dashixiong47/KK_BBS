@@ -1,35 +1,50 @@
+import { useCookie } from '#app'
 
-export default async function request(url, method = "GET", data = {}, options = {}) {
-    if (method != "GET" && method != "get") {
-        options['body'] = JSON.stringify(data)
-    }
-    const defaultOptions = {
-        headers: {
-            'Authorization': localStorage.getItem('token') || ''
-        },
-        method,
-    };
-
-    const mergedOptions = { ...defaultOptions, ...options, };
-    if (process.env.NODE_ENV === 'development') {
-        url = '/api' + url;
-    }
-    try {
-        const response = await $fetch(url, mergedOptions);
-        
-        const { code, data, message } = await response
-        if (code !== 200) {
-            throw new Error(message);
-        } else if (code === 401) {
-            localStorage.removeItem('token');
-            localStorage.removeItem('userInfo')
-            throw new Error(message);
-        } else {
-            return data
+export const request = {
+    get: (url, data = {}, options = {}) => {
+        return request._request(url, 'GET', data, options);
+    },
+    post: (url, data = {}, options = {}) => {
+        return request._request(url, 'POST', data, options);
+    },
+    put: (url, data = {}, options = {}) => {
+        return request._request(url, 'PUT', data, options);
+    },
+    delete: (url, data = {}, options = {}) => {
+        return request._request(url, 'DELETE', data, options);
+    },
+    _request: async (url, method = 'GET', data = {}, options = {}) => {
+        let cookie = useCookie("token")
+        const defaultOptions = {
+            method,
+            headers: {
+                'Authorization': cookie.value
+            },
+        };
+        if (['POST', 'PUT', 'DELETE'].includes(method.toUpperCase())) {
+            defaultOptions.body = JSON.stringify(data);
         }
-    } catch (error) {
-        // 在这里添加你的错误处理逻辑
-        console.error('Fetch Error:', error);
-        throw error;
+        const mergedOptions = { ...defaultOptions, ...options };
+
+        if (process.env.NODE_ENV === 'development') {
+            url = '/api' + url;
+        }
+
+        try {
+            const response = await fetch(url, mergedOptions); // 使用 $fetch 或 fetch，根据你的需要
+            const { code, data, message } = await response.json();
+
+            if (code !== 200) {
+                throw new Error(message);
+            } else if (code === 401) {
+                cookie.value = null
+                throw new Error(message);
+            } else {
+                return data;
+            }
+        } catch (error) {
+            console.error('Fetch Error:', error);
+            throw error;
+        }
     }
-}
+};

@@ -37,7 +37,9 @@ module.exports = {
 
             },
             boxShadow: {
-                'center': '0 0px 20px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1)'
+                // 'center': '0 0px 20px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1)'
+                'center': '-1px -1px 3px rgb(255,255,255,.25), 1px 1px 3px rgb(174,174,192,.4), 4px 4px 8px rgb(174,174,192,.4), -4px -4px 12px #fff;',
+                'active':'-1px -1px 3px rgb(255,255,255,.25), 1px 1px 3px rgb(174,174,192,.4), 4px 4px 8px rgb(174,174,192,.4), -4px -4px 12px #fff, inset 4px 4px 8px rgb(174,174,192,.4);'
             },
             gridTemplateColumns: {
                 '24': 'repeat(24, minmax(0, 1fr))',
@@ -245,7 +247,7 @@ module.exports = {
                 acc[`.dark .${key}`] = { color: `var(--dark-${key})` };
                 return acc;
             }, {});
-            addUtilities({...newUtilities,...darkUtilities}, ['responsive', 'hover']);
+            addUtilities({ ...newUtilities, ...darkUtilities }, ['responsive', 'hover']);
         },
     ],
 }

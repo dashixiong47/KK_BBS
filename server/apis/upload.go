@@ -2,6 +2,7 @@ package apis
 
 import (
 	"fmt"
+	"github.com/dashixiong47/KK_BBS/config"
 	"github.com/dashixiong47/KK_BBS/server"
 	"github.com/dashixiong47/KK_BBS/utils"
 	"github.com/gin-gonic/gin"
@@ -17,7 +18,10 @@ type Upload struct {
 func (u *Upload) Post() utils.ResponseData {
 	var uploadServer server.UploadServer
 	// 获取文件
-	file, _ := u.Ctx.FormFile("file")
+	file, err := u.Ctx.FormFile("file")
+	if err != nil {
+		return utils.JsonFail("获取文件失败")
+	}
 	//判断文件大小 超出限制
 	if file.Size > 1024*1024*10 {
 		return utils.JsonFail("文件大小超出限制")
@@ -42,10 +46,15 @@ func (u *Upload) Post() utils.ResponseData {
 		return utils.JsonFail("保存文件失败")
 	}
 	// 保存文件信息到数据库
-	uploadServer.Save(md5Hash, file.Filename, _type, path[1:])
-	return utils.JsonSuccess(map[string]string{
-		"url":  path[1:],
-		"name": file.Filename,
+	save, err := uploadServer.Save(md5Hash, file.Filename, _type, path[1:])
+	if err != nil {
+		return utils.JsonFail("保存文件信息失败")
+	}
+
+	return utils.JsonSuccess(map[string]interface{}{
+		"id":   save.ID,
+		"url":  config.SettingsConfig.Application.Host + path[1:],
+		"name": save.FileName,
 	})
 }
 

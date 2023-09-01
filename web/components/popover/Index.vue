@@ -1,7 +1,7 @@
 <template>
   <tippy>
     <span><slot></slot></span>
-    <template #content class="bg-white">
+    <template #content>
       <slot name="content"></slot>
     </template>
   </tippy>
@@ -16,10 +16,10 @@ let { placement } = defineProps({
   },
 });
 setDefaultProps({
-  placement: placement,
-  interactive: true,
-  trigger: "click",
-  appendTo: document.body,
-  theme: "glass",
-});
+    placement: placement,
+    interactive: true,
+    trigger: "click",
+    appendTo: document.body,
+    theme: "glass",
+  });
 </script>

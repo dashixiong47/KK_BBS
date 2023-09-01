@@ -1,9 +1,9 @@
-import { getGroup } from '~/api';
+import { useGetGroupDetail } from '~/api/server';
 import { defineStore } from 'pinia';
 
 export const useGroupStore = defineStore('group', {
     state: () => ({
-        group: {},
+        group: [],
         error: null,  // 用于存储错误信息
     }),
     getters: {
@@ -20,8 +20,8 @@ export const useGroupStore = defineStore('group', {
         async fetchGroup() {
             if (!Object.keys(this.group).length) {
                 try {
-                    const data = await getGroup();
-                    this.group = data;
+                    const {data} = await useGetGroupDetail();
+                    this.setGroup(data.value);
                     this.error = null;  // 清除任何旧的错误信息
                 } catch (error) {
                     this.error = error;  // 存储错误信息

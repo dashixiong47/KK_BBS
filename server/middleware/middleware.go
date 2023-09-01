@@ -32,13 +32,13 @@ func AuthMiddleware() gin.HandlerFunc {
 			return
 		} else {
 			user, err := jwt.ParseToken(header)
-			c.Set("user", user.Claims.(jwtv5.MapClaims)["user"])
-			c.Set("id", user.Claims.(jwtv5.MapClaims)["id"])
 			if err != nil {
 				c.JSON(401, utils.JsonError(401, "请登录后访问"))
 				c.Abort()
 				return
 			}
+			c.Set("user", user.Claims.(jwtv5.MapClaims)["user"])
+			c.Set("id", user.Claims.(jwtv5.MapClaims)["id"])
 		}
 		c.Next()
 	}

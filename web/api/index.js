@@ -1,15 +1,18 @@
-import request from '~/utils/request';
+import { request } from '~/utils/request';
 
+// 获取验证码
 export const captcha = async () => {
-    return await request('/api/v1/captcha', "GET");
+    return await request.get('/api/v1/captcha');
 }
+// 登录
 export const login = async (data) => {
-    return await request('/api/v1/login', "POST", data);
+    return await request.post('/api/v1/login', data);
 }
-export const getGroup = async (data) => {
-    return await request('/api/v1/group', "GET", data);
-};
-
-export const fetchUser = async (id, $fetch) => {
-    return await request(`https://api.example.com/users/${id}`, {});
-};
+// 获取用户信息
+export const getUserInfo = async (id = null) => {
+    return await request.get(`/api/v1/user${id ? '/' + id : ''}`)
+}
+// 发帖
+export const createPost = async (data) => {
+    return await request.post('/api/v1/post', data);
+}

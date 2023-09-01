@@ -1,43 +1,45 @@
 <template>
   <Floating :index="index" @change="colorPicker = !colorPicker">
-    <!-- <div class="flex justify-between">
-      <div class="bg-slate-400 rounded-2xl overflow-hidden w-1/2 text-center">
-        Light
+    <button
+      class="relative z-10 bg-blue-500 hover:bg-blue-700 text-white font-bold w-10 h-10 rounded-full"
+      @click="change"
+    >
+      <Icon name="ion:color-palette-outline" size="1.5rem" />
+    </button>
+    <template #content>
+      <div class="overflow-y-auto h-full hidden-scrollbar">
+        <div class="flex items-center justify-between">
+          <label class="primary-text w-20">透明度</label>
+          <input
+            type="range"
+            :value="getThemeValue.blurValue"
+            @input="updateValue($event, 'blur-value')"
+            min="0"
+            max="20"
+          />
+        </div>
+        <div
+          class="flex items-center justify-between"
+          v-for="(val, key) of colorObj"
+        >
+          <label class="primary-text w-32">{{ val }}</label>
+          <Popover>
+            <div
+              class="w-10 h-5 border border-base"
+              :style="{
+                backgroundColor: getThemeValue[key],
+              }"
+            ></div>
+            <template #content>
+              <ColorPicker
+                :color="getThemeValue[key]"
+                @change="(v) => changeColor(key, v)"
+              />
+            </template>
+          </Popover>
+        </div>
       </div>
-      <div class="rounded-2xl w-1/2 text-center">Dark</div>
-    </div> -->
-    <div class="overflow-y-auto h-full hidden-scrollbar">
-      <div class="flex items-center justify-between">
-        <label class="primary-text w-20">透明度</label>
-        <input
-          type="range"
-          :value="getThemeValue.blurValue"
-          @input="updateValue($event, 'blur-value')"
-          min="0"
-          max="20"
-        />
-      </div>
-      <div
-        class="flex items-center justify-between"
-        v-for="(val, key) of colorObj"
-      >
-        <label class="primary-text w-32">{{ val }}</label>
-        <Popover>
-          <div
-            class="w-10 h-5 border border-base"
-            :style="{
-              backgroundColor: getThemeValue[key],
-            }"
-          ></div>
-          <template #content>
-            <ColorPicker
-              :color="getThemeValue[key]"
-              @change="(v) => changeColor(key, v)"
-            />
-          </template>
-        </Popover>
-      </div>
-    </div>
+    </template>
   </Floating>
 </template>
 

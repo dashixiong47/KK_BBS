@@ -36,15 +36,16 @@ type User struct {
 
 // Post 帖子
 type Post struct {
-	ID          uint         `json:"id" gorm:"primaryKey;AUTO_INCREMENT"`
-	UserID      uint         `json:"user_id" gorm:"not null;index:index_user_id"`      // 用户ID
-	Title       string       `json:"title" gorm:"size:255;not null;index:index_title"` // 标题
-	Tags        *db.IntArray `json:"tags" gorm:"type:jsonb"`                           // 标签
-	Covers      *db.IntArray `json:"covers" gorm:"type:jsonb"`                         // 封面
-	DefaultPost PostDefault  `gorm:"foreignKey:PostID"`
-	VideoPost   PostVideo    `gorm:"foreignKey:PostID"`
-	ImagePost   PostImage    `gorm:"foreignKey:PostID"`
-	TextPost    PostText     `gorm:"foreignKey:PostID"`
+	ID          uint          `json:"id" gorm:"primaryKey;AUTO_INCREMENT"`
+	UserID      uint          `json:"userId" gorm:"not null;index:index_user_id"`       // 用户ID
+	Title       string        `json:"title" gorm:"size:255;not null;index:index_title"` // 标题
+	Tags        *db.IntArray  `json:"tags" gorm:"type:integer[];"`                      // 标签
+	Covers      *db.JSONSlice `json:"covers" gorm:"type:jsonb;"`                        // 封面
+	Type        int           `json:"type" gorm:"size:1;not null;index:index_type"`     // 类型 1:默认 2:视频 3:图片 4:文本
+	DefaultPost PostDefault   `json:"defaultPost" gorm:"foreignKey:PostID"`
+	VideoPost   PostVideo     `json:"videoPost" gorm:"foreignKey:PostID"`
+	ImagePost   PostImage     `json:"imagePost" gorm:"foreignKey:PostID"`
+	TextPost    PostText      `json:"textPost" gorm:"foreignKey:PostID"`
 	Model
 }
 
@@ -53,32 +54,32 @@ type PostDefault struct {
 	ID            uint   `json:"id" gorm:"primaryKey;AUTO_INCREMENT"`
 	PostID        uint   `gorm:"unique;index"`                                               // 外键，并且是唯一的
 	Content       string `json:"content" gorm:"type:text"`                                   // 内容
-	Hidden        string `json:"hidden" gorm:"size:1;not null;default:0;index:index_hidden"` // 是否隐藏
-	HiddenContent string `json:"hidden_content" gorm:"type:text"`                            // 隐藏内容
+	Hidden        int    `json:"hidden" gorm:"size:1;not null;default:0;index:index_hidden"` // 是否隐藏
+	HiddenContent string `json:"hiddenContent" gorm:"type:text"`                             // 隐藏内容
 
 }
 
 // PostVideo 视频
 type PostVideo struct {
 	ID           uint         `json:"id" gorm:"primaryKey;AUTO_INCREMENT"`
-	PostID       uint         `gorm:"unique;index"`                 // 外键，并且是唯一的
-	VideoID      *db.IntArray `json:"video_id" gorm:"type:jsonb"`   // 视频
-	Introduction string       `json:"introduction" gorm:"size:255"` // 简介
+	PostID       uint         `gorm:"unique;index"`                   // 外键，并且是唯一的
+	VideoID      *db.IntArray `json:"videoId" gorm:"type:integer[];"` // 视频
+	Introduction string       `json:"introduction" gorm:"size:255"`   // 简介
 }
 
 // PostImage 图片
 type PostImage struct {
 	ID           uint         `json:"id" gorm:"primaryKey;AUTO_INCREMENT"`
-	PostID       uint         `gorm:"unique;index"`                 // 外键，并且是唯一的
-	ImageID      *db.IntArray `json:"image_id" gorm:"type:jsonb"`   // 图片
-	Introduction string       `json:"introduction" gorm:"size:255"` // 简介
+	PostID       uint         `gorm:"unique;index"`                   // 外键，并且是唯一的
+	ImageID      *db.IntArray `json:"imageId" gorm:"type:integer[];"` // 图片
+	Introduction string       `json:"introduction" gorm:"size:255"`   // 简介
 }
 
 // PostText 文本
 type PostText struct {
 	ID           uint         `json:"id" gorm:"primaryKey;AUTO_INCREMENT"`
 	PostID       uint         `gorm:"unique;index"`                 // 外键，并且是唯一的
-	TextID       *db.IntArray `json:"text" gorm:"type:jsonb"`       // 文本
+	TextID       *db.IntArray `json:"text" gorm:"type:integer[];"`  // 文本
 	Introduction string       `json:"introduction" gorm:"size:255"` // 简介
 }
 

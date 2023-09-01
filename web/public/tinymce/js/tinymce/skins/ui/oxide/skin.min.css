@@ -60,7 +60,7 @@
 }
 
 .tox-tinymce {
-    border: 2px solid #eee;
+    /* border: 2px solid #eee; */
     border-radius: 10px;
     box-shadow: none;
     box-sizing: border-box;
