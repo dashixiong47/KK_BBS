@@ -119,14 +119,14 @@
 import { login } from "~/api";
 import { useLoginStore, useUserStore } from "~/stores/main.js";
 const { notice } = useNotice();
-
+const { setCookie } = useCookies();
 const loginStore = useLoginStore();
+const userStore = useUserStore();
 const loginStatus = computed({
   get: () => loginStore.getLoginStatus,
   set: (val) => loginStore.setLoginStatus(val),
 });
 
-const userStore = useUserStore();
 let captchaId = ref("");
 let captchaRef = ref(null);
 let form = ref({
@@ -175,21 +175,21 @@ const handleSubmit = async () => {
     });
     return;
   }
+
   try {
     let data = await login({
       ...form.value,
       loginType: loginType.value,
       captchaId: captchaId.value,
     });
-    let cookie = useCookie("token");
-    cookie.value = data.token;
-    loginStore.setLoginStatus();
+    setCookie("token", data.token);
+    await loginStore.setLoginStatus();
+    await userStore.fetchUserInfo();
     notice({
       title: "提示",
       content: "登录成功",
       autoClose: true,
     });
-    userStore.fetchUserInfo();
   } catch (error) {
     notice({
       title: "提示",

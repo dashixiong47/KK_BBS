@@ -7,7 +7,7 @@
 <script setup>
 import { ref, onMounted, onBeforeUnmount } from "vue";
 import { upload } from "~/api/upload";
-let { placeholder } = defineProps({
+let { placeholder, moduleValue } = defineProps({
   moduleValue: {
     type: String,
     default: "",
@@ -17,7 +17,7 @@ let { placeholder } = defineProps({
     default: "请输入内容",
   },
 });
-let emit = defineEmits("update:moduleValue");
+let emit = defineEmits(["update:moduleValue"]);
 let texteditor = ref(null);
 let editorInstance;
 // 监听内容变化
@@ -101,6 +101,7 @@ const initializeEditor = () => {
           let res = await upload(blobInfo, progress);
           resolve(res.url);
         } catch (error) {
+          removeFailedImage(blobInfo.blobUri())
           reject(error);
         }
       });
@@ -117,7 +118,10 @@ const initializeEditor = () => {
  */
 function registerEventHandlers(editor) {
   editorInstance = editor;
-  editor.on("Change", (e) => {
+  editor.on("init", function () {
+    editor.setContent(moduleValue);
+  });
+  editor.on("input", (e) => {
     emit("update:moduleValue", editor.getContent());
   });
   // editor.ui.registry.addButton("rotateimage", {

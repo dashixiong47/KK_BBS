@@ -15,19 +15,19 @@ func (u *User) Get() utils.ResponseData {
 	var userInfo server.UserServer
 	info, err := userInfo.GetUserInfo(int(value.(float64)))
 	if err != nil {
-		return utils.JsonParameterError("参数错误")
+		return utils.JsonParameterError(err)
 	}
 	return utils.JsonSuccess(info)
 }
 func (u *User) GetBy(id string) utils.ResponseData {
 	intID, err := utils.DecryptID(id)
 	if err != nil {
-		return utils.JsonParameterError("参数错误")
+		return utils.JsonParameterError(err)
 	}
 	var userInfo server.UserServer
 	info, err := userInfo.GetUserInfo(intID)
 	if err != nil {
-		return utils.JsonParameterError("参数错误")
+		return utils.JsonParameterError(err)
 	}
 	return utils.JsonSuccess(info)
 }

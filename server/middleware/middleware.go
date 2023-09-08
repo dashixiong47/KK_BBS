@@ -15,6 +15,10 @@ type CustomClaims struct {
 	// 其他字段
 }
 
+var whiteList = []string{
+	"/api/v1/post/list",
+}
+
 func Logger() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		startTime := time.Now()
@@ -27,13 +31,13 @@ func AuthMiddleware() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		header := c.GetHeader("Authorization")
 		if header == "" {
-			c.JSON(401, utils.JsonError(401, "请登录后访问"))
+			c.JSON(200, utils.JsonError(401, "please_login"))
 			c.Abort()
 			return
 		} else {
 			user, err := jwt.ParseToken(header)
 			if err != nil {
-				c.JSON(401, utils.JsonError(401, "请登录后访问"))
+				c.JSON(200, utils.JsonError(401, "token_error"))
 				c.Abort()
 				return
 			}

@@ -53,14 +53,19 @@ func (a *IntArray) Value() (driver.Value, error) {
 func (a *IntArray) Scan(src interface{}) error {
 	asString, ok := src.(string)
 	if !ok {
-		return fmt.Errorf("Scan source was not []byte")
+		return errors.New("not_byte")
+	}
+	// 检查是否是空数组
+	if asString == "{}" {
+		*a = make(IntArray, 0)
+		return nil
 	}
 	items := strings.Split(asString[1:len(asString)-1], ",")
 	*a = make(IntArray, len(items))
 	for i, v := range items {
 		_, err := fmt.Sscan(v, &(*a)[i])
 		if err != nil {
-			return err
+			return errors.New("unknown")
 		}
 	}
 

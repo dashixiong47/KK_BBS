@@ -3,27 +3,34 @@
     <div class="grid grid-cols-9">
       <div class="h-full m-1 col-span-9 sm:col-span-7">
         <Card>
-          <Icon name="uil:github" color="black" />
           <div class="text-xl font-bold">发帖子</div>
           <div class="border-t mt-5 py-5">
             <ul class="mb-5">
               <li v-for="item in getGroup">
-                <KButton class="mr-5">{{ item.name }}</KButton>
+                <KButton @click="formData.groupId=item.id"  class="mr-5">{{ item.name }}</KButton>
               </li>
             </ul>
             <div class="flex items-center mb-5">
-              <Input
+              <KInput
                 type="text"
                 class="w-full rounded-lg p-2 mr-5"
                 placeholder="请输入标题"
                 v-model="formData.title"
               />
-              <KButton class="flex-shrink-0" @click="uploadCover = !uploadCover">
+              <KButton
+                class="flex-shrink-0"
+                @click="uploadCover = !uploadCover"
+              >
                 选择封面
               </KButton>
             </div>
             <!-- 默认编辑器 -->
-            <Editor ref="content" v-model="formData.defaultPost.content" class="mb-5 mix-h-96" />
+            <Editor
+              ref="content"
+              v-model:moduleValue="formData.defaultPost.content"
+              placeholder="请输入"
+              class="mb-5 mix-h-96"
+            />
             <!-- 上传附件按钮 -->
             <div class="mb-5">
               <KButton class="mr-5" @click="showUpload = !showUpload">
@@ -37,13 +44,22 @@
               </KButton>
             </div>
             <!-- 隐藏内容 -->
-            <Editor class="mt-5" v-if="hiddenContentStatus" v-model="formData.defaultPost.hiddenContent" />
+            <Editor
+              class="mt-5"
+              v-if="hiddenContentStatus"
+              v-model:moduleValue="formData.defaultPost.hiddenContent"
+            />
           </div>
           <!-- 附件 -->
           <div>
             <div class="flex mb-5">
-              <Captcha class="w-32 shadow-center" />
-              <Input
+              <Captcha
+                ref="captchaRef"
+                class="w-32 shadow-center"
+                @captchaId="(id) => (formData.captchaId = id)"
+              />
+              <KInput
+                v-model="formData.code"
                 type="text"
                 class="border w-36 rounded-lg p-2 ml-5"
                 placeholder="验证码"
@@ -69,11 +85,22 @@
     </div>
   </div>
   <!-- 上传附件 -->
-  <Dialog v-model="showUpload"></Dialog>
+  <Dialog v-model="showUpload">
+    <div class="w-[800px] h-96">
+      {{ uploadGattachmentList }}
+      <DragColumn :items="uploadGattachmentList"></DragColumn>
+      <Upload
+        accept="*"
+        multiple
+        @uploadSuccess="(val) => uploadGattachmentList.push(val)"
+      >
+        <KButton>上传</KButton>
+      </Upload>
+    </div>
+  </Dialog>
 
   <!-- 选择封面 -->
   <Dialog v-model="uploadCover">
-    {{ activeList }}
     <div
       class="w-[800px] h-96 grid grid-cols-12 gap-2 px-5 m-5 overflow-y-auto"
     >
@@ -81,17 +108,18 @@
         @click="actived(item)"
         class="w-32 h-32 object-cover rounded-xl shadow-center col-span-2 hover:border"
         :class="{
-          'shadow-active': activeList.includes(item),
+          'shadow-active': activeCoverList.includes(item),
+          border: activeCoverList.includes(item),
         }"
         :src="item"
-        v-for="item in [...$refs.content.getAllImages(), ...uploadList]"
+        v-for="item in [...$refs.content.getAllImages(), ...uploadImgList]"
       />
       <div
         class="w-32 h-32 col-span-2 flex items-center justify-center rounded-xl shadow-center active:shadow-active"
       >
         <Upload
           class="flex items-center justify-center"
-          @uploadSuccess="(val) => uploadList.push(val)"
+          @uploadSuccess="({url}) => uploadImgList.push(url)"
         >
           +
         </Upload>
@@ -106,20 +134,24 @@
 </template>
 
 <script setup>
+import Sortable from 'sortablejs';
 import { useUserStore } from "~/stores/main.js";
 import { useGroupStore } from "~/stores/init.js";
 import { createPost } from "~/api";
+let { addMessage } = useMessage();
 let store = useGroupStore();
 let userStore = useUserStore();
 let userInfo = computed(() => userStore.getUserInfo);
 let getGroup = computed(() => store.getGroup);
+let captchaRef = ref(null);
 let showUpload = ref(false);
 let uploadCover = ref(false);
-let uploadList = ref([]);
-let activeList = ref([]);
+let uploadImgList = ref([]);
+let uploadGattachmentList = ref([]);
+let activeCoverList = ref([]);
 let hiddenContentStatus = ref(false);
 let formData = ref({
-  userId: userInfo.value.userId,
+  userId: userInfo.value.id,
   title: "",
   tags: [],
   type: 1,
@@ -129,36 +161,54 @@ let formData = ref({
     hidden: hiddenContentStatus.value ? 1 : 0,
     hiddenContent: "",
   },
+  code: "",
+  groupId: "",
+  captchaId: "",
 });
-const { formatNumber } = useFormatNumber();
-const { isMobile } = useMobileDetect();
-
 definePageMeta({
   layout: "user",
 });
-onMounted(async () => {
-  await store.fetchGroup();
-});
+store.fetchGroup();
 const actived = (url) => {
-  if (activeList.value.includes(url)) {
-    activeList.value = activeList.value.filter((item) => item !== url);
+  if (activeCoverList.value.includes(url)) {
+    activeCoverList.value = activeCoverList.value.filter(
+      (item) => item !== url
+    );
   } else {
-    activeList.value.push(url);
+    activeCoverList.value.push(url);
   }
-  formData.value.cover = activeList.value;
+  formData.value.cover = activeCoverList.value;
 };
 
 const submit = async () => {
   console.log(formData.value);
-  return
+  let message = checkParams();
+  if (message) {
+    addMessage(message, "warning");
+    return;
+  }
   try {
-    let res = await createPost({
-      title: "标题",
-      content: $refs.content.getContent(),
-      group_id: 1,
-      cover: activeList.value,
-    });
-  } catch (error) {}
+    let res = await createPost(formData.value);
+  } catch (error) {
+    captchaRef.value.init();
+    addMessage(error, "error");
+  }
   console.log("submit");
+};
+// 校验参数
+const checkParams = () => {
+  if (!formData.value.title) {
+    return "请输入标题";
+  }
+  if (!formData.value.defaultPost.content) {
+    return "请输入内容";
+  }
+  if (!formData.value.groupId) {
+    return "请选择分组";
+  }
+  if (!formData.value.code) {
+    return "请先完成验证";
+  }
+  return false;
 };
 </script>

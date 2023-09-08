@@ -12,7 +12,10 @@ var DB *gorm.DB
 
 func init() {
 	dsn := fmt.Sprintf("user=%s password=%s dbname=%s host=%s port=%d sslmode=%s", config.SettingsConfig.Postgresql.User, config.SettingsConfig.Postgresql.Password, config.SettingsConfig.Postgresql.Database, config.SettingsConfig.Postgresql.Host, config.SettingsConfig.Postgresql.Port, config.SettingsConfig.Postgresql.Sslmode)
-	db, err := gorm.Open(postgres.Open(dsn), &gorm.Config{})
+	db, err := gorm.Open(postgres.Open(dsn), &gorm.Config{
+		//	打印出sql语句
+		//Logger: logger.Default.LogMode(logger.Info),
+	})
 	if err != nil {
 		klog.Error("Failed to connect to database: %v", err)
 	}

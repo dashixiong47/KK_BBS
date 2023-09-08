@@ -2,6 +2,7 @@ package utils
 
 import (
 	"encoding/base64"
+	"errors"
 	"github.com/dashixiong47/KK_BBS/config"
 	"strconv"
 )
@@ -25,13 +26,13 @@ func DecryptID(encodedString string) (int, error) {
 	// 使用 Base64 解码
 	decodedBytes, err := base64.StdEncoding.DecodeString(encodedString)
 	if err != nil {
-		return 0, err
+		return 0, errors.New("invalid_id")
 	}
 
 	// 将字节串转换回整数
 	decodedID, err := strconv.Atoi(string(decodedBytes))
 	if err != nil {
-		return 0, err
+		return 0, errors.New("invalid_id")
 	}
 
 	// 使用 XOR 解密

@@ -14,6 +14,7 @@ type Settings struct {
 		SigningKey   string `yaml:"signingKey"`
 		TokenTimeout int    `yaml:"tokenTimeout"`
 		IdConfusion  int    `yaml:"idConfusion"`
+		I18          string `yaml:"i18"`
 	} `yaml:"application"`
 	Postgresql struct {
 		Host     string `yaml:"host"`

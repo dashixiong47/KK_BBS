@@ -1,6 +1,7 @@
 package server
 
 import (
+	"errors"
 	"github.com/dashixiong47/KK_BBS/db"
 	"github.com/dashixiong47/KK_BBS/models"
 	"github.com/dashixiong47/KK_BBS/utils/jwt"
@@ -16,12 +17,12 @@ func (s *LoginServer) Login(username, password string) (any, error) {
 		Where("username = ? AND password = ?", username, password).
 		First(&user).Error
 	if err != nil {
-		return nil, err
+		return nil, errors.New("username_or_password_error")
 	}
 
 	token, err := jwt.CreateToken(user)
 	if err != nil {
-		return nil, err
+		return nil, errors.New("token_error")
 	}
 	return map[string]string{
 		"token":    token,

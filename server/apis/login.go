@@ -23,17 +23,17 @@ func (c *Login) Post() utils.ResponseData {
 	var info user
 	err := c.Ctx.ShouldBindJSON(&info)
 	if err != nil {
-		return utils.JsonFail(err.Error())
+		return utils.JsonFail("json_error")
 	}
 	verifyCaptcha := captcha.VerifyCaptcha(info.CaptchaId, info.Code)
 	if !verifyCaptcha {
-		return utils.JsonFail("验证码错误")
+		return utils.JsonFail("code_error")
 	}
 	md5 := utils.MD5(info.Password)
 	var loginServer server.LoginServer
 	userInfo, err := loginServer.Login(info.Username, md5)
 	if err != nil {
-		return utils.JsonFail("用户名或密码错误")
+		return utils.JsonFail(err)
 	}
 	return utils.JsonSuccess(userInfo)
 }

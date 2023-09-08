@@ -43,7 +43,7 @@
       </ul>
     </div>
     <div class="md:col-span-1 flex items-center justify-end">
-      <KLink :to="`/topic/create`">发表</KLink>
+      <KButton @click="toCreate">发表</KButton>
       <Icon
         @click="test"
         name="icon-park-solid:all-application"
@@ -52,11 +52,11 @@
       />
       <Icon name="icon-park-solid:all-application" size="1rem" class="mr-2" />
       <Icon name="icon-park-solid:all-application" size="1rem" class="mr-2" />
-      
+
       <SwitcherTheme />
-    
+
       <div class="ml-4 w-11 h-11">
-        <KLink v-if="Object.keys(userInfo).length" :to="`/user/1`">
+        <KLink v-if="isLogin" :to="`/user/1`">
           <Avatar :url="userInfo.avatar" class="w-full h-full" />
         </KLink>
         <button v-else @click="setLoginStatus">登录/注册</button>
@@ -73,30 +73,32 @@ import { useLoginStore, useUserStore } from "~/stores/main.js";
 const store = useLoginStore();
 const userStore = useUserStore();
 const userInfo = computed(() => userStore.getUserInfo);
-const loginStatus= computed(()=>store.getLoginStatus)
+const isLogin = computed(() => userStore.getIsLogin);
+const loginStatus = computed(() => store.getLoginStatus);
+const { to } = useToRoute();
 const setLoginStatus = () => {
   store.setLoginStatus();
 };
 
 const { notice } = useNotice();
+const { addMessage } = useMessage();
 
 const test = () => {
-  notice({
-    title: "标题",
-    content:
-      "一、放下大概就是这样，即使我们没在一起，我也会好好的，谢谢时间惊艳了那段有你的记忆，也谢谢现在更努力变好的自己。",
-    autoClose: true,
-  });
+  addMessage("这是一个信息消息", "error");
+  // notice({
+  //   title: "标题",
+  //   content:
+  //     "一、放下大概就是这样，即使我们没在一起，我也会好好的，谢谢时间惊艳了那段有你的记忆，也谢谢现在更努力变好的自己。",
+  //   autoClose: true,
+  // });
 };
 userStore.fetchUserInfo();
-onMounted(async () => {
-  // try {
-  //   let userInfoStr = localStorage.getItem("userInfo");
-  //   if (userInfoStr) {
-  //     userStore.setUserInfo(JSON.parse(userInfoStr));
-  //   }
-  //   // let res = await getUserInfo();
-  //   // console.log(res);
-  // } catch (error) {}
-});
+const toCreate = () => {
+  if(isLogin.value){
+    to(`/topic/create`);
+    return
+  }
+  addMessage("请先登录", "warning");
+
+};
 </script>

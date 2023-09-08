@@ -11,6 +11,7 @@ application:
   tokenTimeout: 1440
   #id混淆
   idConfusion: 123456
+  i18: zh-CN
 postgresql:
     host: 127.0.0.1
     port: 5432

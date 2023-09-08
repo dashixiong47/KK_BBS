@@ -2,7 +2,7 @@
   <Floating :index="index" @change="colorPicker = !colorPicker">
     <button
       class="relative z-10 bg-blue-500 hover:bg-blue-700 text-white font-bold w-10 h-10 rounded-full"
-      @click="change"
+      
     >
       <Icon name="ion:color-palette-outline" size="1.5rem" />
     </button>

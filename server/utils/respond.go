@@ -1,8 +1,8 @@
 package utils
 
 import (
-	"github.com/gin-gonic/gin"
-	"net/http"
+	"github.com/dashixiong47/KK_BBS/config"
+	"github.com/dashixiong47/KK_BBS/locales"
 )
 
 // ResponseData 定义了统一的响应结构
@@ -12,65 +12,83 @@ type ResponseData struct {
 	Data    interface{} `json:"data,omitempty"`
 }
 
-// Respond 用于发送统一格式的响应
-func Respond(c *gin.Context, code int, message string, data interface{}) {
-	response := ResponseData{
-		Code:    code,
-		Message: message,
-		Data:    data,
-	}
-	c.JSON(http.StatusOK, response)
-}
-
 // JsonSuccess 成功响应
 func JsonSuccess(data interface{}) ResponseData {
 	return ResponseData{
 		Code:    200,
-		Message: "success",
+		Message: getMessage("success"),
 		Data:    data,
 	}
 }
 
 // JsonError 失败响应
-func JsonError(code int, message string) ResponseData {
+func JsonError(code int, message any) ResponseData {
+	defaultMessage := "unknown_error"
+	switch message.(type) {
+	case string:
+		defaultMessage = message.(string)
+	case error:
+		defaultMessage = message.(error).Error()
+	}
 	return ResponseData{
 		Code:    code,
-		Message: message,
+		Message: getMessage(defaultMessage),
 		Data:    nil,
 	}
 }
 
 // JsonParameterError 参数错误
-func JsonParameterError(message ...string) ResponseData {
-	defaultMessage := "参数错误"
-	var responseMessage string
+func JsonParameterError(message ...any) ResponseData {
+	defaultMessage := "parameter_error"
 
 	if len(message) > 0 && message[0] != "" {
-		responseMessage = message[0]
-	} else {
-		responseMessage = defaultMessage
+		switch message[0].(type) {
+		case string:
+			defaultMessage = message[0].(string)
+		case error:
+			defaultMessage = message[0].(error).Error()
+		}
 	}
 	return ResponseData{
 		Code:    400,
-		Message: responseMessage,
+		Message: getMessage(defaultMessage),
 		Data:    nil,
 	}
 }
 
 // JsonFail 失败响应
-func JsonFail(message ...string) ResponseData {
-	defaultMessage := "操作失败"
-	var responseMessage string
+func JsonFail(message ...any) ResponseData {
+	defaultMessage := "parameter_error"
 
 	if len(message) > 0 && message[0] != "" {
-		responseMessage = message[0]
-	} else {
-		responseMessage = defaultMessage
+		switch message[0].(type) {
+		case string:
+			defaultMessage = message[0].(string)
+		case error:
+			defaultMessage = message[0].(error).Error()
+		}
 	}
 
 	return ResponseData{
 		Code:    500,
-		Message: responseMessage,
+		Message: getMessage(defaultMessage),
 		Data:    nil,
 	}
+}
+
+// 从i18里面取值
+func getMessage(message string) string {
+	// 获取语言配置
+	lang := config.SettingsConfig.Application.I18
+	// 获取该语言的所有消息
+	messages, ok := locales.I18[lang]
+	if !ok {
+		return "" // 语言不存在
+	}
+	// 获取特定消息
+	msg, ok := messages[message]
+	if !ok {
+		return "" // 消息不存在
+	}
+	return msg
 }

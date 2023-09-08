@@ -1,7 +1,9 @@
 <template>
   <div class="relative">
-  
-    <slot></slot>
+    <div @click="change">
+      <slot></slot>
+    </div>
+
     <transition
       name="scale-transition"
       enter-active-class="animate-scaleUpFromRightBottom"
@@ -11,7 +13,7 @@
         v-if="showPopup"
         class="glass p-5 rounded-2xl w-80 h-96 !absolute right-0 bottom-0 origin-bottom-right"
       >
-        <slot name="content"/>
+        <slot name="content" />
       </div>
     </transition>
   </div>

@@ -13,7 +13,8 @@ export const upload = (blobInfo, progress=()=>{}) =>
         let cookie=useCookie("token")
         // 获取 Blob 对象和文件名
         const blob = blobInfo instanceof Blob ? blobInfo : blobInfo.blob();
-        const filename = blobInfo instanceof Blob ? "unknown" : blobInfo.filename();
+        const filename = blob.name
+        console.log(filename);
         // 创建 XMLHttpRequest 对象
         const xhr = new XMLHttpRequest();
 

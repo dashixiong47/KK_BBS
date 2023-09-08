@@ -32,5 +32,8 @@ func GenerateCaptcha() (captchaId string, b64s string, err error) {
 
 }
 func VerifyCaptcha(captchaId, value string) bool {
+	if captchaId == "" || value == "" {
+		return false
+	}
 	return store.Verify(captchaId, value, true)
 }

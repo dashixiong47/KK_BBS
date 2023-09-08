@@ -14,5 +14,5 @@ export const getUserInfo = async (id = null) => {
 }
 // 发帖
 export const createPost = async (data) => {
-    return await request.post('/api/v1/post', data);
+    return await request.post('/api/v1/post/create', data);
 }

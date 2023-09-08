@@ -1,5 +1,6 @@
 import { defineStore } from 'pinia'
 import { getUserInfo } from '~/api';
+
 export const useLoginStore = defineStore('login', {
     state: () => ({
         loginStatus: false,
@@ -18,17 +19,20 @@ export const useLoginStore = defineStore('login', {
 export const useUserStore = defineStore('userInfo', {
     state: () => ({
         userInfo: {},
+        isLogin:false
     }),
     getters: {
         getUserInfo: (state) => state.userInfo,
+        getIsLogin: (state) => state.isLogin,
     },
     actions: {
         async fetchUserInfo(id) {
             if (!Object.keys(this.userInfo).length) {
+             
                 try {
                     const data = await getUserInfo(id);
-                    console.log(data);
                     this.setUserInfo(data);
+                    this.setIslogin(true)
                 } catch (error) {
                     console.error("An error occurred while fetching the userInfo:", error);
                 }
@@ -39,6 +43,10 @@ export const useUserStore = defineStore('userInfo', {
         },
         resetUserInfo() {
             this.userInfo = {}
-        }
+        },
+        setIslogin(bl){
+            this.isLogin=bl
+        },
+
     },
 })
