@@ -2,7 +2,11 @@ import { useCookie } from '#app'
 
 export const request = {
     get: (url, data = {}, options = {}) => {
-        return request._request(url, 'GET', data, options);
+        // data 对象转换成查询字符串
+        const params = new URLSearchParams();
+        Object.keys(data).forEach(key => params.append(key, data[key]));
+        url += '?' + params.toString();
+        return request._request(url, 'GET', {}, options);
     },
     post: (url, data = {}, options = {}) => {
         return request._request(url, 'POST', data, options);
@@ -27,7 +31,7 @@ export const request = {
         const mergedOptions = { ...defaultOptions, ...options };
 
         if (process.env.NODE_ENV === 'development') {
-            url = '/api' + url;
+            url = ' http://localhost:3000/api' + url;
         }
 
         try {

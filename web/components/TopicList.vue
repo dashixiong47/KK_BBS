@@ -1,21 +1,21 @@
 <template>
   <ul class="h-full m-1">
-    <li
-      v-for="item in 10"
-      class="glass w-full p-5 rounded-2xl mb-5"
-    >
-      <Topic />
+    <li v-for="item in list" class="glass w-full p-5 rounded-2xl mb-5">
+      <Topic :detail="item"/>
     </li>
   </ul>
 </template>
 
 <script setup>
-const list = [
-  {
-    id: 1,
-    title: "标题",
-    content: "内容",
-    type: "topic",
-  },
-];
+import { postList } from "@/api";
+const list = ref([]);
+async function init() {
+  try {
+    list.value = await postList({
+      page: 1,
+      pageSize: 10,
+    });
+  } catch (error) {}
+}
+init();
 </script>

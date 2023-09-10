@@ -4,7 +4,9 @@
     <div class="w-full ml-2 flex items-center justify-between">
       <div class="flex flex-col items-start">
         <KLink to="#" class="text-md font-bold primary-text"> 名称 </KLink>
-        <span class="text-xs secondary-text">发布时间</span>
+        <span class="text-xs secondary-text">
+          发布时间:{{ detail.created_at }}
+        </span>
       </div>
       <div>
         <span class="mr-5 regular-text text-xs">
@@ -17,7 +19,7 @@
     </div>
   </div>
   <KLink to="/topic/1" class="">
-    <p class="text-md mb-3 primary-text">这里是标题</p>
+    <p class="text-md mb-3 primary-text">{{ detail.title }}</p>
     <div class="regular-text text-sm">
       Lorem ipsum dolor sit amet,consectetur adipiscing elit. Morbi nulla
       dolor,ornare at commodo non,feugiat non nisi. Phasellus faucibus mollis
@@ -26,7 +28,7 @@
     <!-- <ul class="flex flex-row flex-wrap "> -->
     <ul class="grid grid-cols-6">
       <li
-        v-for="(item, index) in images.slice(0, 9)"
+        v-for="(item, index) in detail.covers?.slice(0, 9)"
         class="pt-[66.67%] relative flex items-center justify-center m-2 overflow-hidden"
         :class="getClassName(images.length, index)"
       >
@@ -90,6 +92,15 @@
 </template>
 <script setup>
 import { ref, onMounted } from "vue";
+import useMobileDetect from "~/composables/useMobileDetect";
+import useFormatNumber from "~/composables/useFormatNumber";
+let { detail } = defineProps({
+  // 详情
+  detail: {
+    type: Object,
+    default: () => ({}),
+  },
+});
 const images = [
   {
     url: "https://images.hxsj.in/test/1.png",
@@ -122,8 +133,7 @@ const images = [
 const listContainer = ref(null);
 const items = ref(Array(3).fill(null));
 const itemsToShow = ref([...items.value]);
-import useMobileDetect from "~/composables/useMobileDetect";
-import useFormatNumber from "~/composables/useFormatNumber";
+
 const { formatNumber } = useFormatNumber();
 const { isMobile } = useMobileDetect();
 /**

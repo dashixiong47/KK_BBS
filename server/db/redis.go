@@ -56,6 +56,7 @@ func GetID(key interface{}) string {
 		encryptID = utils.EncryptID(int(key.(uint)))
 		Rdb.HSet(context.Background(), "confusionID", encryptID, key.(uint), key.(uint), encryptID)
 	}
+
 	return encryptID
 }
 

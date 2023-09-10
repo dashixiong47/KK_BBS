@@ -38,3 +38,5 @@ func DecryptID(encodedString string) (int, error) {
 	// 使用 XOR 解密
 	return decodedID ^ key, nil
 }
+
+// 从redis里获取
