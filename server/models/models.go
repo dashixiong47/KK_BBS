@@ -34,51 +34,51 @@ type User struct {
 //	return
 //}
 
-// Post 帖子
-type Post struct {
-	ID          uint          `json:"id" gorm:"primaryKey;AUTO_INCREMENT"`
-	UserID      uint          `json:"userId" gorm:"not null;index:index_user_id"`       // 用户ID
-	Title       string        `json:"title" gorm:"size:255;not null;index:index_title"` // 标题
-	Tags        *db.IntArray  `json:"tags" gorm:"type:integer[];"`                      // 标签
-	Covers      *db.JSONSlice `json:"covers" gorm:"type:jsonb;"`                        // 封面
-	Type        int           `json:"type" gorm:"size:1;not null;index:index_type"`     // 类型 1:默认 2:视频 3:图片 4:文本
-	DefaultPost PostDefault   `json:"defaultPost" gorm:"foreignKey:PostID"`
-	VideoPost   PostVideo     `json:"videoPost" gorm:"foreignKey:PostID"`
-	ImagePost   PostImage     `json:"imagePost" gorm:"foreignKey:PostID"`
-	TextPost    PostText      `json:"textPost" gorm:"foreignKey:PostID"`
+// Topic 帖子
+type Topic struct {
+	ID         uint          `json:"id" gorm:"primaryKey;AUTO_INCREMENT"`
+	UserID     uint          `json:"userId" gorm:"not null;index:index_user_id" binding:"required"`       // 用户ID
+	Title      string        `json:"title" gorm:"size:255;not null;index:index_title" binding:"required"` // 标题
+	Tags       *db.IntArray  `json:"tags" gorm:"type:integer[];"`                                         // 标签
+	Covers     *db.JSONSlice `json:"covers" gorm:"type:jsonb;"`                                           // 封面
+	Type       int           `json:"type" gorm:"size:1;not null;index:index_type"`                        // 类型 1:默认 2:视频 3:图片 4:文本
+	Summary    string        `json:"summary" gorm:"size:255;"`                                            // 摘要
+	TopicBasic TopicBasic    `json:"topicBasic" gorm:"foreignKey:TopicID"`
+	TopicVideo TopicVideo    `json:"topicVideo" gorm:"foreignKey:TopicID"`
+	TopicImage TopicImage    `json:"topicImage" gorm:"foreignKey:TopicID"`
+	TopicText  TopicText     `json:"topicText" gorm:"foreignKey:TopicID"`
 	Model
 }
 
-// PostDefault 默认类型
-type PostDefault struct {
+// TopicBasic 默认类型
+type TopicBasic struct {
 	ID            uint   `json:"id" gorm:"primaryKey;AUTO_INCREMENT"`
-	PostID        uint   `gorm:"unique;index"`                                               // 外键，并且是唯一的
+	TopicID       uint   `gorm:"unique;index"`                                               // 外键，并且是唯一的
 	Content       string `json:"content" gorm:"type:text"`                                   // 内容
 	Hidden        int    `json:"hidden" gorm:"size:1;not null;default:0;index:index_hidden"` // 是否隐藏
 	HiddenContent string `json:"hiddenContent" gorm:"type:text"`                             // 隐藏内容
-
 }
 
-// PostVideo 视频
-type PostVideo struct {
+// TopicVideo 视频
+type TopicVideo struct {
 	ID           uint         `json:"id" gorm:"primaryKey;AUTO_INCREMENT"`
-	PostID       uint         `gorm:"unique;index"`                   // 外键，并且是唯一的
+	TopicID      uint         `gorm:"unique;index"`                   // 外键，并且是唯一的
 	VideoID      *db.IntArray `json:"videoId" gorm:"type:integer[];"` // 视频
 	Introduction string       `json:"introduction" gorm:"size:255"`   // 简介
 }
 
-// PostImage 图片
-type PostImage struct {
+// TopicImage 图片
+type TopicImage struct {
 	ID           uint         `json:"id" gorm:"primaryKey;AUTO_INCREMENT"`
-	PostID       uint         `gorm:"unique;index"`                   // 外键，并且是唯一的
+	TopicID      uint         `gorm:"unique;index"`                   // 外键，并且是唯一的
 	ImageID      *db.IntArray `json:"imageId" gorm:"type:integer[];"` // 图片
 	Introduction string       `json:"introduction" gorm:"size:255"`   // 简介
 }
 
-// PostText 文本
-type PostText struct {
+// TopicText 文本
+type TopicText struct {
 	ID           uint         `json:"id" gorm:"primaryKey;AUTO_INCREMENT"`
-	PostID       uint         `gorm:"unique;index"`                 // 外键，并且是唯一的
+	TopicID      uint         `gorm:"unique;index"`                 // 外键，并且是唯一的
 	TextID       *db.IntArray `json:"text" gorm:"type:integer[];"`  // 文本
 	Introduction string       `json:"introduction" gorm:"size:255"` // 简介
 }
@@ -105,6 +105,13 @@ type Group struct {
 	ID   uint   `json:"id" gorm:"primaryKey;AUTO_INCREMENT"`
 	Name string `json:"name" gorm:"size:10;not null;unique;index:index_name"` // 分组名
 	Icon string `json:"icon" gorm:"size:255;not null"`                        // 分组图标
+	Model
+}
+
+// Like 点赞
+type Like struct {
+	ID uint `json:"id" gorm:"primaryKey;AUTO_INCREMENT"`
+
 	Model
 }
 
@@ -137,7 +144,7 @@ func initData() {
 }
 func autoMigrate() {
 	// 自动迁移
-	err := db.DB.AutoMigrate(&Post{}, &PostDefault{}, &PostVideo{}, &PostImage{}, &PostText{}, &Tag{}, &File{})
+	err := db.DB.AutoMigrate(&Topic{}, &TopicBasic{}, &TopicImage{}, &TopicVideo{}, &TopicText{}, &Tag{}, &File{})
 	if err != nil {
 		klog.Info("Failed to connect to database: %v", err)
 	}

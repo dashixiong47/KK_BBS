@@ -13,11 +13,11 @@ export const getUserInfo = async (id = null) => {
     return await request.get(`/api/v1/user${id ? '/' + id : ''}`)
 }
 // 发帖
-export const createPost = async (data) => {
-    return await request.post('/api/v1/post/create', data);
+export const createTopic= async (data) => {
+    return await request.post('/api/v1/topic/create', data);
 }
 // 获取帖子列表
-export const postList = async (data) => {
-    return await request.get('/api/v1/post/list', data);
+export const topicList = async (data) => {
+    return await request.get('/api/v1/topic/list', data);
 }
 

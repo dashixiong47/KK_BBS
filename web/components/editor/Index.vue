@@ -121,7 +121,7 @@ function registerEventHandlers(editor) {
   editor.on("init", function () {
     editor.setContent(moduleValue);
   });
-  editor.on("input", (e) => {
+  editor.on("change", (e) => {
     emit("update:moduleValue", editor.getContent());
   });
   // editor.ui.registry.addButton("rotateimage", {

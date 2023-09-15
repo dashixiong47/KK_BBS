@@ -6,6 +6,7 @@ import (
 	"github.com/gin-gonic/gin"
 	jwtv5 "github.com/golang-jwt/jwt/v5"
 	"log"
+	"strings"
 	"time"
 )
 
@@ -16,7 +17,8 @@ type CustomClaims struct {
 }
 
 var whiteList = []string{
-	"/api/v1/post/list",
+	"/api/v1/topic/list",
+	"/api/v1/topic/",
 }
 
 func Logger() gin.HandlerFunc {
@@ -30,6 +32,13 @@ func Logger() gin.HandlerFunc {
 func AuthMiddleware() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		header := c.GetHeader("Authorization")
+		// 白名单
+		for _, path := range whiteList {
+			if path == c.Request.URL.Path || strings.HasPrefix(c.Request.URL.Path, path) {
+				c.Next()
+				return
+			}
+		}
 		if header == "" {
 			c.JSON(200, utils.JsonError(401, "please_login"))
 			c.Abort()

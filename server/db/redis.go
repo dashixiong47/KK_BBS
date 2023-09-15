@@ -55,22 +55,25 @@ func GetID(key interface{}) string {
 	case uint:
 		encryptID = utils.EncryptID(int(key.(uint)))
 		Rdb.HSet(context.Background(), "confusionID", encryptID, key.(uint), key.(uint), encryptID)
+	case string:
+		decryptID, _ := utils.DecryptID(key.(string))
+		Rdb.HSet(context.Background(), "confusionID", key.(string), decryptID, decryptID, key.(string))
+
 	}
 
 	return encryptID
 }
 
-// SetID 设置 Redis 中的值
-func SetID(key string) (string, error) {
-	intID, err := strconv.Atoi(key)
-	if err != nil {
-		klog.Error("设置 Redis 失败: %v", err)
-		return "", err
+// GetIntID 获取 Redis 中的值
+func GetIntID(strID string) int {
+	id, err := Rdb.HGet(context.Background(), "confusionID", strID).Result()
+	if err == nil {
+		// string 转 int
+		idInt, _ := strconv.Atoi(id)
+		return idInt
 	}
-	strID := utils.EncryptID(intID)
-	if err := Rdb.HSet(context.Background(), "confusionID", strID, intID).Err(); err != nil {
-		klog.Error("设置 Redis 失败: %v", err)
-		return "", err
-	}
-	return strID, nil
+	decryptID, _ := utils.DecryptID(strID)
+	Rdb.HSet(context.Background(), "confusionID", strID, decryptID, decryptID, strID)
+
+	return decryptID
 }

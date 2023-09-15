@@ -40,7 +40,6 @@ func (a *IntArray) Value() (driver.Value, error) {
 	if len(*a) == 0 {
 		return "{}", nil
 	}
-
 	strs := make([]string, len(*a))
 	for i, v := range *a {
 		strs[i] = fmt.Sprint(v)
@@ -60,6 +59,7 @@ func (a *IntArray) Scan(src interface{}) error {
 		*a = make(IntArray, 0)
 		return nil
 	}
+
 	items := strings.Split(asString[1:len(asString)-1], ",")
 	*a = make(IntArray, len(items))
 	for i, v := range items {

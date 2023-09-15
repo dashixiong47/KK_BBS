@@ -1,4 +1,4 @@
-import { useCookie } from '#app'
+import { useCookie,useRuntimeConfig } from '#app'
 
 export const request = {
     get: (url, data = {}, options = {}) => {
@@ -18,6 +18,7 @@ export const request = {
         return request._request(url, 'DELETE', data, options);
     },
     _request: async (url, method = 'GET', data = {}, options = {}) => {
+        const config = useRuntimeConfig()
         let cookie = useCookie("token")
         const defaultOptions = {
             method,
@@ -30,21 +31,18 @@ export const request = {
         }
         const mergedOptions = { ...defaultOptions, ...options };
 
-        if (process.env.NODE_ENV === 'development') {
-            url = ' http://localhost:3000/api' + url;
-        }
 
         try {
-            const response = await fetch(url, mergedOptions); // 使用 $fetch 或 fetch，根据你的需要
+            const response = await fetch(config.public.baseUrl+url, mergedOptions); // 使用 $fetch 或 fetch，根据你的需要
             const { code, data, message } = await response.json();
 
-            if (code !== 200) {
-                throw new Error(message);
+            if (code === 200) {
+                return data;
             } else if (code === 401) {
-                cookie.value = null
+                cookie.value = null;
                 throw new Error(message);
             } else {
-                return data;
+                throw new Error(message);
             }
         } catch (error) {
             console.error('Fetch Error:', error);

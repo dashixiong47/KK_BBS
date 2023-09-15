@@ -31,7 +31,7 @@
     <li v-for="item in 10" class="flex border-b mb-5 pb-5">
       <Avatar />
       <div class="ml-5">
-        <p class="mb-2"><KName /></p>
+        <p class="mb-2"><Name /></p>
         <div class="text-sm">
           一、放下大概就是这样，即使我们没在一起，我也会好好的，谢谢时间惊艳了那段有你的记忆，也谢谢现在更努力变好的自己。
           二、抱歉啊，不能为你金戈铁马，也不能许你一世繁华，不过我能给你一个小家，里面温了杯暖茶。

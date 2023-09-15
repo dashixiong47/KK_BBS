@@ -31,7 +31,7 @@ func registerRoutes(r *gin.Engine) {
 	v1.Use(middleware.AuthMiddleware())
 	RegisterRoutes(v1, &apis.User{})
 	RegisterRoutes(v1, &apis.Upload{})
-	RegisterRoutes(v1, &apis.Post{})
+	RegisterRoutes(v1, &apis.Topic{})
 
 	// 不需要认证的路由
 	noCheck := r.Group("/api/v1")

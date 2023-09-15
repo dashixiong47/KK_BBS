@@ -1,6 +1,6 @@
 import { defineStore } from 'pinia'
-import { getUserInfo } from '~/api';
-
+import { useGetUserInfo } from '~/api/server';
+import { useCookie } from "#app"
 export const useLoginStore = defineStore('login', {
     state: () => ({
         loginStatus: false,
@@ -19,7 +19,7 @@ export const useLoginStore = defineStore('login', {
 export const useUserStore = defineStore('userInfo', {
     state: () => ({
         userInfo: {},
-        isLogin:false
+        isLogin: false
     }),
     getters: {
         getUserInfo: (state) => state.userInfo,
@@ -27,15 +27,12 @@ export const useUserStore = defineStore('userInfo', {
     },
     actions: {
         async fetchUserInfo(id) {
-            if (!Object.keys(this.userInfo).length) {
-             
-                try {
-                    const data = await getUserInfo(id);
-                    this.setUserInfo(data);
-                    this.setIslogin(true)
-                } catch (error) {
-                    console.error("An error occurred while fetching the userInfo:", error);
-                }
+            try {
+                const data = await useGetUserInfo(id);
+                this.setIslogin(true)
+                this.setUserInfo(data);
+            } catch (error) {
+                console.error("An error occurred while fetching the userInfo:", error);
             }
         },
         setUserInfo(userInfo) {
@@ -44,8 +41,8 @@ export const useUserStore = defineStore('userInfo', {
         resetUserInfo() {
             this.userInfo = {}
         },
-        setIslogin(bl){
-            this.isLogin=bl
+        setIslogin(bl) {
+            this.isLogin = bl
         },
 
     },

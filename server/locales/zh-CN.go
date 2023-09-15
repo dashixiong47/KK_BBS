@@ -14,5 +14,7 @@ var ZHCN = map[string]string{
 	"user_not_found":             "用户不存在",
 	"notfound":                   "未找到",
 	"invalid_id":                 "无效的ID",
-	"not_byte":                   "Scan source was not []byte",
+	"not_byte":                   "扫描源不是[]byte",
+	//	解析html错误
+	"parse_html_error": "解析html错误",
 }

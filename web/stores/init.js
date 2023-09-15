@@ -21,7 +21,7 @@ export const useGroupStore = defineStore('group', {
             if (!Object.keys(this.group).length) {
                 try {
                     const {data} = await useGetGroupDetail();
-                    this.setGroup(data.value);
+                    this.setGroup(data);
                     this.error = null;  // 清除任何旧的错误信息
                 } catch (error) {
                     this.error = error;  // 存储错误信息

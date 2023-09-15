@@ -10,7 +10,10 @@ export const useThemeStore = defineStore('theme', {
             // bgBodyImg: "url('https://images.hxsj.in/test/1.png')",
             bgBodyImg: "",
             bgColor: 'rgba(255, 255, 255, 0.1)',
+            // 遮罩颜色
+            maskingColor: 'rgba(0,0,0,0.2)',
             // 常用颜色
+            colorWhite: "#ffffff",     //默认白色
             colorPrimary: '#409eff',   // 主要颜色
             colorSuccess: '#67c23a',   // 成功颜色
             colorWarning: '#e6a23c',   // 警告颜色
@@ -33,8 +36,10 @@ export const useThemeStore = defineStore('theme', {
             blurValue: 10,
             bgColor: 'rgba(0, 0, 0, 0.2)',
             bgBodyImg: "url('https://images.hxsj.in/test/1.jpg')",
-            
+            // 遮罩颜色
+            maskingColor: 'rgba(0,0,0,0.2)',
             // 常用颜色
+            colorWhite: "#ffffff",       //默认白色
             colorPrimary: '#1e90ff',     // 主要颜色
             colorSuccess: '#32cd32',     // 成功颜色
             colorWarning: '#ffa500',     // 警告颜色

@@ -3,7 +3,7 @@
     <div
       v-if="modelValue"
       @click.stop="setValue"
-      class="flex items-center justify-center bg-[rgba(0,0,0,0.2)] fixed top-0 left-0 w-screen h-screen z-[9999]"
+      class="flex items-center justify-center bg-[--masking-color] dark:bg-[--dark-masking-color] fixed top-0 left-0 w-screen h-screen z-[9999]"
     >
       <div class="p-5 bg-white  shadow-center rounded-2xl" @click.stop>
         <p class="w-full flex justify-between">

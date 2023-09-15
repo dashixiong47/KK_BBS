@@ -12,10 +12,8 @@
 
 <script setup>
 import { useGroupStore } from "~/stores/init.js";
-import { useGetGroupDetail } from "~/api/server";
 const store = useGroupStore();
 const data = computed(() => store.getGroup);
-const list = [0, 1, 2, 3, 4, 0, 1, 2, 3, 4];
 let groupActived = ref(0);
 store.fetchGroup();
 </script>

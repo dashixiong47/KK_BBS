@@ -1,6 +1,6 @@
 
-import { useCookie,useAsyncData } from '#app'
-
+import { useCookie, useAsyncData } from '#app'
+import { useRuntimeConfig } from '#app'
 export const useRequest = {
   get: (url) => {
     return useRequest._fetch(url, 'GET')
@@ -14,33 +14,34 @@ export const useRequest = {
   delete: (url) => {
     return useRequest._fetch(url, 'DELETE')
   },
-  _fetch: (url, method, body = null) => {
-    const { data, error, pending } = useAsyncData(`fetch-${url}`, async () => {
-      let cookie = useCookie("token").value;
-      const response = await fetch(url, {
+  _fetch: async (url, method, body = null) => {
+    const config = useRuntimeConfig()
+    url = config.public.baseUrl + url
+    let cookie = useCookie("token").value;
+    let code
+    let message
+    try {
+      let { data } = await useFetch(url, {
         method: method,
         headers: {
           'Content-Type': 'application/json',
           'Authorization': cookie
         },
-        body: body ? JSON.stringify(body) : null
-      });
-
-      if (!response.ok) {
-        throw new Error(`Server responded with status: ${response.status}`);
+        body: body
+      })
+      code = data.value.code
+      message=data.value.message
+      if (code === 200) {
+        return data.value;
+      } else if (code === 401) {
+        cookie.value = null;
+        throw new Error(message);
+      } else {
+        throw new Error(message);
       }
-
-      const responseData = await response.json();
-      if (responseData.code !== 200) {
-        throw new Error(responseData.message);
-      }
-      return responseData.data;  // 直接返回数据
-    })
-
-    return {
-      data,
-      error,
-      pending
+    } catch (error) {
+      throw error;
     }
+
   }
 }

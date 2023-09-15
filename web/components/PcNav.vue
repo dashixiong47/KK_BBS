@@ -55,7 +55,7 @@
 
       <SwitcherTheme />
 
-      <div class="ml-4 w-11 h-11">
+      <div class="ml-4 w-12 h-12">
         <KLink v-if="isLogin" :to="`/user/1`">
           <Avatar :url="userInfo.avatar" class="w-full h-full" />
         </KLink>
@@ -74,7 +74,6 @@ const store = useLoginStore();
 const userStore = useUserStore();
 const userInfo = computed(() => userStore.getUserInfo);
 const isLogin = computed(() => userStore.getIsLogin);
-const loginStatus = computed(() => store.getLoginStatus);
 const { to } = useToRoute();
 const setLoginStatus = () => {
   store.setLoginStatus();
@@ -92,7 +91,7 @@ const test = () => {
   //   autoClose: true,
   // });
 };
-userStore.fetchUserInfo();
+
 const toCreate = () => {
   if(isLogin.value){
     to(`/topic/create`);
@@ -101,4 +100,5 @@ const toCreate = () => {
   addMessage("请先登录", "warning");
 
 };
+userStore.fetchUserInfo();
 </script>

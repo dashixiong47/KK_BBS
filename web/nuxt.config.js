@@ -9,6 +9,9 @@ export default defineNuxtConfig({
     '@pinia/nuxt',
     'nuxt-icon'
   ],
+  render: {
+    ssr: true,
+  },
   plugins: [
     '~/plugins/global-directives.js',
   ],
@@ -17,9 +20,14 @@ export default defineNuxtConfig({
     i18nHead.title = this.$t("title");
     return i18nHead;
   },
+  runtimeConfig: {
+    public: {
+      baseUrl: process.env.NUXT_PUBLIC_BASE_URL,
+    }
+  },
   i18n: {
     // 域名，这里填写生产环境的域名即可
-    baseUrl: "https://my-nuxt-app.com",
+    // baseUrl: "https://my-nuxt-app.com",
     // 语种，酌情配置即可
     locales: [
       {
