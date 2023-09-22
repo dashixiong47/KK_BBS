@@ -28,16 +28,14 @@ func init() {
 }
 func registerRoutes(r *gin.Engine) {
 	v1 := r.Group("/api/v1")
-	v1.Use(middleware.AuthMiddleware())
+	//v1.Use(middleware.AuthMiddleware())
 	RegisterRoutes(v1, &apis.User{})
 	RegisterRoutes(v1, &apis.Upload{})
 	RegisterRoutes(v1, &apis.Topic{})
-
-	// 不需要认证的路由
-	noCheck := r.Group("/api/v1")
-	RegisterRoutes(noCheck, &apis.Captcha{})
-	RegisterRoutes(noCheck, &apis.Login{})
-	RegisterRoutes(noCheck, &apis.Group{})
+	RegisterRoutes(v1, &apis.Captcha{})
+	RegisterRoutes(v1, &apis.Login{})
+	RegisterRoutes(v1, &apis.Group{})
+	RegisterRoutes(v1, &apis.Comment{})
 
 }
 

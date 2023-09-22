@@ -2,6 +2,7 @@ package apis
 
 import (
 	"github.com/dashixiong47/KK_BBS/db"
+	"github.com/dashixiong47/KK_BBS/middleware"
 	"github.com/dashixiong47/KK_BBS/models"
 	"github.com/dashixiong47/KK_BBS/server"
 	"github.com/dashixiong47/KK_BBS/utils"
@@ -22,10 +23,13 @@ type formData struct {
 }
 
 // PostCreate 创建帖子
-func (p *Topic) PostCreate() utils.ResponseData {
+func (t *Topic) PostCreate() utils.ResponseData {
+	if authMiddleware, data := middleware.AuthMiddleware(t.Ctx); !authMiddleware {
+		return *data
+	}
 	var doc formData
 	var postServer server.TopicServer
-	err := p.Ctx.ShouldBindJSON(&doc)
+	err := t.Ctx.ShouldBindJSON(&doc)
 	if err != nil {
 
 		return utils.JsonParameterError("json_error")
@@ -86,9 +90,12 @@ func (p *Topic) PostCreate() utils.ResponseData {
 }
 
 // GetList 帖子列表
-func (p *Topic) GetList() utils.ResponseData {
+func (t *Topic) GetList() utils.ResponseData {
+	//if authMiddleware, data := middleware.AuthMiddleware(t.Ctx); !authMiddleware {
+	//	return *data
+	//}
 	var paging utils.Paging
-	paging.GetPaging(p.Ctx)
+	paging.GetPaging(t.Ctx)
 	var topicServer server.TopicServer
 	list, err := topicServer.GetPostList(paging)
 	if err != nil {
@@ -98,7 +105,10 @@ func (p *Topic) GetList() utils.ResponseData {
 }
 
 // GetBy 帖子详情
-func (p *Topic) GetBy(id string) utils.ResponseData {
+func (t *Topic) GetBy(id string) utils.ResponseData {
+	//if authMiddleware, data := middleware.AuthMiddleware(t.Ctx); !authMiddleware {
+	//	return *data
+	//}
 	var topicServer server.TopicServer
 	detail, err := topicServer.GetTopicDetail(db.GetIntID(id))
 	if err != nil {

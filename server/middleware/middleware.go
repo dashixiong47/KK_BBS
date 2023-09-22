@@ -6,7 +6,6 @@ import (
 	"github.com/gin-gonic/gin"
 	jwtv5 "github.com/golang-jwt/jwt/v5"
 	"log"
-	"strings"
 	"time"
 )
 
@@ -29,30 +28,50 @@ func Logger() gin.HandlerFunc {
 		log.Printf("请求方法: %s, 请求路径: %s, 请求耗时: %s", c.Request.Method, c.Request.URL.Path, latency)
 	}
 }
-func AuthMiddleware() gin.HandlerFunc {
-	return func(c *gin.Context) {
-		header := c.GetHeader("Authorization")
-		// 白名单
-		for _, path := range whiteList {
-			if path == c.Request.URL.Path || strings.HasPrefix(c.Request.URL.Path, path) {
-				c.Next()
-				return
-			}
+
+//func AuthMiddleware() gin.HandlerFunc {
+//	return func(c *gin.Context) {
+//		header := c.GetHeader("Authorization")
+//		// 白名单
+//		for _, path := range whiteList {
+//			if path == c.Request.URL.Path || strings.HasPrefix(c.Request.URL.Path, path) {
+//				c.Next()
+//				return
+//			}
+//		}
+//		if header == "" {
+//			c.JSON(200, utils.JsonError(401, "please_login"))
+//			c.Abort()
+//			return
+//		} else {
+//			user, err := jwt.ParseToken(header)
+//			if err != nil {
+//				c.JSON(200, utils.JsonError(401, "token_error"))
+//				c.Abort()
+//				return
+//			}
+//			c.Set("user", user.Claims.(jwtv5.MapClaims)["user"])
+//			c.Set("id", user.Claims.(jwtv5.MapClaims)["id"])
+//		}
+//		c.Next()
+//	}
+//}
+
+func AuthMiddleware(c *gin.Context) (bool, *utils.ResponseData) {
+	header := c.GetHeader("Authorization")
+
+	var jsonError utils.ResponseData
+	if header == "" {
+		jsonError = utils.JsonError(401, "please_login")
+		return false, &jsonError
+	} else {
+		user, err := jwt.ParseToken(header)
+		if err != nil {
+			jsonError = utils.JsonError(401, "token_error")
+			return false, &jsonError
 		}
-		if header == "" {
-			c.JSON(200, utils.JsonError(401, "please_login"))
-			c.Abort()
-			return
-		} else {
-			user, err := jwt.ParseToken(header)
-			if err != nil {
-				c.JSON(200, utils.JsonError(401, "token_error"))
-				c.Abort()
-				return
-			}
-			c.Set("user", user.Claims.(jwtv5.MapClaims)["user"])
-			c.Set("id", user.Claims.(jwtv5.MapClaims)["id"])
-		}
-		c.Next()
+		c.Set("user", user.Claims.(jwtv5.MapClaims)["user"])
+		c.Set("id", user.Claims.(jwtv5.MapClaims)["id"])
+		return true, nil
 	}
 }

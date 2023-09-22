@@ -32,7 +32,7 @@
         class="pt-[66.67%] relative flex items-center justify-center m-2 overflow-hidden"
         :class="getClassName(images.length, index)"
       >
-        <Image
+        <KImage
           class="rounded-2xl object-cover absolute inset-0"
           :source="getPath(item)"
           alt=""

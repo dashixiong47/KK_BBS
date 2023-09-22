@@ -14,3 +14,7 @@ export const useGetTopicDetail = (id) => {
 export const useGetUserInfo = async () => {
   return await request.get(`/api/v1/user`)
 }
+// 获取评论列表
+export const useGetComments = async (id,data) => {
+  return await request.get(`/api/v1/comment/list/${id}`, data);
+}

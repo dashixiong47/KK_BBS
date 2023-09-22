@@ -1,7 +1,18 @@
 <template>
   <div class="">
     <div class="grid grid-cols-9">
-      <div class="h-full m-1 col-span-9 sm:col-span-6">
+      <div class="relative h-full m-1 col-span-9 sm:col-span-6">
+        <ul class="w-10 fixed top-40 -right-4 sm:left-12 z-50">
+          <li
+            v-for="item in buttonList"
+            class="rounded-full glass w-10 h-10 mb-5 flex items-center justify-center"
+          >
+            <Icon
+              :name="item.icon"
+              class="text-[--secondary-text] dark:text-[--dark-secondary-text]"
+            />
+          </li>
+        </ul>
         <Card>
           <div class="flex" v-if="detail.user">
             <Avatar :url="detail.user?.avatar" />
@@ -36,7 +47,7 @@
           </div>
         </Card>
         <Card class="mt-5">
-          <Comments />
+          <Comments :topicId="route.params.id"/>
         </Card>
       </div>
       <div class="hidden sm:col-span-3 sm:block m-1">
@@ -54,17 +65,45 @@
 <script setup>
 import { useRoute } from "#app";
 import { useGetTopicDetail } from "~/api/server";
+
 import useMobileDetect from "~/composables/useMobileDetect";
 import useFormatNumber from "~/composables/useFormatNumber";
+definePageMeta({
+  layout: "user",
+});
 const { formatNumber } = useFormatNumber();
 const { isMobile } = useMobileDetect();
 const { getRelativeTime } = useTime();
 const route = useRoute();
+const buttonList = ref([
+  {
+    name: "分享",
+    icon: "tabler:share",
+  },
+  {
+    name: "收藏",
+    icon: "tabler:bookmark",
+  },
+  {
+    name: "点赞",
+    icon: "tabler:bookmark",
+  },
+  {
+    name: "评论",
+    icon: "tabler:bookmark",
+  },
+  {
+    name: "举报",
+    icon: "tabler:report",
+  },
+  {
+    name: "打赏",
+    icon: "tabler:bookmark",
+  },
+]);
 let detail = ref({});
-definePageMeta({
-  layout: "user",
-});
-async function init() {
+
+async function getTopicDetail() {
   try {
     // const {data} = await useFetch("http://localhost:8080/api/v1/topic/" + route.params.id);
     let { data } = await useGetTopicDetail(route.params.id);
@@ -72,7 +111,11 @@ async function init() {
     console.log(data);
   } catch (error) {
     console.log(error);
+    showError(error);
   }
+}
+function init() {
+  getTopicDetail();
 }
 init();
 </script>

@@ -1,8 +1,15 @@
 <template>
   <button
-    class="glass relative px-5 py-2 rounded-lg primary-text active:shadow-active"
+    @click="throttledClick"
+    class="glass relative px-5 py-2 rounded-lg primary-text"
+    :class="{
+      'active:shadow-active': !disabled,
+    }"
   >
-    <div v-if="actived" class="absolute h-10 w-4 -right-0 -top-3 bg-[--color-primary] dark:bg-[--dark-color-primary] -rotate-45">
+    <div
+      v-if="actived"
+      class="absolute h-10 w-4 -right-0 -top-3 bg-[--color-primary] dark:bg-[--dark-color-primary] -rotate-45"
+    >
       <Icon
         name="ep:check"
         size="0.8rem"
@@ -14,10 +21,35 @@
 </template>
 
 <script setup>
-const { actived } = defineProps({
+import { ref } from "vue";
+
+const { actived, throttle, disabled } = defineProps({
   actived: {
     type: Boolean,
     default: false,
   },
+  throttle: {
+    type: Function,
+    default: null,
+  },
+  disabled: {
+    type: Boolean,
+    default: false,
+  },
 });
+
+let lastClicked = ref(0);
+
+const throttleTime = 1000; // 节流时间设为1000毫秒（1秒）
+
+const throttledClick = () => {
+  console.log(disabled ,!throttle);
+  if (disabled || !throttle) return;
+  const now = Date.now();
+  if (now - lastClicked.value >= throttleTime) {
+    // 执行你的点击处理逻辑
+    lastClicked.value = now;
+    throttle();
+  }
+};
 </script>

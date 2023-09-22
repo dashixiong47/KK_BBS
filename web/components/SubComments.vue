@@ -1,28 +1,60 @@
 <template>
   <ul class="mt-2">
-    <li v-for="item in 1" class="flex mb-2 pb-2">
-      <Avatar class="w-6 h-6" />
-      <div class="ml-2">
+    <li v-for="item in reply" class="flex mb-2 pb-2">
+      <Avatar class="w-6 h-6" :url="item.user?.avatar" />
+      <div class="ml-2 w-full">
         <div class="text-sm">
           <span class="mb-2">
-            <Name />
+            <KName :name="item.user.nickname" />
             <span class="flex-shrink-0 mx-2">
               {{ $t("subComments-reply") }}
             </span>
-            <Name name="@name" class="text-blue-400" /> :
+            <KName
+              :name="`@${item.replyUser.nickname}`"
+              class="text-blue-400"
+            />
+            :
           </span>
-          一、放下大概就是这样，即使我们没在一起，我也会好好的，谢谢时间惊艳了那段有你的记忆，也谢谢现在更努力变好的自己。
+          {{ item.content }}
         </div>
         <div class="text-xs text-light-5">
-          <span class="mr-2 cursor-pointer">8小时之前</span>
+          <span class="mr-2 cursor-pointer">{{
+            getRelativeTime(item.createdAt)
+          }}</span>
           <span class="mr-2 cursor-pointer">
-            <Icon name="icon-dianzan" class="mr-1" />11
+            <Icon name="icon-park-solid:thumbs-up" class="mr-1" />11
           </span>
-          <span class="cursor-pointer">{{ $t("subComments-reply") }}</span>
+          <span
+            class="cursor-pointer"
+            @click="(e) => subReply(e, item, parentId)"
+            >{{ $t("subComments-reply") }}</span
+          >
+          <div class="reply"></div>
         </div>
       </div>
     </li>
+    <p v-if="total>3" class="text-xs secondary-text cursor-pointer">共{{ total }}条回复, 点击查看</p>
   </ul>
 </template>
 
-<script setup></script>
+<script setup>
+const { getRelativeTime } = useTime();
+let { reply, subReply, parentId, total } = defineProps({
+  reply: {
+    type: Array,
+    default: () => [],
+  },
+  subReply: {
+    type: Function,
+    default: () => {},
+  },
+  parentId: {
+    type: String,
+    default: "",
+  },
+  total: {
+    type: Number,
+    default: 0,
+  },
+});
+</script>

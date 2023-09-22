@@ -5,11 +5,11 @@ export const useThemeStore = defineStore('theme', {
             blurValue: 'px',
         },
         themeConfig: {
-            saturateValue: '180%',
+            saturateValue: '0',
             blurValue: 10,
             // bgBodyImg: "url('https://images.hxsj.in/test/1.png')",
             bgBodyImg: "",
-            bgColor: 'rgba(255, 255, 255, 0.1)',
+            bgColor: 'rgba(255, 255, 255, 1)',
             // 遮罩颜色
             maskingColor: 'rgba(0,0,0,0.2)',
             // 常用颜色
@@ -32,9 +32,9 @@ export const useThemeStore = defineStore('theme', {
 
         },
         darkThemeConfig: {
-            saturateValue: '180%',
+            saturateValue: '0',
             blurValue: 10,
-            bgColor: 'rgba(0, 0, 0, 0.2)',
+            bgColor: 'rgba(0, 0, 0, 1)',
             bgBodyImg: "url('https://images.hxsj.in/test/1.jpg')",
             // 遮罩颜色
             maskingColor: 'rgba(0,0,0,0.2)',

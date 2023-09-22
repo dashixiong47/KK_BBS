@@ -77,3 +77,33 @@ func GetIntID(strID string) int {
 
 	return decryptID
 }
+
+// Del 删除指定开头的 key
+func Del(key string) error {
+	ctx := context.Background()
+	var cursor uint64
+	var err error
+	var keys []string
+
+	for {
+		keys, cursor, err = Rdb.Scan(ctx, cursor, key+"*", 10).Result()
+		if err != nil {
+			klog.Error("Scan 失败: %v", err)
+			return err
+		}
+
+		if len(keys) > 0 {
+			err = Rdb.Del(ctx, keys...).Err()
+			if err != nil {
+				klog.Error("删除 Redis 失败: %v", err)
+				return err
+			}
+		}
+
+		if cursor == 0 {
+			break
+		}
+	}
+
+	return nil
+}

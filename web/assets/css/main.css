@@ -4,28 +4,33 @@
 
 /* 记住几个口诀：padding magin取值 8px 16px 24px，font-size：12px 14px 16px，color：#333 #666 #999 */
 body {
-    @apply h-screen font-sans dark:bg-dark-1 dark:text-light-1;
+    @apply h-screen font-sans dark:bg-dark-1 dark:text-light-1 bg-slate-100 ;
     /* background-image: url('https://images.hxsj.in/test/1.jpg'); */
     /* background-image: url('~/assets/images/1.jpg'); */
     background-image: var(--bg-body-img);
     background-size: 100% 100%;
     background-repeat: no-repeat;
 }
+
 ::placeholder {
-    color: var(--placeholder-text)!important;
+    color: var(--placeholder-text) !important;
 }
+
 .dark ::placeholder {
     color: var(--dark-placeholder-text) !important;
 }
+
 .dark>body {
     background-image: var(--dark-bg-body-img);
 }
 
-.glass,.tippy-box[data-theme~='glass']{
-    @apply relative overflow-hidden shadow-center
+.glass,
+.tippy-box[data-theme~='glass'] {
+    @apply relative overflow-hidden shadow-center bg-white
 }
 
-.glass::before,.tippy-box[data-theme~='glass']::before {
+.glass::before,
+.tippy-box[data-theme~='glass']::before {
     @apply absolute left-0 top-0 right-0 bottom-0 -z-[1];
     content: '';
     background-color: var(--bg-color);
@@ -33,7 +38,8 @@ body {
     transform: translateZ(0);
 }
 
-.dark .glass::before,.dark .tippy-box[data-theme~='glass']::before {
+.dark .glass::before,
+.dark .tippy-box[data-theme~='glass']::before {
     background-color: var(--dark-bg-color);
     backdrop-filter: blur(var(--dark-blur-value)) saturate(var(--dark-saturate-value));
 }

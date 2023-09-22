@@ -110,8 +110,28 @@ type Group struct {
 
 // Like 点赞
 type Like struct {
-	ID uint `json:"id" gorm:"primaryKey;AUTO_INCREMENT"`
+	ID      uint `json:"id" gorm:"primaryKey;AUTO_INCREMENT"`
+	UserID  uint `json:"userId" gorm:"not null;index:index_user_id"`   // 用户ID
+	TopicID uint `json:"topicId" gorm:"not null;index:index_topic_id"` // 帖子ID
+	Model
+}
 
+// Comment 评论
+type Comment struct {
+	ID            uint   `json:"id" gorm:"primaryKey;AUTO_INCREMENT"`
+	ParentID      uint   `json:"parentId" gorm:"not null;index:index_parent_id"`    // 父级ID
+	UserID        uint   `json:"userId" gorm:"not null;index:index_user_id"`        // 用户ID
+	TopicID       uint   `json:"topicId" gorm:"not null;index:index_topic_id"`      // 帖子ID
+	ReplyToUserID uint   `json:"replyToUserId" gorm:"index:index_reply_to_user_id"` // 被回复用户的ID
+	Content       string `json:"content" gorm:"type:text;not null"`                 // 评论内容
+	Model
+}
+
+// CommentLike 评论点赞
+type CommentLike struct {
+	ID        uint `gorm:"primaryKey;AUTO_INCREMENT"`
+	UserID    uint `gorm:"primaryKey;index:index_user_id"`
+	CommentID uint `gorm:"primaryKey;index:index_comment_id"`
 	Model
 }
 
@@ -144,7 +164,7 @@ func initData() {
 }
 func autoMigrate() {
 	// 自动迁移
-	err := db.DB.AutoMigrate(&Topic{}, &TopicBasic{}, &TopicImage{}, &TopicVideo{}, &TopicText{}, &Tag{}, &File{})
+	err := db.DB.AutoMigrate(&Topic{}, &TopicBasic{}, &TopicImage{}, &TopicVideo{}, &TopicText{}, &Tag{}, &File{}, &Comment{})
 	if err != nil {
 		klog.Info("Failed to connect to database: %v", err)
 	}

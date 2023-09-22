@@ -3,6 +3,7 @@ package apis
 import (
 	"fmt"
 	"github.com/dashixiong47/KK_BBS/config"
+	"github.com/dashixiong47/KK_BBS/middleware"
 	"github.com/dashixiong47/KK_BBS/server"
 	"github.com/dashixiong47/KK_BBS/utils"
 	"github.com/gin-gonic/gin"
@@ -16,6 +17,9 @@ type Upload struct {
 }
 
 func (u *Upload) Post() utils.ResponseData {
+	if authMiddleware, data := middleware.AuthMiddleware(u.Ctx); !authMiddleware {
+		return *data
+	}
 	var uploadServer server.UploadServer
 	// 获取文件
 	file, err := u.Ctx.FormFile("file")

@@ -15,6 +15,7 @@ import (
 type UploadServer struct{}
 
 func (u *UploadServer) Query(md5 string) any {
+	
 	var fileInfo models.File
 	ctx := context.Background()
 	// 从redis中查询
