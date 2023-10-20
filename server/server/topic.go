@@ -31,11 +31,16 @@ func (s *TopicServer) Create(post *models.Topic) (string, error) {
 }
 
 // GetPostList 获取帖子列表
-func (s *TopicServer) GetPostList(paging utils.Paging) (any, error) {
+func (s *TopicServer) GetPostList(_type string, paging utils.Paging) (any, error) {
 	var docs []Topic
 	err := paging.SetPaging(db.DB).
 		Order("id desc").
 		Find(&docs).Error
+	if err != nil {
+		return nil, errors.New("unknown")
+	}
+	var count int64
+	err = db.DB.Model(&models.Topic{}).Count(&count).Error
 	if err != nil {
 		return nil, errors.New("unknown")
 	}
@@ -72,7 +77,10 @@ func (s *TopicServer) GetPostList(paging utils.Paging) (any, error) {
 			"createdAt": topic.Model.CreatedAt,
 		})
 	}
-	return topicList, nil
+	return map[string]any{
+		"list":  topicList,
+		"total": count,
+	}, nil
 }
 
 // GetTopicDetail 获取帖子详情
@@ -112,4 +120,10 @@ func (s *TopicServer) GetTopicDetail(id int) (any, error) {
 		"createdAt":   doc.Model.CreatedAt,
 		"topicDetail": detail,
 	}, nil
+}
+
+// LikeTopic 点赞
+func (s *TopicServer) LikeTopic(topicId, userId int) error {
+
+	return nil
 }

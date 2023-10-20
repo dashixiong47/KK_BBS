@@ -94,10 +94,11 @@ func (t *Topic) GetList() utils.ResponseData {
 	//if authMiddleware, data := middleware.AuthMiddleware(t.Ctx); !authMiddleware {
 	//	return *data
 	//}
+	var _type = t.Ctx.DefaultQuery("type", "1")
 	var paging utils.Paging
 	paging.GetPaging(t.Ctx)
 	var topicServer server.TopicServer
-	list, err := topicServer.GetPostList(paging)
+	list, err := topicServer.GetPostList(_type, paging)
 	if err != nil {
 		return utils.JsonFail(err)
 	}
@@ -115,4 +116,18 @@ func (t *Topic) GetBy(id string) utils.ResponseData {
 		return utils.JsonFail(err)
 	}
 	return utils.JsonSuccess(detail)
+}
+
+// PostLikeBy 点赞帖子
+func (t *Topic) PostLikeBy(id string) utils.ResponseData {
+	//if authMiddleware, data := middleware.AuthMiddleware(t.Ctx); !authMiddleware {
+	//	return *data
+	//}
+	userId, _ := t.Ctx.Get("id")
+	var topicServer server.TopicServer
+	err := topicServer.LikeTopic(db.GetIntID(id), userId.(int))
+	if err != nil {
+		return utils.JsonFail(err)
+	}
+	return utils.JsonSuccess(nil)
 }

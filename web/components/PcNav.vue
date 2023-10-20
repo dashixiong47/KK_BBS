@@ -1,6 +1,6 @@
 <template>
   <nav
-    class="glass shadow-md border-b h-16 box-content flex-shrink-0 content-center px-5 grid grid-cols-2 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-4"
+    class="glass z-10 shadow-md border-b h-16 box-content flex-shrink-0 content-center px-5 grid grid-cols-2 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-4"
   >
     <div class="md:col-span-1 primary-text">
       <KLink to="/" class="flex items-center h-full">
@@ -59,7 +59,7 @@
         <KLink v-if="isLogin" :to="`/user/1`">
           <Avatar :url="userInfo.avatar" class="w-full h-full" />
         </KLink>
-        <button v-else @click="setLoginStatus">登录/注册</button>
+        <KButton v-else @click="setLoginStatus">登录/注册</KButton>
       </div>
 
       <!-- <div class="absolute">1212</div> -->

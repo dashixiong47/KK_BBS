@@ -26,12 +26,13 @@ export const useUserStore = defineStore('userInfo', {
         getIsLogin: (state) => state.isLogin,
     },
     actions: {
-        async fetchUserInfo(id) {
+        async fetchUserInfo() {
             try {
-                const data = await useGetUserInfo(id);
+                const {data} = await useGetUserInfo();
                 this.setIslogin(true)
                 this.setUserInfo(data);
             } catch (error) {
+                this.setIslogin(false)
                 console.error("An error occurred while fetching the userInfo:", error);
             }
         },

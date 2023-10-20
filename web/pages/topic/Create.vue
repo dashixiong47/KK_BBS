@@ -4,6 +4,7 @@
       <div class="h-full m-1 col-span-9 sm:col-span-7">
         <Card>
           <div class="text-xl font-bold">发帖子</div>
+          <TopicType />
           <div class="border-t mt-5 py-5">
             <ul class="mb-5">
               <li v-for="item in getGroup">
@@ -151,10 +152,11 @@
 </template>
 
 <script setup>
-const { t } = useI18n();
+
 import { useUserStore } from "~/stores/main.js";
 import { useGroupStore } from "~/stores/init.js";
 import { createTopic } from "~/api";
+const { t } = useI18n();
 let { addMessage } = useMessage();
 let { to } = useToRoute();
 let store = useGroupStore();

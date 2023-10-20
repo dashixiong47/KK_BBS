@@ -1,13 +1,12 @@
 <template>
   <div class="flex flex-col items-end mb-5">
-    {{ props.modelValue }}
     <textarea
       :value="props.modelValue.content"
       @input="outInput"
-      class="w-full border border-[--border-light] dark:border-[--dark-border-light] mb-2 rounded-lg focus:outline-none p-2"
+      class="w-full h-16 text-sm border border-[--border-light] dark:border-[--dark-border-light] mb-2 rounded-lg focus:outline-none p-2"
       :placeholder="props.placeholder"
     />
-    <KButton class="w-20" @click="postCommentCreate">发表</KButton>
+    <KButton class="w-20 h-10 text-sm" @click="postCommentCreate">发表</KButton>
   </div>
 </template>
 

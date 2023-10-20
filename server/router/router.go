@@ -18,6 +18,7 @@ func RegisterRoutes(router *gin.RouterGroup, ctrl interface{}) {
 	}
 	v := reflect.New(t.Elem())      // 创建控制器的新实例
 	prefix := strings.ToLower(name) // 将控制器名转换为小写，用作 URL 前缀
+
 	// 遍历控制器的所有方法
 	for i := 0; i < t.NumMethod(); i++ {
 		state := false
@@ -37,6 +38,7 @@ func RegisterRoutes(router *gin.RouterGroup, ctrl interface{}) {
 			} else {
 				route = fmt.Sprintf("/%s/%s", prefix, routeSuffix)
 			}
+
 			router.Handle(httpMethod, route, func(ctx *gin.Context) {
 				// 设置 Ctx 字段的值
 				v.Elem().FieldByName("Ctx").Set(reflect.ValueOf(ctx))

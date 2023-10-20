@@ -27,12 +27,21 @@ type User struct {
 	Model
 }
 
-//// AfterFind 钩子，用于在查找之后解密 Email
-//func (u *User) AfterFind(tx *gorm.DB) (err error) {
-//	id, _ := utils.DecryptID(strconv.Itoa(int(u.ID)))
-//	u.ID = uint(id)
-//	return
-//}
+// // AfterFind 钩子，用于在查找之后解密 Email
+//
+//	func (u *User) AfterFind(tx *gorm.DB) (err error) {
+//		id, _ := utils.DecryptID(strconv.Itoa(int(u.ID)))
+//		u.ID = uint(id)
+//		return
+//	}
+//
+//// 枚举 type
+//const (
+//	TopicTypeDefault = iota + 1
+//	TopicTypeVideo
+//	TopicTypeImage
+//	TopicTypeText
+//)
 
 // Topic 帖子
 type Topic struct {
@@ -108,8 +117,8 @@ type Group struct {
 	Model
 }
 
-// Like 点赞
-type Like struct {
+// TopicLike 点赞
+type TopicLike struct {
 	ID      uint `json:"id" gorm:"primaryKey;AUTO_INCREMENT"`
 	UserID  uint `json:"userId" gorm:"not null;index:index_user_id"`   // 用户ID
 	TopicID uint `json:"topicId" gorm:"not null;index:index_topic_id"` // 帖子ID
@@ -129,9 +138,10 @@ type Comment struct {
 
 // CommentLike 评论点赞
 type CommentLike struct {
-	ID        uint `gorm:"primaryKey;AUTO_INCREMENT"`
-	UserID    uint `gorm:"primaryKey;index:index_user_id"`
-	CommentID uint `gorm:"primaryKey;index:index_comment_id"`
+	ID           uint `gorm:"primaryKey;AUTO_INCREMENT"`
+	UserID       uint `gorm:"primaryKey;index:index_user_id"`
+	CommentID    uint `gorm:"primaryKey;index:index_comment_id"`
+	SubCommentID uint `gorm:"primaryKey;index:index_sub_comment_id;default:0"`
 	Model
 }
 
@@ -164,7 +174,7 @@ func initData() {
 }
 func autoMigrate() {
 	// 自动迁移
-	err := db.DB.AutoMigrate(&Topic{}, &TopicBasic{}, &TopicImage{}, &TopicVideo{}, &TopicText{}, &Tag{}, &File{}, &Comment{})
+	err := db.DB.AutoMigrate(&TopicLike{}, &Topic{}, &TopicBasic{}, &TopicImage{}, &TopicVideo{}, &TopicText{}, &Tag{}, &File{}, &Comment{}, &CommentLike{})
 	if err != nil {
 		klog.Info("Failed to connect to database: %v", err)
 	}

@@ -7,8 +7,10 @@ import (
 	"fmt"
 	"github.com/dashixiong47/KK_BBS/db"
 	"github.com/dashixiong47/KK_BBS/models"
+	"github.com/dashixiong47/KK_BBS/server/data"
 	"github.com/dashixiong47/KK_BBS/utils"
 	"github.com/dashixiong47/KK_BBS/utils/klog"
+	"gorm.io/gorm"
 	"time"
 )
 
@@ -17,7 +19,19 @@ type CommentServer struct {
 
 // Create 创建评论
 func (s *CommentServer) Create(comment *models.Comment) (*models.Comment, error) {
+
 	err := db.DB.Create(comment).Error
+	if err != nil {
+		return nil, errors.New("create_comment_error")
+	}
+	ctx := context.Background()
+	var zName, name string
+	if comment.ParentID == 0 {
+		zName, name = data.GetName(int(comment.TopicID), int(comment.ID), 0)
+	} else {
+		zName, name = data.GetName(int(comment.TopicID), int(comment.ParentID), int(comment.ID))
+	}
+	_, err = db.Rdb.ZIncrBy(ctx, zName, 0, name).Result()
 	if err != nil {
 		return nil, errors.New("create_comment_error")
 	}
@@ -27,42 +41,57 @@ func (s *CommentServer) Create(comment *models.Comment) (*models.Comment, error)
 	return comment, nil
 }
 
-func (s *CommentServer) GetList(topicId int, paging utils.Paging) (any, error) {
+// GetList 获取评论列表
+func (s *CommentServer) GetList(topicId int, paging utils.Paging, _type string) (any, error) {
+	name := fmt.Sprintf("comment_list:%v:p:%v:s:%v:%v", topicId, paging.Page, paging.PageSize, _type)
 	ctx := context.Background()
-
+	var response data.CommentData // 最终返回的数据
 	// 尝试从 Redis 中获取缓存
-	result, err := db.Rdb.Get(ctx, fmt.Sprintf("comment_list:%v:p:%v:s:%v", topicId, paging.Page, paging.PageSize)).Result()
+	result, err := db.Rdb.Get(ctx, name).Result()
 	if err == nil {
-		var data map[string]interface{}
-		_ = json.Unmarshal([]byte(result), &data)
-		return data, nil
+		_ = json.Unmarshal([]byte(result), &response)
+		response.Comments = data.UpDataLike(response.Comments)
+		return response, nil
 	}
 
-	var comments []models.Comment
-	var docs []map[string]interface{}
-	// 查询一级评论
-	err = paging.SetPaging(db.DB).Where("topic_id = ?", topicId).
-		Where("parent_id = 0").
-		Order("created_at desc").
-		Find(&comments).Error
-	if err != nil {
-		return nil, errors.New("get_comments_error")
-	}
+	var comments = make([]models.Comment, 0)         // 一级评论
+	var allReplyComments = make([]models.Comment, 0) // 所有子评论
+	var docs = make([]data.Comment, 0)               // 评论列表
 
 	// 获取一级评论总数
 	var totalPrimaryComments int64
 	db.DB.Model(&models.Comment{}).Where("topic_id = ?", topicId).Where("parent_id = 0").Count(&totalPrimaryComments)
 
-	var ids []uint
-	for _, comment := range comments {
-		ids = append(ids, comment.ID)
+	if _type == "hot" {
+		// 查询一级热评
+		// 计算起始和结束的排名（0-based index）
+		start := int64((paging.Page - 1) * paging.PageSize)
+		end := start + int64(paging.PageSize) - 1
+
+		// 查询有序集合（按分数从大到小排序）
+		topIds, err := db.Rdb.ZRevRange(ctx, fmt.Sprintf("comment_like:%d", topicId), start, end).Result()
+		if err != nil {
+			fmt.Println("Error:", err)
+		}
+		err = db.DB.Where("id in ?", topIds).Find(&comments).Error
+		if err != nil {
+			return nil, errors.New("get_comments_error")
+		}
+	} else {
+		// 查询一级评论
+		err = paging.SetPaging(db.DB).Where("topic_id = ?", topicId).
+			Where("parent_id = 0").
+			Order("created_at desc").
+			Find(&comments).Error
+		if err != nil {
+			return nil, errors.New("get_comments_error")
+		}
 	}
 
 	// 收集所有子评论
-	var allReplyComments []models.Comment
-	for _, id := range ids {
+	for _, comment := range comments {
 		var replyCommentsForOneParent []models.Comment
-		err = db.DB.Where("parent_id = ?", id).
+		err = db.DB.Where("parent_id = ?", comment.ID).
 			Limit(3).
 			Order("created_at desc").
 			Find(&replyCommentsForOneParent).Error
@@ -72,78 +101,124 @@ func (s *CommentServer) GetList(topicId int, paging utils.Paging) (any, error) {
 		allReplyComments = append(allReplyComments, replyCommentsForOneParent...)
 	}
 
-	// 将子评论和它们的总数添加到相应的一级评论中
-	for _, comment := range comments {
-		var reply []map[string]interface{}
-		var totalReplyComments int64
-		db.DB.Model(&models.Comment{}).Where("parent_id = ?", comment.ID).Count(&totalReplyComments)
-
-		for _, replyComment := range allReplyComments {
-			if comment.ID == replyComment.ParentID {
-				reply = append(reply, map[string]interface{}{
-					"id":          db.GetID(replyComment.ID),
-					"content":     replyComment.Content,
-					"topicId":     db.GetID(replyComment.TopicID),
-					"parentId":    db.GetID(replyComment.ParentID),
-					"replyToUser": db.GetID(replyComment.ReplyToUserID),
-					"user":        getUserInfo(replyComment.UserID),
-					"replyUser":   getUserInfo(replyComment.ReplyToUserID),
-					"createdAt":   replyComment.CreatedAt,
-					"updatedAt":   replyComment.UpdatedAt,
-				})
-			}
-		}
-
-		docs = append(docs, map[string]interface{}{
-			"id":          db.GetID(comment.ID),
-			"content":     comment.Content,
-			"topicId":     db.GetID(comment.TopicID),
-			"parentId":    db.GetID(comment.ParentID),
-			"replyToUser": db.GetID(comment.ReplyToUserID),
-			"createdAt":   comment.CreatedAt,
-			"updatedAt":   comment.UpdatedAt,
-			"total":       totalReplyComments,
-			"user":        getUserInfo(comment.UserID),
-			"reply":       reply,
-		})
-	}
-
 	// 缓存结果到 Redis 并返回
-	response := map[string]interface{}{
-		"comments": docs,
-		"total":    totalPrimaryComments,
+	response = data.CommentData{
+		Comments: data.GetCommentList(topicId, docs, comments, allReplyComments),
+		Total:    totalPrimaryComments,
 	}
-
+	// 缓存到 Redis
 	marshal, err := json.Marshal(response)
 	if err != nil {
-		return nil, errors.New("json_marshal_error")
+		klog.Error("comments_redis_error: %v", err)
 	}
-	if err := db.Rdb.Set(ctx, fmt.Sprintf("comment_list:%v:p:%v:s:%v", topicId, paging.Page, paging.PageSize), marshal, time.Hour).Err(); err != nil {
-		return nil, errors.New("redis_set_error")
+	if err := db.Rdb.Set(ctx, name, marshal, time.Hour).Err(); err != nil {
+		klog.Error("comments_redis_error: %v", err)
 	}
-
+	response.Comments = data.UpDataLike(response.Comments)
 	return response, nil
 }
 
-func getUserInfo(userId uint) any {
-	ctx := context.Background()
-	userData, err := db.Rdb.Get(ctx, fmt.Sprintf("user_info:%v", userId)).Result()
-	if err == nil {
-		var data map[string]interface{}
-		_ = json.Unmarshal([]byte(userData), &data)
-		return data
-	} else {
-
-		var user models.User
-		db.DB.Where("id = ?", userId).Find(&user)
-		var data = map[string]interface{}{
-			"id":       db.GetID(user.ID),
-			"avatar":   user.Avatar,
-			"username": user.Username,
-			"nickname": user.Nickname,
-		}
-		db.Rdb.Set(ctx, fmt.Sprintf("user_info:%v", user.ID), data, time.Hour*2)
-
-		return data
+// GetSubCommentList 获取子评论列表
+func (s *CommentServer) GetSubCommentList(topicId, subId int, paging utils.Paging) (any, error) {
+	var comment []models.Comment
+	err := paging.SetPaging(db.DB).Model(comment).
+		Where("topic_id = ?", topicId).
+		Where("parent_id = ?", subId).
+		Order("created_at desc").
+		Find(&comment).Error
+	if err != nil {
+		return nil, errors.New("get_comments_error")
 	}
+	var docs []map[string]interface{}
+	for _, v := range comment {
+		docs = append(docs, map[string]interface{}{
+			"id":          db.GetID(v.ID),
+			"content":     v.Content,
+			"topicId":     db.GetID(v.TopicID),
+			"parentId":    db.GetID(v.ParentID),
+			"replyToUser": db.GetID(v.ReplyToUserID),
+			"user":        data.GetUserInfo(v.UserID),
+			"replyUser":   data.GetUserInfo(v.ReplyToUserID),
+			"createdAt":   v.CreatedAt,
+			"updatedAt":   v.UpdatedAt,
+		})
+
+	}
+	return docs, nil
+}
+
+// Like 点赞
+func (s *CommentServer) Like(topicId, userId, commentId, subCommentId int) error {
+	ctx := context.Background()
+
+	var commentLike models.CommentLike
+	zName, name := data.GetName(topicId, commentId, subCommentId)
+	// 查找是否存在该点赞记录（包括软删除的记录）
+	tex := db.DB.Unscoped().Where("user_id = ? AND comment_id = ?", userId, commentId)
+	if subCommentId != 0 {
+		tex.Where("sub_comment_id = ?", subCommentId)
+	}
+	err := tex.First(&commentLike).Error
+	// 开启数据库事务
+	tx := db.DB.Begin()
+	defer func() {
+		if r := recover(); r != nil {
+			tx.Rollback()
+		}
+	}()
+
+	if err == nil {
+		// 存在该记录
+		if commentLike.DeletedAt.Valid {
+			// 如果是软删除的记录，则恢复
+			if err := tx.Model(&commentLike).
+				Unscoped().
+				Update("deleted_at", nil).Error; err != nil {
+				tx.Rollback()
+				return errors.New("comment_like_error")
+			}
+			_, err := db.Rdb.ZIncrBy(ctx, zName, 1, name).Result()
+			if err != nil {
+				tx.Rollback()
+				return errors.New("comment_like_error")
+			}
+		} else {
+			// 如果是正常的记录，则进行软删除
+			if err := tx.Delete(&commentLike).Error; err != nil {
+				tx.Rollback()
+				return errors.New("comment_like_error")
+			}
+			_, err := db.Rdb.ZIncrBy(ctx, zName, -1, name).Result()
+			if err != nil {
+				tx.Rollback()
+				return errors.New("comment_like_error")
+			}
+		}
+	} else if errors.Is(err, gorm.ErrRecordNotFound) {
+		// 不存在该记录，创建新记录
+		commentLike = models.CommentLike{
+			UserID:       uint(userId),
+			CommentID:    uint(commentId),
+			SubCommentID: uint(subCommentId),
+		}
+		if err := tx.Create(&commentLike).Error; err != nil {
+			tx.Rollback()
+			return errors.New("comment_like_error")
+		}
+		_, err := db.Rdb.ZIncrBy(ctx, zName, 1, name).Result()
+		if err != nil {
+			tx.Rollback()
+			return errors.New("comment_like_error")
+		}
+	} else {
+		tx.Rollback()
+		return errors.New("comment_like_error")
+	}
+
+	// 提交数据库事务
+	if err := tx.Commit().Error; err != nil {
+		return errors.New("comment_like_error")
+	}
+
+	return nil
 }

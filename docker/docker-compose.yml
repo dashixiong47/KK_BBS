@@ -4,7 +4,7 @@ services:
 
   # Redis 容器配置
   redis:
-    image: redis:latest
+    image: redis:7.2
     container_name: my-redis
     command: redis-server --requirepass 123456 # 设置密码
     ports:
@@ -17,7 +17,7 @@ services:
 
   # PostgreSQL 容器配置
   postgres:
-    image: postgres:latest
+    image: postgres:15.4
     container_name: my-postgres
     environment:
       POSTGRES_USER: root

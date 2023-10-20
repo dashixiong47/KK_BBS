@@ -46,7 +46,7 @@ export const request = {
             }
         } catch (error) {
             console.error('Fetch Error:', error);
-            throw error;
+            throw new Error(error);
         }
     }
 };

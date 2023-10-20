@@ -30,7 +30,7 @@ export const useGroupStore = defineStore('group', {
             }
         },
         setGroup(group) {
-            this.group = { ...this.group, ...group };
+            this.group = [ ...this.group, ...group ];
         }
     },
 });

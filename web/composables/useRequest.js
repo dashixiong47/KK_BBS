@@ -2,7 +2,12 @@
 import { useCookie, useAsyncData } from '#app'
 import { useRuntimeConfig } from '#app'
 export const useRequest = {
-  get: (url) => {
+  get: (url, data = {}) => {
+    if (typeof data === 'object') {
+      const params = new URLSearchParams();
+      Object.keys(data).forEach(key => params.append(key, data[key]));
+      url+= '?' + params.toString();
+    }
     return useRequest._fetch(url, 'GET')
   },
   post: (url, body) => {
@@ -17,7 +22,7 @@ export const useRequest = {
   _fetch: async (url, method, body = null) => {
     const config = useRuntimeConfig()
     url = config.public.baseUrl + url
-    let cookie = useCookie("token").value;
+    let cookie = useCookie("token");
     let code
     let message
     try {
@@ -25,12 +30,12 @@ export const useRequest = {
         method: method,
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': cookie
+          'Authorization': cookie.value
         },
         body: body
       })
       code = data.value.code
-      message=data.value.message
+      message = data.value.message
       if (code === 200) {
         return data.value;
       } else if (code === 401) {

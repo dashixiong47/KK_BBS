@@ -15,8 +15,11 @@ async function init() {
       page: 1,
       pageSize: 10,
     });
-    list.value = data;
+
+    list.value = data.list;
+    console.log(data.total);
   } catch (error) {}
 }
+
 init();
 </script>

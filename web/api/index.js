@@ -25,3 +25,14 @@ export const commentCreate = async (data) => {
     return await request.post('/api/v1/comment/create', data);
 }
 
+// 评论点赞
+export const commentLike = async (id,data) => {
+    return await request.post('/api/v1/comment/like/'+id, data);
+}
+
+// 获取子评论
+export const subCommentList = async (subId,data) => {
+    return await request.get('/api/v1/comment/sub/list/'+subId, data);
+}
+
+

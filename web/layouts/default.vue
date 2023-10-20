@@ -1,10 +1,10 @@
 <template>
   <!-- 导航 -->
-  <PcNav class="z-10" />
+  <PcNav  />
   <div
     class="h-full grid grid-cols-24 p-3 sm:p-5 overflow-y-scroll relative z-0"
   >
-    <LeftBox class="fixed hidden xl:block" />
+    <LeftBox class="fixed left-5 hidden xl:block" />
     <main
       class="mx-auto col-start-1 col-span-24 xl:col-start-6 xl:col-end-20 grid grid-cols-3"
     >

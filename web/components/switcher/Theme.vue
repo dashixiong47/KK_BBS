@@ -36,11 +36,10 @@
   </template>
   
   <script setup>
-  import { reactive } from "vue";
   const colorMode = useColorMode();
-  let theme = reactive(colorMode.preference === "dark" ? true : false);
+  let theme = ref(colorMode.preference === "dark" ? true : false);
   const setValue = () => {
-    colorMode.preference = theme ? "light" : "dark";
+    colorMode.preference = theme.value ? "light" : "dark";
   };
   </script>
   

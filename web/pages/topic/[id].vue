@@ -1,18 +1,21 @@
 <template>
   <div class="">
+    <div class="w-full sticky top-0 z-50">
+      <ul class="w-10 absolute top-5 right-0 sm:-left-12">
+        <li
+          v-for="item in buttonList"
+          @click="handleClick(item)"
+          class="rounded-full cursor-pointer glass w-10 h-10 mb-5 flex items-center justify-center"
+        >
+          <Icon
+            :name="item.icon"
+            class="text-[--secondary-text] dark:text-[--dark-secondary-text]"
+          />
+        </li>
+      </ul>
+    </div>
     <div class="grid grid-cols-9">
       <div class="relative h-full m-1 col-span-9 sm:col-span-6">
-        <ul class="w-10 fixed top-40 -right-4 sm:left-12 z-50">
-          <li
-            v-for="item in buttonList"
-            class="rounded-full glass w-10 h-10 mb-5 flex items-center justify-center"
-          >
-            <Icon
-              :name="item.icon"
-              class="text-[--secondary-text] dark:text-[--dark-secondary-text]"
-            />
-          </li>
-        </ul>
         <Card>
           <div class="flex" v-if="detail.user">
             <Avatar :url="detail.user?.avatar" />
@@ -46,17 +49,19 @@
             <div v-html="detail.topicDetail?.hidden_content"></div>
           </div>
         </Card>
-        <Card class="mt-5">
-          <Comments :topicId="route.params.id"/>
+        <Card id="comment" class="mt-5">
+          <Comments :topicId="route.params.id" />
         </Card>
       </div>
-      <div class="hidden sm:col-span-3 sm:block m-1">
-        <Card class="sticky top-0">
-          <p class="border-b pb-2 mb-2 font-bold">附件</p>
-          <ul>
-            <li>121212</li>
-          </ul>
-        </Card>
+      <div class="sm:col-span-3 sm:block m-1">
+        <div class="sticky top-0">
+          <Card>
+            <p class="border-b pb-2 mb-2 font-bold">附件</p>
+            <ul>
+              <li>121212</li>
+            </ul>
+          </Card>
+        </div>
       </div>
     </div>
   </div>
@@ -86,11 +91,13 @@ const buttonList = ref([
   },
   {
     name: "点赞",
-    icon: "tabler:bookmark",
+    icon: "icon-park-solid:thumbs-up",
+    type: "like",
   },
   {
     name: "评论",
-    icon: "tabler:bookmark",
+    icon: "mdi:comment-processing-outline",
+    type: "comment",
   },
   {
     name: "举报",
@@ -108,10 +115,25 @@ async function getTopicDetail() {
     // const {data} = await useFetch("http://localhost:8080/api/v1/topic/" + route.params.id);
     let { data } = await useGetTopicDetail(route.params.id);
     detail.value = data || {};
-    console.log(data);
   } catch (error) {
     console.log(error);
     showError(error);
+  }
+}
+function handleClick(item) {
+  switch (item.type) {
+    case "comment":
+      console.log("---");
+      // 获取元素
+      var element = document.getElementById("comment");
+
+      // 滚动到元素
+      element.scrollIntoView({ behavior: "smooth" });
+
+      break;
+
+    default:
+      break;
   }
 }
 function init() {
