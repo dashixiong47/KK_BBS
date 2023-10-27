@@ -20,6 +20,12 @@ export const createTopic= async (data) => {
 export const topicList = async (data) => {
     return await request.get('/api/v1/topic/list', data);
 }
+
+// 帖子点赞
+export const topicLike = async (topicId,data) => {
+    return await request.post('/api/v1/topic/like/'+topicId, data);
+}
+
 // 发表评论
 export const commentCreate = async (data) => {
     return await request.post('/api/v1/comment/create', data);

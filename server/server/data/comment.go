@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"github.com/dashixiong47/KK_BBS/db"
 	"github.com/dashixiong47/KK_BBS/models"
+	"github.com/go-redis/redis/v8"
 	"time"
 )
 
@@ -34,7 +35,7 @@ type ReplyComment struct {
 // GetCommentLike 获取点赞数
 func GetCommentLike(topicId, commentId, subCommentId int) int {
 	ctx := context.Background()
-	zName, name := GetName(topicId, commentId, subCommentId)
+	zName, name := GetCommentLikeName(topicId, commentId, subCommentId)
 
 	like, err := db.Rdb.ZScore(ctx, zName, name).Result()
 	if err != nil {
@@ -97,7 +98,7 @@ func UpDataLike(comments []Comment) []Comment {
 	return comments
 }
 
-func GetName(topicId, commentId, subCommentId int) (string, string) {
+func GetCommentLikeName(topicId, commentId, subCommentId int) (string, string) {
 	zName := ""
 	name := ""
 	if subCommentId == 0 {
@@ -118,4 +119,40 @@ func GetLikeState(commentID, subCommentID int) bool {
 		Where("sub_comment_id = ?", subCommentID).
 		Count(&like)
 	return like > 0
+}
+
+// CommentLickPlus 点赞
+func CommentLickPlus(topicId, commentId, subCommentId int) error {
+	ctx := context.Background()
+	zName, name := GetCommentLikeName(topicId, commentId, subCommentId)
+	_, err := db.Rdb.ZIncrBy(ctx, zName, 1, name).Result()
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+// CommentLickMinus 取消点赞
+func CommentLickMinus(topicId, commentId, subCommentId int) error {
+	ctx := context.Background()
+	zName, name := GetCommentLikeName(topicId, commentId, subCommentId)
+	_, err := db.Rdb.ZIncrBy(ctx, zName, -1, name).Result()
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+// IsCommentLike 是否点赞
+func IsCommentLike(topicId, commentId, subCommentId int) bool {
+	ctx := context.Background()
+	zName, name := GetCommentLikeName(topicId, commentId, subCommentId)
+	_, err := db.Rdb.ZRank(ctx, zName, name).Result()
+	if err != nil {
+		return false
+	}
+	if err == redis.Nil {
+		return false
+	}
+	return true
 }

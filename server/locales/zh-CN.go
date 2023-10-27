@@ -23,4 +23,6 @@ var ZHCN = map[string]string{
 	"reply_to_user_id_error":     "被回复用户ID错误",
 	"get_comments_error":         "获取评论失败",
 	"comment_like_error":         "评论点赞失败",
+	"is_not_comment":             "该评论不存在",
+	"is_not_topic":               "该帖子不存在",
 }

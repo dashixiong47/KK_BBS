@@ -247,6 +247,7 @@ module.exports = {
                 acc[`.dark .${key}`] = { color: `var(--dark-${key})` };
                 return acc;
             }, {});
+            
             addUtilities({ ...newUtilities, ...darkUtilities }, ['responsive', 'hover']);
         },
     ],

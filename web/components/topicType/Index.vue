@@ -1,23 +1,13 @@
-import { KLink } from '.nuxt/components';
 <template>
-  <div class="border-t mt-5 pt-5">
-    <ul class="flex">
-      <li v-for="item in types">
-        <KLink
-          :to="`/${item.type}/create`"
-          class="mr-5"
-        >
-          <KButton class="mr-5">
-            {{ item.name }}
-          </KButton>
-        </KLink>
-      </li>
-    </ul>
-  </div>
+   <KTabs :tabs="types" @selectd="selectd"></KTabs>
 </template>
 
 <script setup>
 const types = [
+  {
+    name: "帖子",
+    type: "topic",
+  },
   {
     name: "视频",
     type: "video",
@@ -27,4 +17,7 @@ const types = [
     type: "text",
   },
 ];
+const selectd = (index) => {
+  console.log(index);
+};
 </script>

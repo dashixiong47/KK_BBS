@@ -17,7 +17,14 @@ func CreateToken(user models.User) (string, error) {
 	claims["authorized"] = true
 	claims["user"] = user.Username
 	claims["id"] = user.ID
-	claims["exp"] = time.Now().Add(time.Minute * time.Duration(config.SettingsConfig.Application.TokenTimeout)).Unix()
+	timeout := 0
+	if config.SettingsConfig.Application.Mode == "dev" {
+		timeout = 999999
+	} else {
+		timeout = config.SettingsConfig.Application.TokenTimeout
+	}
+
+	claims["exp"] = time.Now().Add(time.Minute * time.Duration(timeout)).Unix()
 	tokenString, err := token.SignedString(mySigningKey)
 	if err != nil {
 		return "", err

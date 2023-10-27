@@ -129,7 +129,7 @@ func (c *Comment) PostLikeBy(id string) utils.ResponseData {
 	}
 	var commentServer server.CommentServer
 	intID := db.GetIntID(id)
-	err = commentServer.Like(intID, int(userId.(float64)), db.GetIntID(commentId.CommentId), db.GetIntID(commentId.SubCommentId))
+	err = commentServer.LikeComment(intID, int(userId.(float64)), db.GetIntID(commentId.CommentId), db.GetIntID(commentId.SubCommentId))
 	if err != nil {
 		return utils.JsonFail(err)
 	}

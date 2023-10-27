@@ -12,7 +12,7 @@
       </div>
       <div>
         <span class="mr-5 regular-text text-xs">
-          <Icon name="tabler:eye" class="mr-1" />{{ formatNumber(11111) }}
+          <Icon name="tabler:eye" class="mr-1" />{{ formatNumber(detail.like) }}
         </span>
         <span class="regular-text text-xs">
           <Icon name="ic:round-location-on" class="mr-1" />上海
@@ -58,35 +58,18 @@
   </ul>
   <div class="my-2 grid grid-cols-12">
     <button
-      class="regular-text col-span-3 py-2 flex items-center justify-center rounded-lg font-medium text-sm  hover:glass border border-[rgba(0,0,0,0)] hover:border-[#ffffff] hover:shadow-center"
-      :class="{
-        '!text-blue-400': true,
-      }"
+      v-for="btn in btns"
+      class="regular-text col-span-3 py-2 flex items-center justify-center rounded-lg font-medium text-sm hover:glass border border-[rgba(0,0,0,0)] hover:border-[#ffffff] hover:shadow-center"
+      :class="[
+        btn.active
+          ? '!text-[--color-primary] dark:!text-[--dark-color-primary]'
+          : '',
+      ]"
+      @click="btn.func()"
     >
-      <Icon name="icon-park-solid:thumbs-up" size="1rem" />
-      <span class="mx-1">{{ formatNumber(1000) }}</span>
-      <span v-if="!isMobile"> 点赞</span>
-    </button>
-    <button
-      class="regular-text col-span-3 py-2 flex items-center justify-center rounded-lg font-medium text-sm  hover:glass border border-[rgba(0,0,0,0)] hover:border-[#ffffff] hover:shadow-center"
-    >
-      <Icon name="icon-park-solid:message-one" size="1rem" />
-      <span class="mx-1">123</span>
-      <span v-if="!isMobile">评论</span>
-    </button>
-    <button
-      class="regular-text col-span-3 py-2 flex items-center justify-center rounded-lg font-medium text-sm  hover:glass border border-[rgba(0,0,0,0)] hover:border-[#ffffff] hover:shadow-center"
-    >
-      <Icon name="icon-park-solid:thumbs-up" size="1rem" />
-      <span class="mx-1">123</span>
-      <span v-if="!isMobile"> 点赞</span>
-    </button>
-    <button
-      class="regular-text col-span-3 py-2 flex items-center justify-center rounded-lg font-medium text-sm  hover:glass border border-[rgba(0,0,0,0)] hover:border-[#ffffff] hover:shadow-center"
-    >
-      <Icon name="icon-park-solid:collection-files" size="1rem" />
-      <span class="mx-1">123</span>
-      <span v-if="!isMobile"> 收藏</span>
+      <Icon :name="btn.icon" size="1rem" />
+      <span class="mx-1">{{ btn.count }}</span>
+      <span v-if="!isMobile"> {{ btn.text }}</span>
     </button>
   </div>
 </template>
@@ -94,6 +77,12 @@
 import { ref, onMounted } from "vue";
 import useMobileDetect from "~/composables/useMobileDetect";
 import useFormatNumber from "~/composables/useFormatNumber";
+import { useUserStore, useLoginStore } from "~/stores/main";
+
+import { topicLike } from "~/api";
+let userInfo = useUserStore();
+let loginStore = useLoginStore();
+let isLogin = computed(() => userInfo.isLogin);
 const { getRelativeTime } = useTime();
 const { getPath } = usePath();
 let { detail } = defineProps({
@@ -103,7 +92,33 @@ let { detail } = defineProps({
     default: () => ({}),
   },
 });
-
+const btns = reactive([
+  {
+    icon: "icon-park-solid:thumbs-up",
+    text: "点赞",
+    count: detail.like,
+    active: detail.likeState,
+    func: () =>  handleLike(),
+  },
+  {
+    icon: "icon-park-solid:message-one",
+    text: "评论",
+    count: detail.comment,
+    func: () => {},
+  },
+  {
+    icon: "icon-park-solid:thumbs-up",
+    text: "点赞",
+    count: detail.like,
+    func: () => {},
+  },
+  {
+    icon: "icon-park-solid:collection-files",
+    text: "收藏",
+    count: detail.collect,
+    func: () => {},
+  },
+]);
 const listContainer = ref(null);
 const items = ref(Array(3).fill(null));
 const itemsToShow = ref([...items.value]);
@@ -112,6 +127,7 @@ let images = computed(() => {
 });
 const { formatNumber } = useFormatNumber();
 const { isMobile } = useMobileDetect();
+
 /**
  * @argument {number} length
  * @argument {number} index
@@ -137,6 +153,22 @@ const getClassName = (length, index) => {
       return "col-span-2";
     default:
       return "col-span-2";
+  }
+};
+/**
+ * @description 点赞
+ */
+const handleLike = async () => {
+  if (!isLogin.value) {
+    loginStore.setLoginStatus();
+    return;
+  }
+  try {
+    await topicLike(detail.id);
+    btns[0].active = !btns[0].active;
+    btns[0].active ? btns[0].count++ : btns[0].count--;
+  } catch (error) {
+    console.log(error);
   }
 };
 </script>

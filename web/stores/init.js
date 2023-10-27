@@ -20,7 +20,7 @@ export const useGroupStore = defineStore('group', {
         async fetchGroup() {
             if (!Object.keys(this.group).length) {
                 try {
-                    const {data} = await useGetGroupDetail();
+                    const { data } = await useGetGroupDetail();
                     this.setGroup(data);
                     this.error = null;  // 清除任何旧的错误信息
                 } catch (error) {
@@ -30,7 +30,21 @@ export const useGroupStore = defineStore('group', {
             }
         },
         setGroup(group) {
-            this.group = [ ...this.group, ...group ];
+            this.group = [...this.group, ...group];
         }
     },
 });
+
+export const useAppConfigStore = defineStore("appConfig", {
+    state: () => ({
+        config: {
+            appName: "kkbbs"
+        }
+    }),
+    getters: {
+        getConfig(state) {
+            return state.config;
+        }
+    },
+
+})

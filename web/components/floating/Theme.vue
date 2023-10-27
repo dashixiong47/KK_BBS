@@ -79,7 +79,7 @@ let { index } = defineProps({
 let colorObj = {
   bgColor: "背景颜色", // 背景颜色
   // 常用颜色
-  colorPrimary: "主要颜色", // 主要颜色
+  colorPrimary: "选中颜色", // 选中颜色
   colorSuccess: "成功颜色", // 成功颜色
   colorWarning: "警告颜色", // 警告颜色
   colorDanger: "危险颜色", // 危险颜色

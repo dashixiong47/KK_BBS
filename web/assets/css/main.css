@@ -26,17 +26,17 @@ body {
 
 .glass,
 .tippy-box[data-theme~='glass'] {
-    @apply relative overflow-hidden shadow-center bg-white
+    @apply relative shadow-center overflow-hidden  bg-[--bg-color] dark:bg-[--dark-bg-color]
 }
-
-.glass::before,
+/* shadow-center */
+/* .glass::before,
 .tippy-box[data-theme~='glass']::before {
     @apply absolute left-0 top-0 right-0 bottom-0 -z-[1];
     content: '';
     background-color: var(--bg-color);
     backdrop-filter: blur(var(--blur-value)) saturate(var(--saturate-value));
     transform: translateZ(0);
-}
+} */
 
 .dark .glass::before,
 .dark .tippy-box[data-theme~='glass']::before {
@@ -92,4 +92,18 @@ body {
 /* 滑块hover样式 */
 ::-webkit-scrollbar-thumb:hover {
     @apply bg-gray-500;
+}
+
+/* 默认选中的背景色 */
+.activeBgColor{
+    @apply bg-[--color-primary] dark:bg-[--dark-color-primary]
+}
+/* 默认选中的字体色 */
+.activeTextColor{
+    @apply text-[--color-primary] dark:text-[--dark-color-primary]
+}
+
+/* 默认主要字体颜色 */
+.textColor{
+    @apply text-[--color-primary] dark:text-[--dark-color-primary]
 }

@@ -5,7 +5,7 @@ let router = useRouter();
 const { locale } = useI18n();
 
 const { isMobile } = useMobileDetect();
-const runtimeConfig = useRuntimeConfig()
+const runtimeConfig = useRuntimeConfig();
 // console.log(runtimeConfig);  // 输出：https://api.example.com
 // console.log(router);
 </script>
@@ -19,6 +19,8 @@ const runtimeConfig = useRuntimeConfig()
       <p>{{ $t("welcome") }}</p>
     </form>
   </div> -->
-  <TopicList />
+  <div>
+    <TopicList />
+  </div>
 </template>
 <style lang="postcss"></style>

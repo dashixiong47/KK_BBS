@@ -10,7 +10,6 @@ import (
 	"github.com/dashixiong47/KK_BBS/server/data"
 	"github.com/dashixiong47/KK_BBS/utils"
 	"github.com/dashixiong47/KK_BBS/utils/klog"
-	"gorm.io/gorm"
 	"time"
 )
 
@@ -27,9 +26,9 @@ func (s *CommentServer) Create(comment *models.Comment) (*models.Comment, error)
 	ctx := context.Background()
 	var zName, name string
 	if comment.ParentID == 0 {
-		zName, name = data.GetName(int(comment.TopicID), int(comment.ID), 0)
+		zName, name = data.GetCommentLikeName(int(comment.TopicID), int(comment.ID), 0)
 	} else {
-		zName, name = data.GetName(int(comment.TopicID), int(comment.ParentID), int(comment.ID))
+		zName, name = data.GetCommentLikeName(int(comment.TopicID), int(comment.ParentID), int(comment.ID))
 	}
 	_, err = db.Rdb.ZIncrBy(ctx, zName, 0, name).Result()
 	if err != nil {
@@ -147,18 +146,21 @@ func (s *CommentServer) GetSubCommentList(topicId, subId int, paging utils.Pagin
 	return docs, nil
 }
 
-// Like 点赞
-func (s *CommentServer) Like(topicId, userId, commentId, subCommentId int) error {
-	ctx := context.Background()
+// LikeComment 点赞
+func (s *CommentServer) LikeComment(topicId, userId, commentId, subCommentId int) error {
 
 	var commentLike models.CommentLike
-	zName, name := data.GetName(topicId, commentId, subCommentId)
+	state := data.IsCommentLike(topicId, commentId, subCommentId)
+	if !state {
+		return errors.New("is_not_comment")
+	}
 	// 查找是否存在该点赞记录（包括软删除的记录）
-	tex := db.DB.Unscoped().Where("user_id = ? AND comment_id = ?", userId, commentId)
+	tex := db.DB.Unscoped().
+		Where("user_id = ? AND comment_id = ?", userId, commentId)
 	if subCommentId != 0 {
 		tex.Where("sub_comment_id = ?", subCommentId)
 	}
-	err := tex.First(&commentLike).Error
+	tex.First(&commentLike)
 	// 开启数据库事务
 	tx := db.DB.Begin()
 	defer func() {
@@ -166,35 +168,33 @@ func (s *CommentServer) Like(topicId, userId, commentId, subCommentId int) error
 			tx.Rollback()
 		}
 	}()
-
-	if err == nil {
-		// 存在该记录
-		if commentLike.DeletedAt.Valid {
-			// 如果是软删除的记录，则恢复
-			if err := tx.Model(&commentLike).
-				Unscoped().
-				Update("deleted_at", nil).Error; err != nil {
-				tx.Rollback()
-				return errors.New("comment_like_error")
-			}
-			_, err := db.Rdb.ZIncrBy(ctx, zName, 1, name).Result()
-			if err != nil {
-				tx.Rollback()
-				return errors.New("comment_like_error")
-			}
-		} else {
-			// 如果是正常的记录，则进行软删除
-			if err := tx.Delete(&commentLike).Error; err != nil {
-				tx.Rollback()
-				return errors.New("comment_like_error")
-			}
-			_, err := db.Rdb.ZIncrBy(ctx, zName, -1, name).Result()
-			if err != nil {
-				tx.Rollback()
-				return errors.New("comment_like_error")
-			}
+	// 如果存在该记录
+	if commentLike.ID != 0 && commentLike.DeletedAt.Valid {
+		// 如果是软删除的记录，则恢复
+		if err := tx.Model(&commentLike).
+			Unscoped().
+			Update("deleted_at", nil).Error; err != nil {
+			tx.Rollback()
+			return errors.New("comment_like_error")
 		}
-	} else if errors.Is(err, gorm.ErrRecordNotFound) {
+		err := data.CommentLickPlus(topicId, commentId, subCommentId)
+		if err != nil {
+			tx.Rollback()
+			return errors.New("comment_like_error")
+		}
+		//	如果是正常的记录，则进行软删除
+	} else if commentLike.ID != 0 && !commentLike.DeletedAt.Valid {
+		if err := tx.Delete(&commentLike).Error; err != nil {
+			tx.Rollback()
+			return errors.New("comment_like_error")
+		}
+		err := data.CommentLickMinus(topicId, commentId, subCommentId)
+		if err != nil {
+			tx.Rollback()
+			return errors.New("comment_like_error")
+		}
+		// 不存在该记录，创建新记录
+	} else {
 		// 不存在该记录，创建新记录
 		commentLike = models.CommentLike{
 			UserID:       uint(userId),
@@ -205,14 +205,11 @@ func (s *CommentServer) Like(topicId, userId, commentId, subCommentId int) error
 			tx.Rollback()
 			return errors.New("comment_like_error")
 		}
-		_, err := db.Rdb.ZIncrBy(ctx, zName, 1, name).Result()
+		err := data.CommentLickPlus(topicId, commentId, subCommentId)
 		if err != nil {
 			tx.Rollback()
 			return errors.New("comment_like_error")
 		}
-	} else {
-		tx.Rollback()
-		return errors.New("comment_like_error")
 	}
 
 	// 提交数据库事务

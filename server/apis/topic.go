@@ -91,14 +91,16 @@ func (t *Topic) PostCreate() utils.ResponseData {
 
 // GetList 帖子列表
 func (t *Topic) GetList() utils.ResponseData {
-	//if authMiddleware, data := middleware.AuthMiddleware(t.Ctx); !authMiddleware {
-	//	return *data
-	//}
+	middleware.AuthMiddleware(t.Ctx)
 	var _type = t.Ctx.DefaultQuery("type", "1")
 	var paging utils.Paging
 	paging.GetPaging(t.Ctx)
+	userId, _ := t.Ctx.Get("id")
+	if userId == nil {
+		userId = float64(0)
+	}
 	var topicServer server.TopicServer
-	list, err := topicServer.GetPostList(_type, paging)
+	list, err := topicServer.GetTopicList(_type, uint(userId.(float64)), paging)
 	if err != nil {
 		return utils.JsonFail(err)
 	}
@@ -106,12 +108,12 @@ func (t *Topic) GetList() utils.ResponseData {
 }
 
 // GetBy 帖子详情
-func (t *Topic) GetBy(id string) utils.ResponseData {
+func (t *Topic) GetBy(topicId string) utils.ResponseData {
 	//if authMiddleware, data := middleware.AuthMiddleware(t.Ctx); !authMiddleware {
 	//	return *data
 	//}
 	var topicServer server.TopicServer
-	detail, err := topicServer.GetTopicDetail(db.GetIntID(id))
+	detail, err := topicServer.GetTopicDetail(db.GetIntID(topicId))
 	if err != nil {
 		return utils.JsonFail(err)
 	}
@@ -119,13 +121,14 @@ func (t *Topic) GetBy(id string) utils.ResponseData {
 }
 
 // PostLikeBy 点赞帖子
-func (t *Topic) PostLikeBy(id string) utils.ResponseData {
-	//if authMiddleware, data := middleware.AuthMiddleware(t.Ctx); !authMiddleware {
-	//	return *data
-	//}
+func (t *Topic) PostLikeBy(topicId string) utils.ResponseData {
+	if authMiddleware, data := middleware.AuthMiddleware(t.Ctx); !authMiddleware {
+		return *data
+	}
 	userId, _ := t.Ctx.Get("id")
 	var topicServer server.TopicServer
-	err := topicServer.LikeTopic(db.GetIntID(id), userId.(int))
+
+	err := topicServer.LikeTopic(db.GetIntID(topicId), int(userId.(float64)))
 	if err != nil {
 		return utils.JsonFail(err)
 	}

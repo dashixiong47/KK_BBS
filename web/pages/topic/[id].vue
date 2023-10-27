@@ -11,6 +11,12 @@
             :name="item.icon"
             class="text-[--secondary-text] dark:text-[--dark-secondary-text]"
           />
+          <div
+            class="w-4 h-4 absolute -top-2 -right-2 rounded-full bg-slate-400 text-white text-xs flex items-center justify-center"
+            v-if="!getData(item.type)"
+          >
+            {{ getData(item.type) }}
+          </div>
         </li>
       </ul>
     </div>
@@ -40,10 +46,8 @@
               </div>
             </div>
           </div>
-          <div
-            class="border-t mt-5 py-5"
-            v-html="detail.topicDetail?.content"
-          ></div>
+          <h2 class="font-medium text-xl mt-5">{{ detail.title }}</h2>
+          <div class="py-5" v-html="detail.topicDetail?.content"></div>
           <div v-if="detail.topicDetail?.hidden">
             <div class="text-md font-bold">隐藏内容</div>
             <div v-html="detail.topicDetail?.hidden_content"></div>
@@ -70,9 +74,12 @@
 <script setup>
 import { useRoute } from "#app";
 import { useGetTopicDetail } from "~/api/server";
+import { useAppConfigStore } from "~/stores/init";
 
 import useMobileDetect from "~/composables/useMobileDetect";
 import useFormatNumber from "~/composables/useFormatNumber";
+let appConfigStore = useAppConfigStore();
+let appConfig = computed(() => appConfigStore.getConfig);
 definePageMeta({
   layout: "user",
 });
@@ -109,12 +116,14 @@ const buttonList = ref([
   },
 ]);
 let detail = ref({});
-
 async function getTopicDetail() {
   try {
     // const {data} = await useFetch("http://localhost:8080/api/v1/topic/" + route.params.id);
     let { data } = await useGetTopicDetail(route.params.id);
     detail.value = data || {};
+    useHead({
+      title: detail.value.title + " - " + appConfig.value.appName,
+    });
   } catch (error) {
     console.log(error);
     showError(error);
@@ -132,6 +141,16 @@ function handleClick(item) {
 
       break;
 
+    default:
+      break;
+  }
+}
+function getData(type) {
+  switch (type) {
+    case "like":
+      return detail.value.like;
+    case "comment":
+      return detail.value.comment;
     default:
       break;
   }

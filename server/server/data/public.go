@@ -18,7 +18,6 @@ func GetUserInfo(userId uint) any {
 		_ = json.Unmarshal([]byte(userData), &data)
 		return data
 	} else {
-
 		var user models.User
 		db.DB.Where("id = ?", userId).Find(&user)
 		var data = map[string]interface{}{
@@ -31,4 +30,12 @@ func GetUserInfo(userId uint) any {
 
 		return data
 	}
+}
+
+func GetUserList(userIds []uint) []models.User {
+	var users []models.User
+	if err := db.DB.Model(models.User{}).Where("id IN ?", userIds).Find(&users).Error; err != nil {
+		return make([]models.User, 0)
+	}
+	return users
 }

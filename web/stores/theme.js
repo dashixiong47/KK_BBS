@@ -14,7 +14,7 @@ export const useThemeStore = defineStore('theme', {
             maskingColor: 'rgba(0,0,0,0.2)',
             // 常用颜色
             colorWhite: "#ffffff",     //默认白色
-            colorPrimary: '#409eff',   // 主要颜色
+            colorPrimary: '#409eff',   // 选中颜色
             colorSuccess: '#67c23a',   // 成功颜色
             colorWarning: '#e6a23c',   // 警告颜色
             colorDanger: '#f56c6c',    // 危险颜色
@@ -34,7 +34,7 @@ export const useThemeStore = defineStore('theme', {
         darkThemeConfig: {
             saturateValue: '0',
             blurValue: 10,
-            bgColor: 'rgba(0, 0, 0, 1)',
+            bgColor: '#31363a',
             bgBodyImg: "url('https://images.hxsj.in/test/1.jpg')",
             // 遮罩颜色
             maskingColor: 'rgba(0,0,0,0.2)',

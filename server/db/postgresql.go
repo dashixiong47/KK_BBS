@@ -6,6 +6,7 @@ import (
 	"github.com/dashixiong47/KK_BBS/utils/klog"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
+	"gorm.io/gorm/schema"
 )
 
 var DB *gorm.DB
@@ -15,6 +16,10 @@ func init() {
 	db, err := gorm.Open(postgres.Open(dsn), &gorm.Config{
 		//	打印出sql语句
 		//Logger: logger.Default.LogMode(logger.Info),
+		NamingStrategy: schema.NamingStrategy{
+			TablePrefix:   "kk_", // 表名前缀
+			SingularTable: true,  // 使用单数表名，禁用默认表名复数化
+		},
 	})
 	if err != nil {
 		klog.Error("Failed to connect to database: %v", err)

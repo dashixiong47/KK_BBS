@@ -8,6 +8,7 @@
 
 <script setup>
 import { useGetTopicList } from "@/api/server";
+
 const list = ref([]);
 async function init() {
   try {
@@ -17,7 +18,6 @@ async function init() {
     });
 
     list.value = data.list;
-    console.log(data.total);
   } catch (error) {}
 }
 

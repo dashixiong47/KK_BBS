@@ -1,14 +1,14 @@
 package models
 
 func (TopicBasic) TableName() string {
-	return "topic_basics"
+	return "kk_topic_basics"
 }
 func (TopicImage) TableName() string {
-	return "topic_images"
+	return "kk_topic_images"
 }
 func (TopicText) TableName() string {
-	return "topic_texts"
+	return "kk_topic_texts"
 }
 func (TopicVideo) TableName() string {
-	return "topic_videos"
+	return "kk_topic_videos"
 }

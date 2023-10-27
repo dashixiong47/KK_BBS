@@ -3,10 +3,10 @@
     <div class="grid grid-cols-9">
       <div class="h-full m-1 col-span-9 sm:col-span-7">
         <Card>
-          <div class="text-xl font-bold">发帖子</div>
+          <div class="text-xl font-bold">发</div>
           <TopicType />
           <div class="border-t mt-5 py-5">
-            <ul class="mb-5">
+            <!-- <ul class="mb-5">
               <li v-for="item in getGroup">
                 <KButton
                   @click="formData.groupId = item.id"
@@ -16,7 +16,7 @@
                   {{ item.name }}
                 </KButton>
               </li>
-            </ul>
+            </ul> -->
             <div class="flex items-center mb-5">
               <KInput
                 type="text"
@@ -32,31 +32,7 @@
                 选择封面
               </KButton>
             </div>
-            <!-- 默认编辑器 -->
-            <Editor
-              ref="content"
-              v-model:moduleValue="formData.topicBasic.content"
-              placeholder="请输入"
-              class="mb-5 mix-h-96"
-            />
-            <!-- 上传附件按钮 -->
-            <div class="mb-5">
-              <KButton class="mr-5" @click="showUpload = !showUpload">
-                上传附件
-              </KButton>
-            </div>
-            <!-- 是否回复可见 -->
-            <div class="flex">
-              <KButton @click="hiddenContentStatus = !hiddenContentStatus" :actived="hiddenContentStatus">
-                评论可见
-              </KButton>
-            </div>
-            <!-- 隐藏内容 -->
-            <Editor
-              class="mt-5"
-              v-if="hiddenContentStatus"
-              v-model:moduleValue="formData.topicBasic.hiddenContent"
-            />
+            <Publish></Publish>
           </div>
           <!-- 附件 -->
           <div>
@@ -94,17 +70,7 @@
   </div>
   <!-- 上传附件 -->
   <Dialog v-model="showUpload">
-    <div class="w-[800px] h-96">
-      {{ uploadGattachmentList }}
-      <DragColumn :items="uploadGattachmentList"></DragColumn>
-      <Upload
-        accept="*"
-        multiple
-        @uploadSuccess="(val) => uploadGattachmentList.push(val)"
-      >
-        <KButton>上传</KButton>
-      </Upload>
-    </div>
+    <UploadFiles v-model="fileList"></UploadFiles>
   </Dialog>
 
   <!-- 选择封面 -->
@@ -152,35 +118,23 @@
 </template>
 
 <script setup>
-
-import { useUserStore } from "~/stores/main.js";
 import { useGroupStore } from "~/stores/init.js";
 import { createTopic } from "~/api";
 const { t } = useI18n();
+
+
 let { addMessage } = useMessage();
 let { to } = useToRoute();
 let store = useGroupStore();
-let userStore = useUserStore();
-let userInfo = computed(() => userStore.getUserInfo);
 let getGroup = computed(() => store.getGroup);
 let captchaRef = ref(null);
-let showUpload = ref(false);
+
 let uploadCover = ref(false);
 let uploadImgList = ref([]);
-let uploadGattachmentList = ref([]);
+// 附件列表
+let fileList = ref([]);
 let activeCoverList = ref([]);
-let hiddenContentStatus = ref(false);
 let formData = ref({
-  userId: userInfo.value.id,
-  title: "",
-  tags: [],
-  type: 1,
-  covers: [],
-  topicBasic: {
-    content: "",
-    hidden: hiddenContentStatus.value ? 1 : 0,
-    hiddenContent: "",
-  },
   code: "",
   groupId: getGroup.value[0]?.id,
   captchaId: "",

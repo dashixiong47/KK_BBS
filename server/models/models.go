@@ -92,6 +92,14 @@ type TopicText struct {
 	Introduction string       `json:"introduction" gorm:"size:255"` // 简介
 }
 
+// TopicView 浏览
+type TopicView struct {
+	ID      uint `json:"id" gorm:"primaryKey;AUTO_INCREMENT"`
+	UserID  uint `json:"userId" gorm:"not null;index:index_user_id"`   // 用户ID
+	TopicID uint `json:"topicId" gorm:"not null;index:index_topic_id"` // 帖子ID
+	Model
+}
+
 // Tag 标签
 type Tag struct {
 	ID   uint   `json:"id" gorm:"primaryKey;AUTO_INCREMENT"`
@@ -174,7 +182,7 @@ func initData() {
 }
 func autoMigrate() {
 	// 自动迁移
-	err := db.DB.AutoMigrate(&TopicLike{}, &Topic{}, &TopicBasic{}, &TopicImage{}, &TopicVideo{}, &TopicText{}, &Tag{}, &File{}, &Comment{}, &CommentLike{})
+	err := db.DB.AutoMigrate(&TopicLike{}, &Topic{}, &TopicBasic{}, &TopicImage{}, &TopicVideo{}, &TopicText{}, &TopicView{}, &Tag{}, &File{}, &Comment{}, &CommentLike{})
 	if err != nil {
 		klog.Info("Failed to connect to database: %v", err)
 	}
