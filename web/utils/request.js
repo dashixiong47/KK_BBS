@@ -1,5 +1,5 @@
 import { useCookie,useRuntimeConfig } from '#app'
-
+const { setCookie,getCookie } = useCookies();
 export const request = {
     get: (url, data = {}, options = {}) => {
         // data 对象转换成查询字符串
@@ -19,11 +19,10 @@ export const request = {
     },
     _request: async (url, method = 'GET', data = {}, options = {}) => {
         const config = useRuntimeConfig()
-        let cookie = useCookie("token")
         const defaultOptions = {
             method,
             headers: {
-                'Authorization': cookie.value
+                'Authorization': getCookie('token'),
             },
         };
         if (['POST', 'PUT', 'DELETE'].includes(method.toUpperCase())) {
@@ -39,7 +38,7 @@ export const request = {
             if (code === 200) {
                 return data;
             } else if (code === 401) {
-                cookie.value = null;
+                setCookie('token', null)
                 throw new Error(message);
             } else {
                 throw new Error(message);

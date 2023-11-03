@@ -1,16 +1,14 @@
-import { emit } from 'process';
 <template>
   <div class="flex justify-center">
-    <div class="flex items-center">
+    <div class="flex items-center shadow-center rounded-2xl bg-[#dddde2] overflow-hidden">
       <div
         v-for="(tab, index) in tabs"
         :key="index"
         :class="[
-          'relative h-8 w-20 bg-slate-300',
-          'cursor-pointer',
-          modelValue === index ? 'activeBgColor' : '',
-          index === 0 ? 'rounded-l-2xl' : '',
-          index === tabs.length - 1 ? 'rounded-r-2xl' : '',
+          'relative text-sm h-8 w-20 uncheckedColor',
+          'cursor-pointer ml-[1px]',
+          index === 0 ? '!ml-0' : '',
+          modelValue === index ? 'activeColor' : '',
         ]"
         @click="actived(index)"
       >

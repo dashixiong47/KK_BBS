@@ -1,12 +1,14 @@
 <template>
   <div class="">
     <div class="grid grid-cols-9">
-      <div class="h-full m-1 col-span-9 sm:col-span-7">
+      <div class="h-full m-1 col-span-9">
         <Card>
-          <div class="text-xl font-bold">发</div>
+          <!-- 帖子类型 -->
           <TopicType />
+          <!-- 通用 标题封面 -->
           <div class="border-t mt-5 py-5">
-            <!-- <ul class="mb-5">
+            <Skeleton :lines="3" v-if="!getGroup.length" />
+            <ul class="mb-5">
               <li v-for="item in getGroup">
                 <KButton
                   @click="formData.groupId = item.id"
@@ -16,7 +18,7 @@
                   {{ item.name }}
                 </KButton>
               </li>
-            </ul> -->
+            </ul>
             <div class="flex items-center mb-5">
               <KInput
                 type="text"
@@ -32,10 +34,17 @@
                 选择封面
               </KButton>
             </div>
-            <Publish></Publish>
+            <component ref="publish" :is="Topic"></component>
           </div>
-          <!-- 附件 -->
-          <div>
+          <!-- 是否回复可见 -->
+          <p class="flex mb-5">
+            上传附件:<KSwitch class="ml-2" v-model="uploadShow"></KSwitch>
+          </p>
+
+          <!-- 上传附件 -->
+          <Attachment v-if="uploadShow" v-model="fileList"></Attachment>
+
+          <div class="mt-5">
             <div class="flex mb-5">
               <Captcha
                 ref="captchaRef"
@@ -45,7 +54,7 @@
               <KInput
                 v-model="formData.code"
                 type="text"
-                class="border w-36 rounded-lg p-2 ml-5"
+                class="w-36 rounded-lg p-2 ml-5"
                 placeholder="验证码"
               />
             </div>
@@ -58,20 +67,8 @@
           </div>
         </Card>
       </div>
-      <div class="hidden sm:col-span-2 sm:block m-1">
-        <Card class="sticky top-0">
-          <p class="border-b pb-2 mb-2 font-bold">附件</p>
-          <ul>
-            <li>121212</li>
-          </ul>
-        </Card>
-      </div>
     </div>
   </div>
-  <!-- 上传附件 -->
-  <Dialog v-model="showUpload">
-    <UploadFiles v-model="fileList"></UploadFiles>
-  </Dialog>
 
   <!-- 选择封面 -->
   <Dialog v-model="uploadCover">
@@ -120,29 +117,46 @@
 <script setup>
 import { useGroupStore } from "~/stores/init.js";
 import { createTopic } from "~/api";
+import { useUserStore } from "~/stores/main.js";
+import Topic from "~/components/publish/Index.vue";
+let userStore = useUserStore();
 const { t } = useI18n();
-
 
 let { addMessage } = useMessage();
 let { to } = useToRoute();
 let store = useGroupStore();
 let getGroup = computed(() => store.getGroup);
 let captchaRef = ref(null);
-
+// 上传文件显示of隐藏
+let uploadShow = ref(false);
+// 发布组件
+let publish = ref(null);
+// 用户信息
+let userInfo = computed(() => userStore.getUserInfo);
 let uploadCover = ref(false);
 let uploadImgList = ref([]);
 // 附件列表
 let fileList = ref([]);
 let activeCoverList = ref([]);
+// 表单数据
 let formData = ref({
   code: "",
+  title: "",
+  tags: [],
+  covers: [],
+  type: 1,
+  userId: userInfo.value.id,
   groupId: getGroup.value[0]?.id,
   captchaId: "",
+  attachment: fileList.value,
 });
+// 使用layout
 definePageMeta({
   layout: "user",
 });
+// 获取小组列表
 store.fetchGroup();
+
 const actived = (url) => {
   if (activeCoverList.value.includes(url)) {
     activeCoverList.value = activeCoverList.value.filter(
@@ -155,14 +169,16 @@ const actived = (url) => {
 };
 
 const submit = async () => {
-  console.log(formData.value);
   let message = checkParams();
   if (message) {
     addMessage(message, "warning");
     return;
   }
   try {
-    let data = await createTopic(formData.value);
+    let data = await createTopic({
+      ...formData.value,
+      ...publish.value.getFormData(),
+    });
     to("/topic/" + data);
     addMessage(t("submitted-success"));
   } catch (error) {
@@ -174,9 +190,6 @@ const submit = async () => {
 const checkParams = () => {
   if (!formData.value.title) {
     return t("topic-create-title");
-  }
-  if (!formData.value.topicBasic.content) {
-    return t("topic-create-content");
   }
   if (!formData.value.groupId) {
     return t("topic-create-groupId");

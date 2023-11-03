@@ -1,25 +1,7 @@
 <template>
   <div class="">
-    <div class="w-full sticky top-0 z-50">
-      <ul class="w-10 absolute top-5 right-0 sm:-left-12">
-        <li
-          v-for="item in buttonList"
-          @click="handleClick(item)"
-          class="rounded-full cursor-pointer glass w-10 h-10 mb-5 flex items-center justify-center"
-        >
-          <Icon
-            :name="item.icon"
-            class="text-[--secondary-text] dark:text-[--dark-secondary-text]"
-          />
-          <div
-            class="w-4 h-4 absolute -top-2 -right-2 rounded-full bg-slate-400 text-white text-xs flex items-center justify-center"
-            v-if="!getData(item.type)"
-          >
-            {{ getData(item.type) }}
-          </div>
-        </li>
-      </ul>
-    </div>
+    <!-- 侧边状态栏 -->
+    <Sidebar :detail="detail" />
     <div class="grid grid-cols-9">
       <div class="relative h-full m-1 col-span-9 sm:col-span-6">
         <Card>
@@ -34,16 +16,16 @@
                   发布时间:{{ getRelativeTime(detail.createdAt) }}
                 </span>
               </div>
-              <div>
+              <!-- <div>
                 <span class="mr-5 regular-text text-xs">
                   <Icon name="tabler:eye" class="mr-1" />{{
-                    formatNumber(11111)
+                    formatNumber(detail.view)
                   }}
                 </span>
                 <span class="regular-text text-xs">
                   <Icon name="ic:round-location-on" class="mr-1" />上海
                 </span>
-              </div>
+              </div> -->
             </div>
           </div>
           <h2 class="font-medium text-xl mt-5">{{ detail.title }}</h2>
@@ -54,7 +36,7 @@
           </div>
         </Card>
         <Card id="comment" class="mt-5">
-          <Comments :topicId="route.params.id" />
+          <Comments :topicId="route.params.id" @change="commentChange" />
         </Card>
       </div>
       <div class="sm:col-span-3 sm:block m-1">
@@ -87,34 +69,7 @@ const { formatNumber } = useFormatNumber();
 const { isMobile } = useMobileDetect();
 const { getRelativeTime } = useTime();
 const route = useRoute();
-const buttonList = ref([
-  {
-    name: "分享",
-    icon: "tabler:share",
-  },
-  {
-    name: "收藏",
-    icon: "tabler:bookmark",
-  },
-  {
-    name: "点赞",
-    icon: "icon-park-solid:thumbs-up",
-    type: "like",
-  },
-  {
-    name: "评论",
-    icon: "mdi:comment-processing-outline",
-    type: "comment",
-  },
-  {
-    name: "举报",
-    icon: "tabler:report",
-  },
-  {
-    name: "打赏",
-    icon: "tabler:bookmark",
-  },
-]);
+
 let detail = ref({});
 async function getTopicDetail() {
   try {
@@ -129,31 +84,9 @@ async function getTopicDetail() {
     showError(error);
   }
 }
-function handleClick(item) {
-  switch (item.type) {
-    case "comment":
-      console.log("---");
-      // 获取元素
-      var element = document.getElementById("comment");
-
-      // 滚动到元素
-      element.scrollIntoView({ behavior: "smooth" });
-
-      break;
-
-    default:
-      break;
-  }
-}
-function getData(type) {
-  switch (type) {
-    case "like":
-      return detail.value.like;
-    case "comment":
-      return detail.value.comment;
-    default:
-      break;
-  }
+function commentChange() {
+  detail.value.comment = detail.value.comment + 1;
+  detail.value.commentState = true;
 }
 function init() {
   getTopicDetail();

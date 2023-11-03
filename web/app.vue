@@ -1,6 +1,6 @@
 <template>
   <NuxtLayout>
-    <NuxtLoadingIndicator />
+    <NuxtLoadingIndicator class="!transform-none top-16" />
     <NuxtPage />
   </NuxtLayout>
   <Teleport to="body">

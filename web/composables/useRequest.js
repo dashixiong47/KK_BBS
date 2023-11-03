@@ -1,6 +1,6 @@
-
-import { useCookie, useAsyncData } from '#app'
+// composables/useRequest.js
 import { useRuntimeConfig } from '#app'
+const { setCookie,getCookie } = useCookies();
 export const useRequest = {
   get: (url, data = {}) => {
     if (typeof data === 'object') {
@@ -22,7 +22,6 @@ export const useRequest = {
   _fetch: async (url, method, body = null) => {
     const config = useRuntimeConfig()
     url = config.public.baseUrl + url
-    let cookie = useCookie("token");
     let code
     let message
     try {
@@ -30,7 +29,7 @@ export const useRequest = {
         method: method,
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': cookie.value
+          'Authorization': getCookie('token')
         },
         body: body
       })
@@ -39,7 +38,7 @@ export const useRequest = {
       if (code === 200) {
         return data.value;
       } else if (code === 401) {
-        cookie.value = null;
+        setCookie('token', null)
         throw new Error(message);
       } else {
         throw new Error(message);

@@ -9,9 +9,21 @@ export const useThemeStore = defineStore('theme', {
             blurValue: 10,
             // bgBodyImg: "url('https://images.hxsj.in/test/1.png')",
             bgBodyImg: "",
-            bgColor: 'rgba(255, 255, 255, 1)',
+            bgColor: 'rgba(241, 245, 249, 1)',
             // 遮罩颜色
             maskingColor: 'rgba(0,0,0,0.2)',
+            // 选中背景色
+            activeBgColor:'rgb(250, 250, 250)',
+            // 选中字体颜色
+            activeTextColor:'rgb(29, 28, 26)',
+            // 未选中背景色
+            inactiveBgColor:'rgba(241, 245, 249, 1)',
+            // 未选中字体颜色
+            inactiveTextColor:'rgb(65, 98, 240)',
+            // 禁用色
+            disableColor:'#eaeaea',
+
+
             // 常用颜色
             colorWhite: "#ffffff",     //默认白色
             colorPrimary: '#409eff',   // 选中颜色
@@ -34,10 +46,22 @@ export const useThemeStore = defineStore('theme', {
         darkThemeConfig: {
             saturateValue: '0',
             blurValue: 10,
-            bgColor: '#31363a',
-            bgBodyImg: "url('https://images.hxsj.in/test/1.jpg')",
+            bgColor: 'rgba(49, 54, 58, 1)',
+            // bgBodyImg: "url('https://images.hxsj.in/test/1.jpg')",
             // 遮罩颜色
             maskingColor: 'rgba(0,0,0,0.2)',
+            // 选中背景色
+            activeBgColor:'#303133',
+            // 选中字体颜色
+            activeTextColor:'#409eff',
+            // 未选中背景色
+            inactiveBgColor:'#ffffff',
+            // 未选中字体颜色
+            inactiveTextColor:'#606266',
+            // 禁用色
+            disableColor:'#DCDFE6',
+
+            
             // 常用颜色
             colorWhite: "#ffffff",       //默认白色
             colorPrimary: '#1e90ff',     // 主要颜色

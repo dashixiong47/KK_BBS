@@ -133,6 +133,7 @@ let page = {
   page: 1,
   pageSize: 10,
 };
+let emit = defineEmits(["change"]);
 let selected = ref(0);
 let subReplyIpt = ref(null);
 const getDisabled = computed(() => {
@@ -163,6 +164,7 @@ const replySuccess = () => {
   showSubReply.value = false;
   resetLastReplyNode();
   getComments();
+  emit("change");
 };
 
 // ----------------------------------------------------------------
@@ -218,6 +220,7 @@ const loadMore = () => {
   page.page++;
   getComments();
 };
+// 获取评论
 async function getComments() {
   try {
     let { data } = await useGetComments(topicId, { ...page, type: type.value });
@@ -242,6 +245,7 @@ async function getComments() {
     console.log(error);
   }
 }
+// 评论点赞
 async function commentLikeChange(item, commentId, subCommentId) {
   if (!isLogin.value) {
     loginStore.setLoginStatus();
@@ -257,6 +261,7 @@ async function commentLikeChange(item, commentId, subCommentId) {
     let data = await commentLike(topicId, options);
 
     item.likeState = !item.likeState;
+
     if (item.likeState) {
       item.like += 1;
     } else {

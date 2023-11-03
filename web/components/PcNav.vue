@@ -56,12 +56,11 @@
       <SwitcherTheme />
 
       <div class="ml-4 w-12 h-12">
-        <KLink v-if="isLogin" :to="`/user/1`">
+        <KLink v-if="isLogin" :to="getPath()">
           <Avatar :url="userInfo.avatar" class="w-full h-full" />
         </KLink>
-        <KButton v-else @click="setLoginStatus">登录/注册</KButton>
+        <KButton v-else @click="setLoginStatus">登录</KButton>
       </div>
-
       <!-- <div class="absolute">1212</div> -->
     </div>
   </nav>
@@ -79,26 +78,16 @@ const setLoginStatus = () => {
   store.setLoginStatus();
 };
 
-const { notice } = useNotice();
-const { addMessage } = useMessage();
-
-const test = () => {
-  addMessage("这是一个信息消息", "error");
-  // notice({
-  //   title: "标题",
-  //   content:
-  //     "一、放下大概就是这样，即使我们没在一起，我也会好好的，谢谢时间惊艳了那段有你的记忆，也谢谢现在更努力变好的自己。",
-  //   autoClose: true,
-  // });
-};
 
 const toCreate = () => {
-  if(isLogin.value){
+  if (isLogin.value) {
     to(`/topic/create`);
-    return
+    return;
   }
   addMessage("请先登录", "warning");
-
 };
+function getPath() {
+  return `/user/${userInfo.value.id}`;
+}
 userStore.fetchUserInfo();
 </script>

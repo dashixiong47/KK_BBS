@@ -1,5 +1,6 @@
 <template>
   <div class="shadow-center rounded-xl">
+    <Skeleton :lines="18" v-if="show" />
     <div ref="texteditor"></div>
   </div>
 </template>
@@ -7,6 +8,11 @@
 <script setup>
 import { ref, onMounted, onBeforeUnmount } from "vue";
 import { upload } from "~/api/upload";
+useHead({
+  script: {
+    src: "/tinymce/js/tinymce/tinymce.min.js",
+  },
+});
 let { placeholder, moduleValue } = defineProps({
   moduleValue: {
     type: String,
@@ -18,11 +24,13 @@ let { placeholder, moduleValue } = defineProps({
   },
 });
 let emit = defineEmits(["update:moduleValue"]);
+let show = ref(true);
 let texteditor = ref(null);
 let editorInstance;
 // 监听内容变化
 onMounted(() => {
-  initTinyMCE();
+  // initTinyMCE();
+  initializeEditor();
 });
 // 卸载前销毁编辑器
 onBeforeUnmount(() => {
@@ -42,7 +50,7 @@ const initTinyMCE = () => {
       initializeEditor();
       return;
     }
-
+    return;
     // 使用 ID 检查是否已经加载了 TinyMCE 脚本
     const existingScript = document.getElementById("tinymce-script");
 
@@ -101,7 +109,7 @@ const initializeEditor = () => {
           let res = await upload(blobInfo, progress);
           resolve(res.url);
         } catch (error) {
-          removeFailedImage(blobInfo.blobUri())
+          removeFailedImage(blobInfo.blobUri());
           reject(error);
         }
       });
@@ -119,7 +127,9 @@ const initializeEditor = () => {
 function registerEventHandlers(editor) {
   editorInstance = editor;
   editor.on("init", function () {
+    show.value = false;
     editor.setContent(moduleValue);
+   
   });
   editor.on("change", (e) => {
     emit("update:moduleValue", editor.getContent());

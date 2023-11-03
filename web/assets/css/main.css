@@ -26,7 +26,7 @@ body {
 
 .glass,
 .tippy-box[data-theme~='glass'] {
-    @apply relative shadow-center overflow-hidden  bg-[--bg-color] dark:bg-[--dark-bg-color]
+    @apply relative shadow-default dark:shadow-default  bg-[--bg-color] dark:bg-[--dark-bg-color]
 }
 /* shadow-center */
 /* .glass::before,
@@ -93,17 +93,18 @@ body {
 ::-webkit-scrollbar-thumb:hover {
     @apply bg-gray-500;
 }
+.shadow-center{
+    /* background: linear-gradient(145deg, #cacaca, #f0f0f0); */
+    @apply shadow-default dark:shadow-default
 
-/* 默认选中的背景色 */
-.activeBgColor{
-    @apply bg-[--color-primary] dark:bg-[--dark-color-primary]
-}
-/* 默认选中的字体色 */
-.activeTextColor{
-    @apply text-[--color-primary] dark:text-[--dark-color-primary]
 }
 
-/* 默认主要字体颜色 */
-.textColor{
-    @apply text-[--color-primary] dark:text-[--dark-color-primary]
+/* 默认未选中色 */
+.uncheckedColor{
+    @apply bg-[--inactive-bg-color] dark:bg-[--dark-inactive-bg-color] text-[--inactive-text-color] dark:text-[--dark-inactive-text-color] hover:bg-[--disable-color] hover:dark:bg-[--dark-disable-color] hover:text-[--active-text-color] hover:dark:text-[--dark-active-text-color]
+}
+
+/* 默认选中色 */  
+.activeColor{
+    @apply bg-[--active-bg-color] dark:bg-[--dark-active-bg-color] text-[--active-text-color] dark:text-[--dark-active-text-color]
 }

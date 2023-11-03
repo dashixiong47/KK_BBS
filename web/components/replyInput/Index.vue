@@ -3,7 +3,7 @@
     <textarea
       :value="props.modelValue.content"
       @input="outInput"
-      class="w-full h-16 text-sm border border-[--border-light] dark:border-[--dark-border-light] mb-2 rounded-lg focus:outline-none p-2"
+      class="shadow-center bg-[rgba(0,0,0,0)] w-full h-16 text-sm border-[--border-light] dark:border-[--dark-border-light] mb-2 rounded-lg focus:outline-none p-2"
       :placeholder="props.placeholder"
     />
     <KButton class="w-20 h-10 text-sm" @click="postCommentCreate">发表</KButton>

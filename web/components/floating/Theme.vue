@@ -2,7 +2,6 @@
   <Floating :index="index" @change="colorPicker = !colorPicker">
     <button
       class="relative z-10 bg-blue-500 hover:bg-blue-700 text-white font-bold w-10 h-10 rounded-full"
-      
     >
       <Icon name="ion:color-palette-outline" size="1.5rem" />
     </button>
@@ -78,6 +77,16 @@ let { index } = defineProps({
 });
 let colorObj = {
   bgColor: "背景颜色", // 背景颜色
+  // 选中背景色
+  activeBgColor: "选中背景色",
+  // 选中字体颜色
+  activeTextColor: "选中字体颜色",
+  // 未选中背景色
+  inactiveBgColor: "未选中背景色",
+  // 未选中字体颜色
+  inactiveTextColor: "未选中字体颜色",
+  // 禁用色
+  disableColor: "禁用色",
   // 常用颜色
   colorPrimary: "选中颜色", // 选中颜色
   colorSuccess: "成功颜色", // 成功颜色

@@ -12,7 +12,7 @@
       </div>
       <div>
         <span class="mr-5 regular-text text-xs">
-          <Icon name="tabler:eye" class="mr-1" />{{ formatNumber(detail.like) }}
+          <Icon name="tabler:eye" class="mr-1" />{{ formatNumber(detail.view) }}
         </span>
         <span class="regular-text text-xs">
           <Icon name="ic:round-location-on" class="mr-1" />上海
@@ -59,7 +59,7 @@
   <div class="my-2 grid grid-cols-12">
     <button
       v-for="btn in btns"
-      class="regular-text col-span-3 py-2 flex items-center justify-center rounded-lg font-medium text-sm hover:glass border border-[rgba(0,0,0,0)] hover:border-[#ffffff] hover:shadow-center"
+      class="regular-text col-span-3 py-2 flex items-center justify-center rounded-lg font-medium text-sm hover:shadow-default"
       :class="[
         btn.active
           ? '!text-[--color-primary] dark:!text-[--dark-color-primary]'
@@ -79,7 +79,8 @@ import useMobileDetect from "~/composables/useMobileDetect";
 import useFormatNumber from "~/composables/useFormatNumber";
 import { useUserStore, useLoginStore } from "~/stores/main";
 
-import { topicLike } from "~/api";
+import { topicLike,topicCollect } from "~/api";
+const { to } = useToRoute();
 let userInfo = useUserStore();
 let loginStore = useLoginStore();
 let isLogin = computed(() => userInfo.isLogin);
@@ -98,26 +99,31 @@ const btns = reactive([
     text: "点赞",
     count: detail.like,
     active: detail.likeState,
-    func: () =>  handleLike(),
+    func: () => handleLike(),
   },
   {
     icon: "icon-park-solid:message-one",
     text: "评论",
     count: detail.comment,
-    func: () => {},
-  },
-  {
-    icon: "icon-park-solid:thumbs-up",
-    text: "点赞",
-    count: detail.like,
-    func: () => {},
+    active:detail.commentState,
+    func: () => {
+      to(`/topic/${detail.id}`);
+    },
   },
   {
     icon: "icon-park-solid:collection-files",
     text: "收藏",
     count: detail.collect,
+    active: detail.collectState,
+    func: () => handleCollect(),
+  },
+  {
+    icon: "tabler:share",
+    text: "分享",
+    count: detail.like,
     func: () => {},
   },
+  
 ]);
 const listContainer = ref(null);
 const items = ref(Array(3).fill(null));
@@ -167,6 +173,20 @@ const handleLike = async () => {
     await topicLike(detail.id);
     btns[0].active = !btns[0].active;
     btns[0].active ? btns[0].count++ : btns[0].count--;
+  } catch (error) {
+    console.log(error);
+  }
+};
+// 收藏
+const handleCollect =async () => {
+  if (!isLogin.value) {
+    loginStore.setLoginStatus();
+    return;
+  }
+  try {
+    await topicCollect(detail.id);
+    btns[2].active = !btns[2].active;
+    btns[2].active ? btns[2].count++ : btns[2].count--;
   } catch (error) {
     console.log(error);
   }

@@ -6,9 +6,13 @@ export default defineNuxtConfig({
     '@nuxtjs/tailwindcss',
     '@nuxtjs/color-mode',
     '@nuxtjs/i18n',
+    'nuxt-simple-sitemap',
     '@pinia/nuxt',
     'nuxt-icon'
   ],
+  site: {
+    url: 'https://example.com',
+  },
   render: {
     ssr: true,
   },
@@ -49,12 +53,20 @@ export default defineNuxtConfig({
     },
     vueI18n: './i18n.config.js', // if you are using custom path, default 
   },
+  sitemap: {
+    autoI18n: true,
+    
+  },
   nitro: {
     devProxy: {
       "/api": {
         target: "http://localhost:8080", // 这里是接口地址
         changeOrigin: true,
       },
+    },
+    prerender: {
+      crawlLinks: true,
+      routes: ['/', 'sitemap.xml'],
     },
   },
   css: [

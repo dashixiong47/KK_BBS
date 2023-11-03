@@ -11,8 +11,8 @@ export const useGetTopicDetail = (id) => {
   return useRequest.get("/api/v1/topic/"+id)
 };
 // 获取用户信息
-export const useGetUserInfo = async () => {
-  return await useRequest.get(`/api/v1/user`)
+export const useGetUserInfo = async (id) => {
+  return await useRequest.get(`/api/v1/user${id?`/${id}`:''}`)
 }
 // 获取评论列表
 export const useGetComments = async (id,data) => {

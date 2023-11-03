@@ -1,22 +1,25 @@
 package server
 
 import (
-	"context"
 	"errors"
 	"github.com/dashixiong47/KK_BBS/db"
 	"github.com/dashixiong47/KK_BBS/models"
 	"github.com/dashixiong47/KK_BBS/server/data"
+	"github.com/dashixiong47/KK_BBS/server/data/group"
 	"github.com/dashixiong47/KK_BBS/utils"
+	"github.com/dashixiong47/KK_BBS/utils/klog"
+	"log"
 )
 
 type TopicServer struct {
 }
 type Topic struct {
 	ID      uint          `json:"id" `
-	UserID  uint          `json:"userId"` // 用户ID
-	Title   string        `json:"title"`  // 标题
-	Tags    *db.IntArray  `json:"tags"`   // 标签
-	Covers  *db.JSONSlice `json:"covers"` // 封面
+	UserID  uint          `json:"userId"`  // 用户ID
+	GroupID uint          `json:"groupId"` // 分组
+	Title   string        `json:"title"`   // 标题
+	Tags    *db.IntArray  `json:"tags"`    // 标签
+	Covers  *db.JSONSlice `json:"covers"`  // 封面
 	Type    int           `json:"type"`
 	Summary string        `json:"summary"` // 摘要
 	models.Model
@@ -24,12 +27,24 @@ type Topic struct {
 }
 
 // Create 创建帖子
-func (s *TopicServer) Create(post *models.Topic) (string, error) {
+func (s *TopicServer) Create(post *models.Topic, attachments *[]models.Attachment) (string, error) {
 	tx := db.DB.Begin()
 	if err := tx.Create(&post).Error; err != nil {
 		tx.Rollback()
 		return "", errors.New("unknown")
 	}
+
+	if len(*attachments) > 0 {
+		for _, attachment := range *attachments {
+			attachment.TopicID = post.ID
+		}
+		if err := tx.Debug().Create(&attachments).Error; err != nil {
+			tx.Rollback()
+			klog.Error("Create Attachment", err)
+			return "", errors.New("unknown")
+		}
+	}
+	// 每次创建新帖子的时候，都会在Redis里设置该帖子的点赞默认为0
 	err := data.CreateTopicLike(int(post.ID))
 	if err != nil {
 		tx.Rollback()
@@ -50,11 +65,6 @@ func (s *TopicServer) GetTopicList(_type string, userId uint, paging utils.Pagin
 	if err != nil {
 		return nil, errors.New("unknown")
 	}
-	ctx := context.Background()
-	count, err := db.Rdb.ZCard(ctx, "topic_like").Result()
-	if err != nil {
-		return nil, errors.New("unknown")
-	}
 	userIDs := make([]uint, 0)
 	for _, doc := range docs {
 		userIDs = append(userIDs, doc.UserID)
@@ -72,29 +82,35 @@ func (s *TopicServer) GetTopicList(_type string, userId uint, paging utils.Pagin
 	var topicList []map[string]any
 	// 将详情填充到Post列表中
 	for _, topic := range docs {
+		log.Println(topic.GroupID)
 		topicList = append(topicList, map[string]any{
-			"id":        db.GetID(topic.ID),
-			"user":      userDetails[topic.UserID],
-			"userId":    db.GetID(topic.UserID),
-			"title":     topic.Title,
-			"tags":      topic.Tags,
-			"covers":    topic.Covers,
-			"type":      topic.Type,
-			"summary":   topic.Summary,
-			"createdAt": topic.Model.CreatedAt,
-			"comment":   data.GetTopicCommentCount(topic.ID),
-			"like":      data.GetTopicLikeCount(topic.ID),
-			"likeState": data.IsTopicLike(topic.ID, userId),
+			"id":           db.GetID(topic.ID),
+			"user":         userDetails[topic.UserID],
+			"userId":       db.GetID(topic.UserID),
+			"title":        topic.Title,
+			"tags":         topic.Tags,
+			"covers":       topic.Covers,
+			"type":         topic.Type,
+			"summary":      topic.Summary,
+			"createdAt":    topic.Model.CreatedAt,
+			"view":         data.GetTopicViewCount(topic.ID),
+			"comment":      data.GetTopicCommentCount(topic.ID),
+			"commentState": data.IsTopicComment(topic.ID, userId),
+			"like":         data.GetTopicLikeCount(topic.ID),
+			"likeState":    data.IsTopicLike(topic.ID, userId),
+			"group":        group.GetGroupKey(topic.GroupID),
+			"collect":      data.GetTopicCollectCount(topic.UserID),
+			"collectState": data.IsTopicCollect(topic.ID, userId),
 		})
 	}
 	return map[string]any{
 		"list":  topicList,
-		"total": count,
+		"total": data.GetTopicCount(),
 	}, nil
 }
 
 // GetTopicDetail 获取帖子详情
-func (s *TopicServer) GetTopicDetail(topicId int) (any, error) {
+func (s *TopicServer) GetTopicDetail(topicId, userId int) (any, error) {
 	var doc Topic
 	err := db.DB.Where("id = ?", topicId).
 		First(&doc).Error
@@ -113,6 +129,11 @@ func (s *TopicServer) GetTopicDetail(topicId int) (any, error) {
 	if err != nil {
 		return nil, errors.New("user_not_found")
 	}
+	err = data.TopicViewPlus(uint(topicId), doc.UserID)
+	if err != nil {
+		klog.Error("TopicViewPlus", err)
+	}
+
 	return map[string]any{
 		"id": db.GetID(doc.ID),
 		"user": map[string]any{
@@ -121,16 +142,20 @@ func (s *TopicServer) GetTopicDetail(topicId int) (any, error) {
 			"username": user.Username,
 			"nickname": user.Nickname,
 		},
-		"title":       doc.Title,
-		"tags":        doc.Tags,
-		"covers":      doc.Covers,
-		"type":        doc.Type,
-		"like":        data.GetTopicLikeCount(uint(topicId)),
-		"likeState":   data.IsTopicLike(uint(topicId), doc.UserID),
-		"comment":     data.GetTopicCommentCount(uint(topicId)),
-		"summary":     doc.Summary,
-		"createdAt":   doc.Model.CreatedAt,
-		"topicDetail": detail,
+		"title":        doc.Title,
+		"tags":         doc.Tags,
+		"covers":       doc.Covers,
+		"type":         doc.Type,
+		"view":         data.GetTopicViewCount(uint(topicId)),
+		"like":         data.GetTopicLikeCount(uint(topicId)),
+		"likeState":    data.IsTopicLike(uint(topicId), doc.UserID),
+		"collect":      data.GetTopicCollectCount(doc.UserID),
+		"collectState": data.IsTopicCollect(uint(topicId), uint(userId)),
+		"comment":      data.GetTopicCommentCount(uint(topicId)),
+		"commentState": data.IsTopicComment(uint(topicId), uint(userId)),
+		"summary":      doc.Summary,
+		"createdAt":    doc.Model.CreatedAt,
+		"topicDetail":  detail,
 	}, nil
 }
 
@@ -194,6 +219,57 @@ func (s *TopicServer) LikeTopic(topicId, userId int) error {
 		return nil
 	}
 
+	if err := tx.Commit().Error; err != nil {
+		return errors.New("unknown")
+	}
+	return nil
+}
+
+// CollectTopic 收藏帖子
+func (s *TopicServer) CollectTopic(topicId, userId int) error {
+	var topicCollect models.Collection
+	state := data.IsTopic(topicId)
+	if !state {
+		return errors.New("is_not_topic")
+	}
+	// 查询是否已经收藏
+	db.DB.Unscoped().Where("topic_id = ? and user_id = ?", topicId, userId).
+		First(&topicCollect)
+	tx := db.DB.Begin()
+	defer func() {
+		if r := recover(); r != nil {
+			tx.Rollback()
+		}
+	}()
+	// 如果已经收藏 则取消收藏
+	if topicCollect.ID != 0 && topicCollect.DeletedAt.Valid {
+		if err := tx.Model(&topicCollect).
+			Unscoped().
+			Update("deleted_at", nil).Error; err != nil {
+			tx.Rollback()
+			return errors.New("unknown")
+		}
+		// 如果是正常的记录，则进行软删除
+	} else if topicCollect.ID != 0 && !topicCollect.DeletedAt.Valid {
+		if err := tx.Delete(&topicCollect).Error; err != nil {
+			tx.Rollback()
+			return errors.New("unknown")
+		}
+		// 不存在该记录，创建新记录
+	} else {
+		// 未收藏
+		topicCollect = models.Collection{
+			TopicID: uint(topicId),
+			UserID:  uint(userId),
+		}
+		err := db.DB.Create(&topicCollect).Error
+		if err != nil {
+			tx.Rollback()
+			return errors.New("error")
+		}
+		return nil
+	}
+	data.ClearTopicCollectCountCache(uint(userId))
 	if err := tx.Commit().Error; err != nil {
 		return errors.New("unknown")
 	}

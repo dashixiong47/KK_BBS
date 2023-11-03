@@ -11,6 +11,7 @@ type User struct {
 	Ctx *gin.Context
 }
 
+// Get 获取用户信息
 func (u *User) Get() utils.ResponseData {
 	if authMiddleware, data := middleware.AuthMiddleware(u.Ctx); !authMiddleware {
 		return *data
@@ -23,10 +24,9 @@ func (u *User) Get() utils.ResponseData {
 	}
 	return utils.JsonSuccess(info)
 }
+
+// GetBy 获取用户信息
 func (u *User) GetBy(id string) utils.ResponseData {
-	if authMiddleware, data := middleware.AuthMiddleware(u.Ctx); !authMiddleware {
-		return *data
-	}
 	intID, err := utils.DecryptID(id)
 	if err != nil {
 		return utils.JsonParameterError(err)

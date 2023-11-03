@@ -1,5 +1,5 @@
 <template>
-  <Dialog v-model="loginStatus">
+  <Dialog v-model="loginStatus" :confirmBtn="false">
     <form class="w-[400px] m-auto" @submit="handleSubmit">
       <div class="mt-4 mb-4 flex justify-center">
         <div
@@ -120,6 +120,7 @@ import { login } from "~/api";
 import { useLoginStore, useUserStore } from "~/stores/main.js";
 const { notice } = useNotice();
 const { setCookie } = useCookies();
+const { sleep } = useSleep();
 const loginStore = useLoginStore();
 const userStore = useUserStore();
 const loginStatus = computed({
@@ -183,8 +184,10 @@ const handleSubmit = async () => {
       captchaId: captchaId.value,
     });
     setCookie("token", data.token);
+    await sleep(500);
     await loginStore.setLoginStatus();
     await userStore.fetchUserInfo();
+
     notice({
       title: "提示",
       content: "登录成功",

@@ -25,4 +25,6 @@ var ZHCN = map[string]string{
 	"comment_like_error":         "评论点赞失败",
 	"is_not_comment":             "该评论不存在",
 	"is_not_topic":               "该帖子不存在",
+	"unsupported_post_type":      "不支持的帖子类型",
+	"invalid_type":               "无效的类型",
 }

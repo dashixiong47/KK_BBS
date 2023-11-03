@@ -1,5 +1,5 @@
 <template>
-  <div class="w-full h-full" @click="triggerFileUpload">
+  <div @click="triggerFileUpload">
     <slot></slot>
     <input
       type="file"

@@ -41,4 +41,8 @@ export const subCommentList = async (subId,data) => {
     return await request.get('/api/v1/comment/sub/list/'+subId, data);
 }
 
+// 收藏帖子
+export const topicCollect = async (id,data) => {
+    return await request.post('/api/v1/topic/collect/'+id, data);
+}
 
