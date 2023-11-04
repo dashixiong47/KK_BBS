@@ -1,11 +1,12 @@
 package models
 
 import (
+	"time"
+
 	"github.com/dashixiong47/KK_BBS/db"
 	"github.com/dashixiong47/KK_BBS/server/data/group"
 	"github.com/dashixiong47/KK_BBS/utils/klog"
 	"gorm.io/gorm"
-	"time"
 )
 
 // Model gorm.Model 的定义
@@ -37,7 +38,7 @@ type User struct {
 // Topic 帖子
 type Topic struct {
 	ID         uint          `json:"id" gorm:"primaryKey;AUTO_INCREMENT"`
-	UserID     uint          `json:"userId" gorm:"not null;index:index_user_id" binding:"required"`       // 用户ID
+	UserID     uint          `json:"userId" gorm:"not null;index:index_user_id"`                          // 用户ID
 	GroupID    uint          `json:"groupId" gorm:"not null;index:index_group_id" binding:"required"`     // 分组ID
 	Title      string        `json:"title" gorm:"size:255;not null;index:index_title" binding:"required"` // 标题
 	Tags       *db.IntArray  `json:"tags" gorm:"type:integer[];"`                                         // 标签

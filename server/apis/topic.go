@@ -2,6 +2,7 @@ package apis
 
 import (
 	"errors"
+
 	"github.com/dashixiong47/KK_BBS/db"
 	"github.com/dashixiong47/KK_BBS/middleware"
 	"github.com/dashixiong47/KK_BBS/models"
@@ -69,6 +70,7 @@ func (t *Topic) PostCreate() utils.ResponseData {
 		klog.Error("PostCreate ShouldBindJSON", err)
 		return utils.JsonParameterError("json_error")
 	}
+	doc.UserID = uintId
 	verifyCaptcha := captcha.VerifyCaptcha(doc.CaptchaId, doc.Code)
 	if !verifyCaptcha {
 		return utils.JsonFail("code_error")
