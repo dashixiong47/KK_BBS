@@ -3,7 +3,7 @@
     <div class="pt-[33%] sm:md:pt-[20%] md:pt-[16%] h-2 flex-shrink-0 relative">
       <img
         class="object-cover absolute inset-0 w-full h-full"
-        :src="userInfo.background"
+        :src="userInfo.background || '/images/bg.png'"
         alt=""
         srcset=""
       />
@@ -44,7 +44,6 @@ async function init() {
   try {
     const { data } = await useGetUserInfo(route.params.id);
     userInfo.value = data;
-    console.log(data, "--------------");
   } catch (error) {
     console.log(error);
   }

@@ -3,11 +3,12 @@ package data
 import (
 	"context"
 	"fmt"
+	"strconv"
+	"time"
+
 	"github.com/dashixiong47/KK_BBS/db"
 	"github.com/dashixiong47/KK_BBS/models"
 	"github.com/go-redis/redis/v8"
-	"strconv"
-	"time"
 )
 
 func GetTopicLikeName(topicId int) string {
@@ -76,6 +77,9 @@ func GetTopicCommentCount(topicId uint) int64 {
 
 // IsTopicLike 是否点赞
 func IsTopicLike(topicId uint, userId uint) bool {
+	if userId == 0 {
+		return false
+	}
 	var count int64
 	db.DB.Model(&models.TopicLike{}).
 		Where("topic_id = ?", topicId).
@@ -158,6 +162,9 @@ func ClearTopicCollectCountCache(userId uint) {
 
 // IsTopicCollect 是否收藏
 func IsTopicCollect(topicId, userId uint) bool {
+	if userId == 0 {
+		return false
+	}
 	var count int64
 	db.DB.Model(&models.Collection{}).
 		Where("topic_id = ?", topicId).
@@ -168,6 +175,9 @@ func IsTopicCollect(topicId, userId uint) bool {
 
 // IsTopicComment 是否评论
 func IsTopicComment(topicId, userId uint) bool {
+	if userId == 0 {
+		return false
+	}
 	var count int64
 	db.DB.Model(&models.Comment{}).
 		Where("topic_id = ?", topicId).

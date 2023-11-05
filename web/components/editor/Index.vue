@@ -29,8 +29,8 @@ let texteditor = ref(null);
 let editorInstance;
 // 监听内容变化
 onMounted(() => {
-  // initTinyMCE();
-  initializeEditor();
+  initTinyMCE();
+  // initializeEditor();
 });
 // 卸载前销毁编辑器
 onBeforeUnmount(() => {

@@ -94,8 +94,8 @@ body {
     @apply bg-gray-500;
 }
 .shadow-center{
-    /* background: linear-gradient(145deg, #cacaca, #f0f0f0); */
-    @apply shadow-default dark:shadow-default
+ 
+    @apply shadow-default bg-[--bg-color]  dark:shadow-default dark:bg-[--dark-bg-color]
 
 }
 

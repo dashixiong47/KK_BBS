@@ -22,7 +22,7 @@ const sizeClass = computed(() => {
 
 <template>
   <div
-    class="shadow-center rounded-full bg-slate-200 flex-shrink-0"
+    class="shadow-center rounded-full overflow-hidden bg-slate-200 flex-shrink-0"
     :class="sizeClass"
   >
     <img :src="url" alt="" srcset="" />

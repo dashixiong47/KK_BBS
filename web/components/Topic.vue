@@ -29,11 +29,11 @@
     <ul class="grid grid-cols-6">
       <li
         v-for="(item, index) in images"
-        class="pt-[66.67%] relative flex items-center justify-center m-2 overflow-hidden"
+        class="shadow-center rounded-2xl pt-[66.67%] relative flex items-center justify-center m-2 overflow-hidden"
         :class="getClassName(images.length, index)"
       >
         <KImage
-          class="rounded-2xl object-cover absolute inset-0"
+          class="object-cover absolute inset-0"
           :source="getPath(item)"
           alt=""
           srcset=""
@@ -79,7 +79,7 @@ import useMobileDetect from "~/composables/useMobileDetect";
 import useFormatNumber from "~/composables/useFormatNumber";
 import { useUserStore, useLoginStore } from "~/stores/main";
 
-import { topicLike,topicCollect } from "~/api";
+import { topicLike, topicCollect } from "~/api";
 const { to } = useToRoute();
 let userInfo = useUserStore();
 let loginStore = useLoginStore();
@@ -105,7 +105,7 @@ const btns = reactive([
     icon: "icon-park-solid:message-one",
     text: "评论",
     count: detail.comment,
-    active:detail.commentState,
+    active: detail.commentState,
     func: () => {
       to(`/topic/${detail.id}`);
     },
@@ -123,7 +123,6 @@ const btns = reactive([
     count: detail.like,
     func: () => {},
   },
-  
 ]);
 const listContainer = ref(null);
 const items = ref(Array(3).fill(null));
@@ -178,7 +177,7 @@ const handleLike = async () => {
   }
 };
 // 收藏
-const handleCollect =async () => {
+const handleCollect = async () => {
   if (!isLogin.value) {
     loginStore.setLoginStatus();
     return;

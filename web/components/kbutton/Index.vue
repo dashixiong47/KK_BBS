@@ -38,7 +38,7 @@ const porps = defineProps({
     default: false,
   },
 });
-const { actived, throttle } = porps;
+const { actived, throttle } = toRefs(porps);
 
 let lastClicked = ref(0);
 

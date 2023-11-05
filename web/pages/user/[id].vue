@@ -4,7 +4,7 @@
     <!-- <NuxtPage name="user/1"/> -->
     <!-- <p>id: {{ $route.params.id }}</p> -->
     <div class="grid grid-cols-9 mt-5">
-      <TopicList class="col-span-5"></TopicList>
+      <TopicList class="col-span-5" :userId="route.params.id"></TopicList>
       <!-- <ul class="h-full  ">
         <li
           v-for="item in 10"
@@ -25,7 +25,7 @@
 <script setup>
 import useMobileDetect from "~/composables/useMobileDetect";
 import useFormatNumber from "~/composables/useFormatNumber";
-
+const route = useRoute();
 const { formatNumber } = useFormatNumber();
 
 const { isMobile } = useMobileDetect();

@@ -2,13 +2,13 @@ package server
 
 import (
 	"errors"
+
 	"github.com/dashixiong47/KK_BBS/db"
 	"github.com/dashixiong47/KK_BBS/models"
 	"github.com/dashixiong47/KK_BBS/server/data"
 	"github.com/dashixiong47/KK_BBS/server/data/group"
 	"github.com/dashixiong47/KK_BBS/utils"
 	"github.com/dashixiong47/KK_BBS/utils/klog"
-	"log"
 )
 
 type TopicServer struct {
@@ -57,11 +57,14 @@ func (s *TopicServer) Create(post *models.Topic, attachments *[]models.Attachmen
 }
 
 // GetTopicList 获取帖子列表
-func (s *TopicServer) GetTopicList(_type string, userId uint, paging utils.Paging) (any, error) {
+func (s *TopicServer) GetTopicList(_type string, userId, selfUserId uint, paging utils.Paging) (any, error) {
 	var docs []Topic
-	err := paging.SetPaging(db.DB).
-		Order("id desc").
-		Find(&docs).Error
+	tx := paging.SetPaging(db.DB).
+		Order("id desc")
+	if userId != 0 {
+		tx = tx.Where("user_id = ?", userId)
+	}
+	err := tx.Find(&docs).Error
 	if err != nil {
 		return nil, errors.New("unknown")
 	}
@@ -82,7 +85,6 @@ func (s *TopicServer) GetTopicList(_type string, userId uint, paging utils.Pagin
 	var topicList []map[string]any
 	// 将详情填充到Post列表中
 	for _, topic := range docs {
-		log.Println(topic.GroupID)
 		topicList = append(topicList, map[string]any{
 			"id":           db.GetID(topic.ID),
 			"user":         userDetails[topic.UserID],
@@ -95,12 +97,12 @@ func (s *TopicServer) GetTopicList(_type string, userId uint, paging utils.Pagin
 			"createdAt":    topic.Model.CreatedAt,
 			"view":         data.GetTopicViewCount(topic.ID),
 			"comment":      data.GetTopicCommentCount(topic.ID),
-			"commentState": data.IsTopicComment(topic.ID, userId),
+			"commentState": data.IsTopicComment(topic.ID, selfUserId),
 			"like":         data.GetTopicLikeCount(topic.ID),
-			"likeState":    data.IsTopicLike(topic.ID, userId),
+			"likeState":    data.IsTopicLike(topic.ID, selfUserId),
 			"group":        group.GetGroupKey(topic.GroupID),
 			"collect":      data.GetTopicCollectCount(topic.UserID),
-			"collectState": data.IsTopicCollect(topic.ID, userId),
+			"collectState": data.IsTopicCollect(topic.ID, selfUserId),
 		})
 	}
 	return map[string]any{

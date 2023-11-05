@@ -55,7 +55,7 @@ export default defineNuxtConfig({
   },
   sitemap: {
     autoI18n: true,
-    
+
   },
   nitro: {
     devProxy: {
@@ -66,7 +66,9 @@ export default defineNuxtConfig({
     },
     prerender: {
       crawlLinks: true,
-      routes: ['/', 'sitemap.xml'],
+      routes: [
+        '/',
+      ]
     },
   },
   css: [

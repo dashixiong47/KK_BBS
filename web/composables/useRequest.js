@@ -1,40 +1,34 @@
 // composables/useRequest.js
 import { useRuntimeConfig } from '#app'
-const { setCookie,getCookie } = useCookies();
+const { setCookie, getCookie } = useCookies();
 export const useRequest = {
-  get: (url, data = {}) => {
-    if (typeof data === 'object') {
-      const params = new URLSearchParams();
-      Object.keys(data).forEach(key => params.append(key, data[key]));
-      url+= '?' + params.toString();
-    }
-    return useRequest._fetch(url, 'GET')
+  get: (url, params, body) => {
+    return useRequest._fetch(url, 'GET', params, body)
   },
-  post: (url, body) => {
-    return useRequest._fetch(url, 'POST', body)
+  post: (url, params, body) => {
+    return useRequest._fetch(url, 'POST', params, body)
   },
-  put: (url, body) => {
-    return useRequest._fetch(url, 'PUT', body)
+  put: (url, params, body) => {
+    return useRequest._fetch(url, 'PUT', params, body)
   },
   delete: (url) => {
     return useRequest._fetch(url, 'DELETE')
   },
-  _fetch: async (url, method, body = null) => {
+  _fetch: async (url, method, params, body) => {
     const config = useRuntimeConfig()
     url = config.public.baseUrl + url
-    let code
-    let message
+
     try {
       let { data } = await useFetch(url, {
         method: method,
+        params: params,
         headers: {
           'Content-Type': 'application/json',
           'Authorization': getCookie('token')
         },
         body: body
       })
-      code = data.value.code
-      message = data.value.message
+      let { code, message } = data.value
       if (code === 200) {
         return data.value;
       } else if (code === 401) {

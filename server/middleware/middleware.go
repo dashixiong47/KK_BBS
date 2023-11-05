@@ -1,12 +1,13 @@
 package middleware
 
 import (
+	"log"
+	"time"
+
 	"github.com/dashixiong47/KK_BBS/utils"
 	"github.com/dashixiong47/KK_BBS/utils/jwt"
 	"github.com/gin-gonic/gin"
 	jwtv5 "github.com/golang-jwt/jwt/v5"
-	"log"
-	"time"
 )
 
 type CustomClaims struct {

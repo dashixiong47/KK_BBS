@@ -198,14 +198,22 @@ func (t *Topic) handleAttachments(doc *formData, uintId uint) ([]models.Attachme
 func (t *Topic) GetList() utils.ResponseData {
 	middleware.AuthMiddleware(t.Ctx)
 	var _type = t.Ctx.DefaultQuery("type", "1")
+	var userIdStr = t.Ctx.DefaultQuery("userId", "0")
+	var userId uint
+	if userIdStr != "" {
+		userId = uint(db.GetIntID(userIdStr))
+	}
 	var paging utils.Paging
 	paging.GetPaging(t.Ctx)
-	userId, _ := t.Ctx.Get("id")
-	if userId == nil {
-		userId = float64(0)
+	var selfUserId uint
+	selfUserIdFlot, _ := t.Ctx.Get("id")
+	if selfUserIdFlot == nil {
+		selfUserId = uint(float64(0))
+	} else {
+		selfUserId = uint(selfUserIdFlot.(float64))
 	}
 	var topicServer server.TopicServer
-	list, err := topicServer.GetTopicList(_type, uint(userId.(float64)), paging)
+	list, err := topicServer.GetTopicList(_type, userId, selfUserId, paging)
 	if err != nil {
 		return utils.JsonFail(err)
 	}

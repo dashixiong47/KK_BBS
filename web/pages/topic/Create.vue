@@ -26,13 +26,8 @@
                 placeholder="请输入标题"
                 v-model="formData.title"
               />
-              <KButton
-                class="flex-shrink-0"
-                @click="uploadCover = !uploadCover"
-                :actived="activeCoverList.length > 0"
-              >
-                选择封面
-              </KButton>
+              <!-- 选择封面 -->
+              <UploadCover @selectd="(val) => (formData.covers = val)" />
             </div>
             <component ref="publish" :is="Topic"></component>
           </div>
@@ -69,49 +64,6 @@
       </div>
     </div>
   </div>
-
-  <!-- 选择封面 -->
-  <Dialog v-model="uploadCover">
-    <div
-      class="w-[800px] h-96 grid grid-cols-12 gap-2 px-5 m-5 overflow-y-auto"
-    >
-      <div
-        v-for="item in [...$refs.content.getAllImages(), ...uploadImgList]"
-        class="col-span-2 w-32 h-32 relative cursor-pointer"
-      >
-        <img
-          @click="actived(item)"
-          class="w-full h-full object-cover rounded-xl shadow-center hover:border"
-          :src="item"
-        />
-        <div
-          v-if="activeCoverList.includes(item)"
-          class="w-full h-full pointer-events-none bg-[--masking-color] dark:bg-[--dark-masking-color] absolute top-0 left-0"
-        >
-          <Icon
-            name="ep:check"
-            size="2rem"
-            class="text-[--color-white] dark:text-[--dark-color-white] absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2"
-          />
-        </div>
-      </div>
-      <div
-        class="w-32 h-32 col-span-2 flex items-center justify-center rounded-xl shadow-center active:shadow-active"
-      >
-        <Upload
-          class="flex items-center justify-center"
-          @uploadSuccess="({ url }) => uploadImgList.push(url)"
-        >
-          +
-        </Upload>
-      </div>
-    </div>
-    <div class="flex justify-end">
-      <KButton @click="uploadCover = !uploadCover" class="primary-text">
-        确定
-      </KButton>
-    </div>
-  </Dialog>
 </template>
 
 <script setup>
@@ -133,8 +85,7 @@ let uploadShow = ref(false);
 let publish = ref(null);
 // 用户信息
 let userInfo = computed(() => userStore.getUserInfo);
-let uploadCover = ref(false);
-let uploadImgList = ref([]);
+
 // 附件列表
 let fileList = ref([]);
 let activeCoverList = ref([]);
@@ -145,7 +96,6 @@ let formData = ref({
   tags: [],
   covers: [],
   type: 1,
-  userId: userInfo.value.id,
   groupId: getGroup.value[0]?.id,
   captchaId: "",
   attachment: fileList.value,
@@ -154,19 +104,6 @@ let formData = ref({
 definePageMeta({
   layout: "user",
 });
-// 获取小组列表
-store.fetchGroup();
-
-const actived = (url) => {
-  if (activeCoverList.value.includes(url)) {
-    activeCoverList.value = activeCoverList.value.filter(
-      (item) => item !== url
-    );
-  } else {
-    activeCoverList.value.push(url);
-  }
-  formData.value.covers = activeCoverList.value;
-};
 
 const submit = async () => {
   let message = checkParams();
@@ -199,4 +136,6 @@ const checkParams = () => {
   }
   return false;
 };
+// 获取小组列表
+store.fetchGroup();
 </script>
