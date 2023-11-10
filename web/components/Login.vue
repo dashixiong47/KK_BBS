@@ -178,7 +178,7 @@ const handleSubmit = async () => {
   }
 
   try {
-    let data = await login({
+    let { data } = await login({
       ...form.value,
       loginType: loginType.value,
       captchaId: captchaId.value,

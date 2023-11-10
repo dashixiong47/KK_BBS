@@ -29,8 +29,5 @@ const route = useRoute();
 const { formatNumber } = useFormatNumber();
 
 const { isMobile } = useMobileDetect();
-definePageMeta({
-  layout: "user",
-});
 
 </script>

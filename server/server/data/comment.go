@@ -2,10 +2,12 @@ package data
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"github.com/dashixiong47/KK_BBS/db"
 	"github.com/dashixiong47/KK_BBS/models"
 	"github.com/go-redis/redis/v8"
+	"gorm.io/gorm"
 	"time"
 )
 
@@ -155,4 +157,61 @@ func IsCommentLike(topicId, commentId, subCommentId int) bool {
 		return false
 	}
 	return true
+}
+
+// AddCommentIntegral 回复获得积分
+func AddCommentIntegral(userId, topicId uint) error {
+	return AddIntegral(userId, 1, 10, 2, topicId, "发表评论获得积分")
+}
+
+// ReplyCommentIntegral 被回复发帖人获得积分
+func ReplyCommentIntegral(userId, topicId uint) error {
+
+	return AddIntegral(userId, 1, 5, 3, topicId, "被回复获得积分")
+}
+
+// EarnPoints 评论获得积分
+func EarnPoints(tx *gorm.DB, comment *models.Comment) error {
+	// 确认该话题存在
+	var userId uint
+	err := tx.Model(&models.Topic{}).Where("id = ?", comment.TopicID).
+		Select("user_id").
+		Scan(&userId).Error
+	if err != nil {
+		return errors.New("is_not_topic")
+	}
+
+	// 如果评论者是发帖人，则不获得积分
+	if userId == comment.UserID {
+		return nil
+	}
+
+	// 检查用户是否已经评论过该话题
+	var exists bool
+	err = tx.Model(&models.Comment{}).
+		Select("1").
+		Where("user_id = ? AND topic_id = ?", comment.UserID, comment.TopicID).
+		Limit(1).
+		Find(&exists).Error
+
+	if err != nil {
+		tx.Rollback()
+		return err
+	}
+
+	// 如果用户没有对该主题发表过评论，则进行积分奖励
+	if !exists {
+		// 回复获得积分
+		if err = AddCommentIntegral(comment.UserID, comment.TopicID); err != nil {
+			tx.Rollback()
+			return err
+		}
+		// 发帖人获得积分
+		if err = ReplyCommentIntegral(userId, comment.TopicID); err != nil {
+			tx.Rollback()
+			return err
+		}
+	}
+
+	return nil
 }

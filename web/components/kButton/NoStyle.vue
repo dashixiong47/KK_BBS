@@ -1,7 +1,7 @@
 <template>
   <button
     @click="throttledClick"
-    class="relative px-5 py-2 primary-text"
+    class="relative px-5 py-2 font-main-color"
     :class="{
       'active:shadow-active': !porps.disabled,
     }"

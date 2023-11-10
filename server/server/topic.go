@@ -2,7 +2,6 @@ package server
 
 import (
 	"errors"
-
 	"github.com/dashixiong47/KK_BBS/db"
 	"github.com/dashixiong47/KK_BBS/models"
 	"github.com/dashixiong47/KK_BBS/server/data"
@@ -35,8 +34,10 @@ func (s *TopicServer) Create(post *models.Topic, attachments *[]models.Attachmen
 	}
 
 	if len(*attachments) > 0 {
-		for _, attachment := range *attachments {
+		for i, _ := range *attachments {
+			attachment := &(*attachments)[i] // 正确解引用并获取切片中的元素
 			attachment.TopicID = post.ID
+
 		}
 		if err := tx.Debug().Create(&attachments).Error; err != nil {
 			tx.Rollback()
@@ -49,6 +50,12 @@ func (s *TopicServer) Create(post *models.Topic, attachments *[]models.Attachmen
 	if err != nil {
 		tx.Rollback()
 		return "", errors.New("unknown")
+	}
+	//
+	err = data.AddTopicIntegral(post.UserID, post.ID)
+	if err != nil {
+		tx.Rollback()
+		return "", err
 	}
 	if err := tx.Commit().Error; err != nil {
 		return "", errors.New("unknown")

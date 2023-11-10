@@ -3,7 +3,7 @@
     <KButton
       class="w-full mb-5"
       :class="{
-        '!bg-[--disable-color]':
+        'disableColor':
           modelValue.currentPage === total,
       }"
       :disabled="modelValue.currentPage === total"
@@ -17,7 +17,7 @@
         <button
           class="shadow-center uncheckedColor mr-2 w-10 h-10 flex items-center justify-center rounded-lg cursor-pointer"
           :class="{
-            '!bg-[--disable-color]': modelValue.currentPage === 1,
+            'disableColor': modelValue.currentPage === 1,
             'cursor-not-allowed': modelValue.currentPage === 1,
           }"
           :disabled="modelValue.currentPage === 1"
@@ -60,7 +60,7 @@
         <button
           class="shadow-center uncheckedColor w-10 h-10 flex items-center justify-center rounded-lg cursor-pointer"
           :class="{
-            '!bg-[--disable-color]': modelValue.currentPage === total,
+            'disableColor': modelValue.currentPage === total,
             'cursor-not-allowed': modelValue.currentPage === total,
           }"
           :disabled="modelValue.currentPage === total"
@@ -93,7 +93,6 @@ const modelValue = reactive({
 const total = computed(() =>
   modelValue.total ? Math.ceil(modelValue.total / modelValue.pageSize) : 1
 );
-console.log(total);
 const shouldShowEllipsis = computed(() => total.value > 9); // 根据总页数决定是否显示省略号
 const emit = defineEmits(["update:modelValue"]);
 
@@ -112,7 +111,6 @@ function moveRight() {
 
 const pages = computed(() => {
   let start, end;
-  console.log(total.value, total.value <= 9);
   if (total.value <= 9) {
     start = 1;
     end = total.value;

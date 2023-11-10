@@ -186,31 +186,7 @@ func IsTopicComment(topicId, userId uint) bool {
 	return count > 0
 }
 
-//// GetTopicCollect 获取收藏帖子
-//func GetTopicCollect(userId uint) []models.Collection {
-//	name := fmt.Sprintf("topic_collect:%v", userId) // 格式化缓存键名
-//	ctx := context.Background()
-//
-//	// 尝试从Redis获取缓存数据
-//	result, err := db.Rdb.Get(ctx, name).Result()
-//	if err == nil {
-//		var data []models.Collection
-//		// 如果缓存数据存在，尝试解析为JSON
-//		if json.Unmarshal([]byte(result), &data) == nil {
-//			return data // 如果解析成功，返回数据
-//		}
-//	}
-//
-//	var docs []models.Collection
-//	// 如果缓存数据不存在或解析失败，从数据库获取数据
-//	if db.DB.Where("user_id = ?", userId).Find(&docs).Error == nil && len(docs) > 0 {
-//		// 将数据序列化为JSON并存储到Redis
-//		if marshal, err := json.Marshal(docs); err == nil {
-//			// 将序列化后的数据存储到Redis，设置过期时间为2小时
-//			_ = db.Rdb.Set(ctx, name, marshal, cacheTTL).Err()
-//		}
-//		return docs // 返回从数据库获取的数据
-//	}
-//
-//	return []models.Collection{} // 如果有任何错误或没有数据，返回空数组
-//}
+// AddTopicIntegral 发帖获得积分
+func AddTopicIntegral(userId, topicId uint) error {
+	return AddIntegral(userId, 1, 10, 1, topicId, "发帖获得积分")
+}

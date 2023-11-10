@@ -18,11 +18,20 @@ type CommentServer struct {
 
 // Create 创建评论
 func (s *CommentServer) Create(comment *models.Comment) (*models.Comment, error) {
-
-	err := db.DB.Create(comment).Error
+	tx := db.DB.Begin()
+	// 评论积分
+	err := data.EarnPoints(tx, comment)
 	if err != nil {
+		tx.Rollback()
+		return nil, err
+	}
+
+	// 创建评论
+	if err := tx.Create(comment).Error; err != nil {
+		tx.Rollback()
 		return nil, errors.New("create_comment_error")
 	}
+	// 更新评论点赞排行
 	ctx := context.Background()
 	var zName, name string
 	if comment.ParentID == 0 {
@@ -30,13 +39,22 @@ func (s *CommentServer) Create(comment *models.Comment) (*models.Comment, error)
 	} else {
 		zName, name = data.GetCommentLikeName(int(comment.TopicID), int(comment.ParentID), int(comment.ID))
 	}
-	_, err = db.Rdb.ZIncrBy(ctx, zName, 0, name).Result()
-	if err != nil {
+
+	if _, err = db.Rdb.ZIncrBy(ctx, zName, 0, name).Result(); err != nil {
+		tx.Rollback()
 		return nil, errors.New("create_comment_error")
 	}
-	if err := db.Del(fmt.Sprintf("comment_list:%v", comment.TopicID)); err != nil {
+
+	// 提交事务
+	if err = tx.Commit().Error; err != nil {
+		return nil, errors.New("create_comment_error")
+	}
+
+	// 删除对应的 Redis 缓存
+	if err = db.Del(fmt.Sprintf("comment_list:%v", comment.TopicID)); err != nil {
 		klog.Error("删除 Redis 缓存失败: %v", err)
 	}
+
 	return comment, nil
 }
 
@@ -148,12 +166,11 @@ func (s *CommentServer) GetSubCommentList(topicId, subId int, paging utils.Pagin
 
 // LikeComment 点赞
 func (s *CommentServer) LikeComment(topicId, userId, commentId, subCommentId int) error {
-
 	var commentLike models.CommentLike
-	state := data.IsCommentLike(topicId, commentId, subCommentId)
-	if !state {
-		return errors.New("is_not_comment")
-	}
+	//state := data.IsCommentLike(topicId, commentId, subCommentId)
+	//if !state {
+	//	return errors.New("is_not_comment")
+	//}
 	// 查找是否存在该点赞记录（包括软删除的记录）
 	tex := db.DB.Unscoped().
 		Where("user_id = ? AND comment_id = ?", userId, commentId)

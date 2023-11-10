@@ -8,9 +8,9 @@
       >
         <Icon
           :name="item.icon"
-          class="text-[--secondary-text] dark:text-[--dark-secondary-text]"
+          class="text-[--font-regular-color] dark:text-[--dark-font-regular-color]"
           :class="{
-            '!text-[--color-primary] dark:!text-[--dark-color-primary]':
+            '!text-[--illuminate-color] dark:!text-[--dark-illuminate-color]':
               getActive(item.type),
           }"
         />

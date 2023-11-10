@@ -30,15 +30,15 @@ func RegisterRoutes(router *gin.RouterGroup, ctrl interface{}) {
 			routeSuffix = strings.TrimSuffix(routeSuffix, "by") + ":id"
 			state = true
 		}
+
 		// 如果成功提取了 HTTP 方法和路由后缀，则注册方法到路由
 		if httpMethod != "" {
 			route := ""
 			if routeSuffix == "" {
 				route = fmt.Sprintf("/%s", prefix)
 			} else {
-				route = fmt.Sprintf("/%s/%s", prefix, routeSuffix)
+				route = fmt.Sprintf("/%s%s", prefix, routeSuffix)
 			}
-
 			router.Handle(httpMethod, route, func(ctx *gin.Context) {
 				// 设置 Ctx 字段的值
 				v.Elem().FieldByName("Ctx").Set(reflect.ValueOf(ctx))

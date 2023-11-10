@@ -1,6 +1,7 @@
 package models
 
 import (
+	"github.com/dashixiong47/KK_BBS/config"
 	"time"
 
 	"github.com/dashixiong47/KK_BBS/db"
@@ -27,11 +28,11 @@ type User struct {
 	Introduction string       `json:"introduction" gorm:"size:255;"`                                // 用户简介
 	Role         *db.IntArray `json:"role" gorm:"type:integer[];"`                                  // 用户角色
 	Status       int          `json:"status" gorm:"size:1;"`                                        // 用户状态
-	Coins        int          `json:"coins" gorm:"size:255;default:0;"`                             // 金币
-	Exp          int          `json:"exp" gorm:"size:255;default:0;"`                               // 经验
-	Level        int          `json:"level" gorm:"size:255;default:0;"`                             // 等级
-	Follow       int          `json:"follow" gorm:"size:255;default:0;"`                            // 关注
-	Fans         int          `json:"fans" gorm:"size:255;default:0;"`                              // 粉丝
+	Coins        int          `json:"coins" gorm:"-"`                                               // 金币
+	Exp          int          `json:"exp" gorm:"-"`                                                 // 经验
+	Level        int          `json:"level" gorm:"-"`                                               // 等级
+	Follow       int          `json:"follow" gorm:"-"`                                              // 关注
+	Fans         int          `json:"fans" gorm:"-"`                                                // 粉丝
 	Model
 }
 
@@ -191,9 +192,43 @@ type Share struct {
 	Model
 }
 
+// IntegralLog Source 1:发帖 2:评论 3:被评论 4:签到 5:充值 6:购买附件 7:打赏 8:悬赏
+// IntegralLog 积分系统 积分=金币
+type IntegralLog struct {
+	ID       uint   `json:"id" gorm:"primaryKey;AUTO_INCREMENT"`
+	UserID   uint   `json:"userId" gorm:"not null;index:index_user_id"`   // 用户ID
+	Type     int    `json:"type" gorm:"size:1;not null;index:index_type"` // 类型 1:增加 2:减少
+	Source   int    `json:"source" gorm:"size:1;not null;index:index_source"`
+	SourceID uint   `json:"sourceId" gorm:"not null;index:index_source_id"`
+	Number   int    `json:"number" gorm:"size:255;default:0;"` // 数量
+	Remake   string `json:"remake" gorm:"size:255;"`           // 备注
+	Model
+}
+
+// RedeemCode 卡密密钥
+type RedeemCode struct {
+	ID     uint   `json:"id" gorm:"primaryKey;AUTO_INCREMENT"`
+	Code   string `json:"code" gorm:"size:255;not null;unique;index:index_code"` // 密钥
+	Type   int    `json:"type" gorm:"size:1;not null;index:index_type"`          // 类型 1:金币 2:会员
+	Number int    `json:"number" gorm:"size:255;default:0;"`                     // 数量 1:金币 2:会员 时长为天数
+	Remake string `json:"remake" gorm:"size:255;"`                               // 备注
+	Model
+}
+
+// Config admin 管理后台
+// 配置
+type Config struct {
+	ID    uint   `json:"id" gorm:"primaryKey;AUTO_INCREMENT"`
+	Code  string `json:"code" gorm:"size:255;not null;unique;index:index_code"` // 配置代码
+	Name  string `json:"name" gorm:"size:255;not null;unique;index:index_name"` // 配置名
+	Value string `json:"value" gorm:"size:255;not null;"`                       // 配置值
+	Model
+}
+
 func init() {
 	initData()
 	autoMigrate()
+	LoadSystemConfig()
 	klog.Info("Successfully connected to database!")
 }
 func initData() {
@@ -227,8 +262,24 @@ func initData() {
 func autoMigrate() {
 	// 自动迁移
 	err := db.DB.AutoMigrate(&TopicLike{}, &Topic{}, &TopicBasic{}, &TopicImage{}, &TopicVideo{}, &TopicText{}, &TopicView{}, &Tag{}, &File{}, &Comment{}, &CommentLike{},
-		&Attachment{}, &Collection{}, &Follow{}, &Share{})
+		&Attachment{}, &Collection{}, &Follow{}, &Share{}, &IntegralLog{}, &RedeemCode{}, &Config{})
 	if err != nil {
 		klog.Info("Failed to connect to database: %v", err)
 	}
+}
+
+// LoadSystemConfig 加载systemConfig
+func LoadSystemConfig() {
+	//	读取数据库里的配置
+	var sysConfig []Config
+	tx := db.DB.Find(&sysConfig)
+	if tx.Error != nil {
+		klog.Error("Error reading config: %s\n", tx.Error)
+	}
+	//	写到SystemConfig
+	for _, v := range sysConfig {
+		config.SystemConfig[v.Code] = v.Value
+	}
+	//	打印加载的配置
+	klog.Info("successfullyLoaded:%v", config.SystemConfig)
 }

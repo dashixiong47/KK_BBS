@@ -3,7 +3,7 @@
     <div
       v-if="modelValue"
       @click.stop="setValue"
-      class="flex items-center justify-center bg-[--masking-color] dark:bg-[--dark-masking-color] fixed top-0 left-0 w-screen h-screen z-[9999]"
+      class="flex items-center justify-center bg-[--bg-masking-color] dark:bg-[--dark-bg-masking-color] fixed top-0 left-0 w-screen h-screen z-[9999]"
     >
       <div class="p-5 shadow-center rounded-2xl" @click.stop>
         <p class="w-full flex justify-between">
@@ -17,10 +17,10 @@
         </p>
         <slot></slot>
         <div class="flex justify-end">
-          <KButton v-if="cancelBtn" @click="cancel" class="primary-text mr-4">
+          <KButton v-if="cancelBtn" @click="cancel" class="font-main-color mr-4">
             {{ cancelText }}
           </KButton>
-          <KButton v-if="confirmBtn" @click="confirm" class="primary-text">
+          <KButton v-if="confirmBtn" @click="confirm" class="font-main-color">
             {{ confirmText }}
           </KButton>
         </div>

@@ -15,6 +15,7 @@ type Settings struct {
 		TokenTimeout int    `yaml:"tokenTimeout"`
 		IdConfusion  int    `yaml:"idConfusion"`
 		I18          string `yaml:"i18"`
+		RedeemKey    string `yaml:"redeemKey"`
 	} `yaml:"application"`
 	Postgresql struct {
 		Host     string `yaml:"host"`
@@ -39,6 +40,7 @@ type Settings struct {
 }
 
 var SettingsConfig = new(Settings)
+var SystemConfig = make(map[string]string)
 
 func init() {
 	// 读取 YAML 文件

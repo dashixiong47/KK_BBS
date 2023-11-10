@@ -3,26 +3,30 @@
     <Avatar :url="detail.user?.avatar" />
     <div class="w-full ml-2 flex items-center justify-between">
       <div class="flex flex-col items-start">
-        <KLink to="#" class="text-md font-bold primary-text">
+        <KLink to="#" class="text-md font-bold font-main-color">
           {{ detail.user?.nickname }}
         </KLink>
-        <span class="text-xs secondary-text">
+        <span class="text-xs font-regular-color">
           发布时间:{{ getRelativeTime(detail.createdAt) }}
         </span>
       </div>
       <div>
-        <span class="mr-5 regular-text text-xs">
+        <span class="mr-5 font-secondary-color text-xs">
           <Icon name="tabler:eye" class="mr-1" />{{ formatNumber(detail.view) }}
         </span>
-        <span class="regular-text text-xs">
+        <span class="font-secondary-color text-xs">
           <Icon name="ic:round-location-on" class="mr-1" />上海
         </span>
       </div>
     </div>
   </div>
   <KLink :to="`/topic/${detail.id}`" class="">
-    <p class="text-md mb-3 primary-text">{{ detail.title }}</p>
-    <div class="regular-text text-sm mb-5">
+    <p
+      class="text-md mb-3 text-[--font-main-color] dark:text-[--dark-font-main-color]"
+    >
+      {{ detail.title }}
+    </p>
+    <div class="font-secondary-color text-sm mb-5">
       {{ detail.summary }}
     </div>
     <!-- <ul class="flex flex-row flex-wrap "> -->
@@ -42,7 +46,7 @@
     </ul>
   </KLink>
   <ul
-    class="w-full h-6 flex overflow-x-auto"
+    class="w-full flex"
     :class="{
       'hidden-scrollbar': isMobile,
     }"
@@ -50,19 +54,19 @@
   >
     <template v-for="(item, index) in itemsToShow">
       <li
-        class="mr-5 flex-shrink-0 rounded-2xl border bg-light-2 px-2 text-sm flex items-center secondary-text"
+        class="cursor-pointer hover:shadow-default mr-5 flex-shrink-0 rounded-2xl py-1 px-2 text-sm flex items-center text-[--font-regular-color] dark:text-[--dark-font-regular-color]"
       >
         <KLink to="#"> #分类{{ index }} </KLink>
       </li>
     </template>
   </ul>
-  <div class="my-2 grid grid-cols-12">
+  <div class="my-2 grid grid-cols-12 gap-4">
     <button
       v-for="btn in btns"
-      class="regular-text col-span-3 py-2 flex items-center justify-center rounded-lg font-medium text-sm hover:shadow-default"
+      class="hover:shadow-default text-[--font-regular-color] dark:text-[--dark-font-regular-color] col-span-3 py-2 flex items-center justify-center rounded-lg font-medium text-sm"
       :class="[
         btn.active
-          ? '!text-[--color-primary] dark:!text-[--dark-color-primary]'
+          ? '!text-[--illuminate-color] dark:!text-[--dark-illuminate-color]'
           : '',
       ]"
       @click="btn.func()"

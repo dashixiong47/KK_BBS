@@ -1,10 +1,7 @@
 <template>
   <Dialog v-model="showCover" @confirm="confirm">
-    {{ activeCoverList }}
     <!-- 选择封面 -->
-    <div
-      class="w-[800px] h-96 grid grid-cols-12 gap-2 px-5 m-5 overflow-y-auto"
-    >
+    <div class="w-[900px] h-96 grid grid-cols-12 gap-5 p-5 overflow-y-auto">
       <div
         v-for="item in coverList"
         class="col-span-2 w-32 h-32 relative cursor-pointer"
@@ -16,12 +13,12 @@
         />
         <div
           v-if="activeCoverList.includes(item)"
-          class="w-full h-full pointer-events-none bg-[--masking-color] dark:bg-[--dark-masking-color] absolute top-0 left-0"
+          class="w-full h-full pointer-events-none rounded-xl bg-[--bg-masking-color] dark:bg-[--dark-bg-masking-color] absolute top-0 left-0"
         >
           <Icon
             name="ep:check"
             size="2rem"
-            class="text-[--color-white] dark:text-[--dark-color-white] absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2"
+            class="text-[--illuminate-color] dark:text-[--dark-illuminate-color] absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2"
           />
         </div>
       </div>
@@ -42,6 +39,7 @@
   </KButton>
 </template>
 <script setup>
+
 let activeCoverList = ref([]);
 const props = defineProps({
   coverList: {
@@ -49,6 +47,7 @@ const props = defineProps({
     default: () => [],
   },
 });
+
 let showCover = ref(false);
 const emit = defineEmits(["update:modelValue", "selectd"]);
 let coverList = ref([...props.coverList]);

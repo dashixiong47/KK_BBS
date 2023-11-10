@@ -2,19 +2,19 @@
 import { useRuntimeConfig } from '#app'
 const { setCookie, getCookie } = useCookies();
 export const useRequest = {
-  get: (url, params, body) => {
-    return useRequest._fetch(url, 'GET', params, body)
+  get: (url, params) => {
+    return useRequest._fetch(url, 'GET', null, params)
   },
-  post: (url, params, body) => {
-    return useRequest._fetch(url, 'POST', params, body)
+  post: (url, body, params) => {
+    return useRequest._fetch(url, 'POST', body, params)
   },
-  put: (url, params, body) => {
-    return useRequest._fetch(url, 'PUT', params, body)
+  put: (url, body, params) => {
+    return useRequest._fetch(url, 'PUT', body, params)
   },
   delete: (url) => {
-    return useRequest._fetch(url, 'DELETE')
+    return useRequest._fetch(url, 'DELETE',)
   },
-  _fetch: async (url, method, params, body) => {
+  _fetch: async (url, method, body, params) => {
     const config = useRuntimeConfig()
     url = config.public.baseUrl + url
 

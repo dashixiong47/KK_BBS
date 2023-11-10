@@ -1,7 +1,7 @@
 <template>
   <button
     @click="throttledClick"
-    class="glass relative px-5 py-2 rounded-lg primary-text overflow-hidden"
+    class="shadow-center relative px-5 py-2 rounded-lg font-main-color overflow-hidden"
     :class="{
       'active:shadow-active': !porps.disabled,
     }"
@@ -9,7 +9,7 @@
   >
     <div
       v-if="actived"
-      class="absolute h-10 w-4 -right-0 -top-3 bg-[--color-primary] dark:bg-[--dark-color-primary] -rotate-45"
+      class="absolute h-10 w-4 -right-0 -top-3 text-white bg-[--illuminate-color] dark:bg-[--dark-illuminate-color] -rotate-45"
     >
       <Icon
         name="ep:check"
@@ -45,12 +45,13 @@ let lastClicked = ref(0);
 const throttleTime = 1000; // 节流时间设为1000毫秒（1秒）
 
 const throttledClick = () => {
-  if (porps.disabled || typeof throttle !== "function") return;
+  console.log("---------");
+ if (porps.disabled || typeof throttle.value !== "function") return;
   const now = Date.now();
   if (now - lastClicked.value >= throttleTime) {
     // 执行你的点击处理逻辑
     lastClicked.value = now;
-    throttle();
+    throttle.value();
   }
 };
 </script>

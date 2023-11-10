@@ -1,6 +1,6 @@
 <template>
   <input
-    class="glass bg-[rgba(0,0,0,0)] primary-text outline-none ring-0"
+    class="glass bg-[rgba(0,0,0,0)] font-main-color outline-none ring-0"
     :type="type"
     :value="displayValue"
     @input="setValue"

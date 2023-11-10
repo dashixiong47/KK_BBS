@@ -28,7 +28,7 @@ export const useUserStore = defineStore('userInfo', {
     actions: {
         async fetchUserInfo() {
             try {
-                const {data} = await useGetUserInfo();
+                const { data } = await useGetUserInfo();
                 this.setIslogin(true)
                 this.setUserInfo(data);
             } catch (error) {

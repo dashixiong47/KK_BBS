@@ -18,16 +18,17 @@
           {{ item.content }}
         </div>
         <div class="text-xs text-light-5">
-          <div class="flex">
-            <span class="mr-2 cursor-pointer">{{
-              getRelativeTime(item.createdAt)
-            }}</span>
+          <div class="flex text-[--font-secondary-color] dark:text-[--dark-font-secondary-color]">
+            <span class="mr-2 cursor-pointer">
+              {{ getRelativeTime(item.createdAt) }}
+            </span>
             <span
-              class="mr-2 cursor-pointer flex items-center"
-              :class="{
-                'text-[--color-primary]': item.likeState,
-                'dark:text-[--dark-color-primary]': item.likeState,
-              }"
+              class="mr-2 cursor-pointer flex items-center text-[--font-secondary-color] dark:text-[--dark-font-secondary-color]"
+              :class="[
+                item.likeState
+                  ? 'text-[--illuminate-color] dark:text-[--dark-illuminate-color]'
+                  : '',
+              ]"
               @click="commentLikeChange(item, parentId, item.id)"
             >
               <Icon name="icon-park-solid:thumbs-up" class="mr-1" />{{
@@ -35,7 +36,7 @@
               }}
             </span>
             <span
-              class="cursor-pointer"
+              class="cursor-pointer text-[--illuminate-color] dark:text-[--dark-illuminate-color]"
               @click="(e) => subReply(e, item, parentId)"
               >{{ $t("comments-reply") }}
             </span>
@@ -47,7 +48,7 @@
     <p
       @click="loadMore"
       v-if="total > 3 && replyList.length < total"
-      class="text-xs secondary-text cursor-pointer"
+      class="text-xs font-regular-color cursor-pointer"
     >
       剩余{{ total - replyList.length }}条回复, 点击查看
     </p>

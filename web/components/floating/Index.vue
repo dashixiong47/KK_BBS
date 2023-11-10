@@ -11,7 +11,7 @@
     >
       <div
         v-if="showPopup"
-        class="glass p-5 rounded-2xl w-80 h-96 !absolute right-0 bottom-0 origin-bottom-right"
+        class="shadow-center p-5 rounded-2xl w-80 h-96 !absolute right-0 bottom-0 origin-bottom-right"
       >
         <slot name="content" />
       </div>

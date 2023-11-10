@@ -7,6 +7,7 @@ import (
 	"fmt"
 	"github.com/dashixiong47/KK_BBS/db"
 	"github.com/dashixiong47/KK_BBS/models"
+	"github.com/dashixiong47/KK_BBS/server/data"
 	"time"
 )
 
@@ -24,10 +25,13 @@ func (u *UserServer) GetUserInfo(id int) (any, error) {
 	}
 	// 如果缓存中没有，再从数据库中获取
 	if err := db.DB.Where("id = ?", id).First(&userInfo).Error; err != nil {
-		return userInfo, errors.New("user_not_found")
+
+		return nil, errors.New("user_not_found")
 	}
+	userInfo.Coins = data.UserIntegral(userInfo.ID)
 	// 将数据存到缓存中
 	setRedisUserInfo(userInfo)
+
 	return userInfo, nil
 }
 
@@ -58,6 +62,6 @@ func setRedisUserInfo(user models.User) {
 		"level":        user.Level,
 		"createdAt":    user.CreatedAt,
 	}
-	data, _ := json.Marshal(userData)
-	db.Rdb.Set(ctx, fmt.Sprintf("userInfo:%v", user.ID), data, time.Hour*1)
+	jsonData, _ := json.Marshal(userData)
+	db.Rdb.Set(ctx, fmt.Sprintf("userInfo:%v", user.ID), jsonData, time.Hour*1)
 }

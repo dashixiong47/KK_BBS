@@ -6,22 +6,19 @@ const { locale } = useI18n();
 
 const { isMobile } = useMobileDetect();
 const runtimeConfig = useRuntimeConfig();
-// console.log(runtimeConfig);  // 输出：https://api.example.com
-// console.log(router);
+function test() {
+  console.log("test");
+}
 </script>
 <template>
-  <!-- <div>
-    <form>
-      <select v-model="locale">
-        <option value="en">en</option>
-        <option value="zh">zh</option>
-      </select>
-      <p>{{ $t("welcome") }}</p>
-    </form>
-  </div> -->
-  
-  <div>
-    <TopicList />
+  <div class="home">
+    <Card class="flex">
+      <div class="w-[1/3]">
+        <img src="/images/bg.png" alt="" srcset="" />
+        <KButton @click="test">按钮</KButton>
+      </div>
+      <div class="w-[2/3]">热点</div>
+    </Card>
   </div>
 </template>
 <style lang="postcss"></style>

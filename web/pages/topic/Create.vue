@@ -54,7 +54,7 @@
               />
             </div>
             <KButton
-              class="glass px-5 py-2 w-full primary-text rounded-lg overflow-hidden"
+              class="glass px-5 py-2 w-full font-main-color rounded-lg overflow-hidden"
               @click="submit"
             >
               发布
@@ -100,10 +100,6 @@ let formData = ref({
   captchaId: "",
   attachment: fileList.value,
 });
-// 使用layout
-definePageMeta({
-  layout: "user",
-});
 
 const submit = async () => {
   let message = checkParams();
@@ -112,7 +108,7 @@ const submit = async () => {
     return;
   }
   try {
-    let data = await createTopic({
+    let {data} = await createTopic({
       ...formData.value,
       ...publish.value.getFormData(),
     });

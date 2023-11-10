@@ -4,20 +4,21 @@
 
 /* 记住几个口诀：padding magin取值 8px 16px 24px，font-size：12px 14px 16px，color：#333 #666 #999 */
 body {
-    @apply h-screen font-sans dark:bg-dark-1 dark:text-light-1 bg-slate-100 ;
+    @apply h-screen font-sans bg-[#e3edf7];
     /* background-image: url('https://images.hxsj.in/test/1.jpg'); */
     /* background-image: url('~/assets/images/1.jpg'); */
     background-image: var(--bg-body-img);
     background-size: 100% 100%;
     background-repeat: no-repeat;
+
 }
 
 ::placeholder {
-    color: var(--placeholder-text) !important;
+    color: var(--font-secondary-color) !important;
 }
 
 .dark ::placeholder {
-    color: var(--dark-placeholder-text) !important;
+    color: var(--dark-font-secondary-color) !important;
 }
 
 .dark>body {
@@ -94,17 +95,20 @@ body {
     @apply bg-gray-500;
 }
 .shadow-center{
- 
     @apply shadow-default bg-[--bg-color]  dark:shadow-default dark:bg-[--dark-bg-color]
-
 }
 
 /* 默认未选中色 */
 .uncheckedColor{
-    @apply bg-[--inactive-bg-color] dark:bg-[--dark-inactive-bg-color] text-[--inactive-text-color] dark:text-[--dark-inactive-text-color] hover:bg-[--disable-color] hover:dark:bg-[--dark-disable-color] hover:text-[--active-text-color] hover:dark:text-[--dark-active-text-color]
+    @apply bg-[--bg-inactive-color] dark:bg-[--dark-bg-inactive-color] text-[--font-inactive-color] dark:text-[--dark-font-inactive-color] hover:bg-[--bg-disable-color] hover:dark:bg-[--dark-bg-disable-color] hover:text-[--font-active-color] hover:dark:text-[--dark-font-active-color]
 }
 
 /* 默认选中色 */  
 .activeColor{
-    @apply bg-[--active-bg-color] dark:bg-[--dark-active-bg-color] text-[--active-text-color] dark:text-[--dark-active-text-color]
+    @apply bg-[--bg-active-color] dark:bg-[--dark-bg-active-color] text-[--font-active-color] dark:text-[--dark-font-active-color]
 }
+/* 禁用背景色 */
+.disableColor{
+    @apply bg-[--bg-disable-color] dark:bg-[--dark-bg-disable-color] cursor-not-allowed
+}
+

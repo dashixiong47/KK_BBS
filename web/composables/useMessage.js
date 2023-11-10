@@ -5,10 +5,10 @@ export default function useMessage() {
     const messages = ref([]);
     let messageContainer = null;
     const messageType = {
-        info: 'bg-[--color-primary] text-white rounded-md px-4 py-2 mb-2',
-        success: 'bg-[--color-success] text-white rounded-md px-4 py-2 mb-2',
-        warning: 'bg-[--color-warning] text-white rounded-md px-4 py-2 mb-2',
-        error: 'bg-[--color-danger] text-white rounded-md px-4 py-2 mb-2',
+        info: 'rounded-md px-4 py-2 mb-2',
+        success: 'rounded-md px-4 py-2 mb-2',
+        warning: 'rounded-md px-4 py-2 mb-2',
+        error: 'rounded-md px-4 py-2 mb-2',
 
     }
     // 初始化消息容器
@@ -22,7 +22,7 @@ export default function useMessage() {
     const addMessage = (text, type = 'info', duration = 3000) => {
         const id = Date.now();
         const messageElement = document.createElement('div');
-        messageElement.className ='shadow-center '+ messageType[type];
+        messageElement.className = 'shadow-center ' + messageType[type];
         messageElement.textContent = text;
         messageElement.id = `message-${id}`;
         messageContainer.appendChild(messageElement);

@@ -6,9 +6,9 @@
       <Icon name="ion:color-palette-outline" size="1.5rem" />
     </button>
     <template #content>
-      <div class="overflow-y-auto h-full hidden-scrollbar">
+      <div class=" overflow-y-auto h-full hidden-scrollbar">
         <div class="flex items-center justify-between">
-          <label class="primary-text w-20">透明度</label>
+          <label class="font-main-color w-20">透明度</label>
           <input
             type="range"
             :value="getThemeValue.blurValue"
@@ -21,7 +21,7 @@
           class="flex items-center justify-between"
           v-for="(val, key) of colorObj"
         >
-          <label class="primary-text w-32">{{ val }}</label>
+          <label class="font-main-color w-32">{{ val }}</label>
           <Popover>
             <div
               class="w-10 h-5 border border-base"
@@ -77,6 +77,12 @@ let { index } = defineProps({
 });
 let colorObj = {
   bgColor: "背景颜色", // 背景颜色
+  // 默认主字体颜色
+  fontMainColor: "默认主字体颜色",
+  // 常规文本颜色
+  fontRegularColor: "常规文本颜色",
+  // 次要文本颜色
+  fontSecondaryColor: "次要文本颜色",
   // 选中背景色
   activeBgColor: "选中背景色",
   // 选中字体颜色
@@ -86,21 +92,10 @@ let colorObj = {
   // 未选中字体颜色
   inactiveTextColor: "未选中字体颜色",
   // 禁用色
-  disableColor: "禁用色",
-  // 常用颜色
-  colorPrimary: "选中颜色", // 选中颜色
-  colorSuccess: "成功颜色", // 成功颜色
-  colorWarning: "警告颜色", // 警告颜色
-  colorDanger: "危险颜色", // 危险颜色
-  colorInfo: "信息颜色", // 信息颜色
-  primaryText: "主文本颜色", // 主文本颜色
-  regularText: "常规文本颜色", // 常规文本颜色
-  secondaryText: "次要文本颜色", // 次要文本颜色
-  placeholderText: "占位符文本颜色", // 占位符文本颜色
-  borderBasis: "基础边框颜色", // 基础边框颜色
-  borderLight: "浅边框颜色", // 浅边框颜色
-  borderLighter: "更浅边框颜色", // 更浅边框颜色
-  borderExtraLight: "极浅边框颜色", // 极浅边框颜色
+  bgDisableColor: "禁用色",
+  //禁用背景色
+  fontDisableBgColor: "禁用背景色",
+  
 };
 useHead({
   script: {

@@ -3,19 +3,18 @@
 </template>
 
 <script setup>
-import { captcha } from '~/api';
+import { captcha } from "~/api";
 let captchaUrl = ref("");
 let captchaId = ref("");
-let emit=defineEmits(["captchaId"])
+let emit = defineEmits(["captchaId"]);
 async function init() {
-  let res = await captcha();
-  captchaUrl.value = res.captcha;
-  captchaId.value = res.captchaId;
-  emit("captchaId",captchaId.value)
+  let { data } = await captcha();
+  captchaUrl.value = data.captcha;
+  captchaId.value = data.captchaId;
+  emit("captchaId", captchaId.value);
 }
-init()
+init();
 defineExpose({
-  init
-})
-
+  init,
+});
 </script>

@@ -1,8 +1,8 @@
 <template>
   <div>
-    <p class="border-b py-2 mb-2 font-semibold primary-text">签到</p>
+    <p class="border-b py-2 mb-2 font-semibold font-main-color">签到</p>
 
-    <div class="flex justify-between border-b pb-2 primary-text">
+    <div class="flex justify-between border-b pb-2 font-main-color">
       <span class="text-sm flex items-center">
         <Icon name="healthicons:coins" class="mr-2" size="1.5rem" />
         1111

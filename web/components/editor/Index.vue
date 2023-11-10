@@ -13,6 +13,7 @@ useHead({
     src: "/tinymce/js/tinymce/tinymce.min.js",
   },
 });
+const { sleep } = useSleep();
 let { placeholder, moduleValue } = defineProps({
   moduleValue: {
     type: String,
@@ -28,8 +29,9 @@ let show = ref(true);
 let texteditor = ref(null);
 let editorInstance;
 // 监听内容变化
-onMounted(() => {
+onMounted(async () => {
   initTinyMCE();
+  // await sleep(500);
   // initializeEditor();
 });
 // 卸载前销毁编辑器
@@ -46,24 +48,23 @@ onBeforeUnmount(() => {
 // 初始化 TinyMCE
 const initTinyMCE = () => {
   if (process.client) {
+    // 如果 TinyMCE 已经加载，那么直接初始化编辑器 如果没有重试3次
     if (window.tinymce) {
       initializeEditor();
       return;
-    }
-    return;
-    // 使用 ID 检查是否已经加载了 TinyMCE 脚本
-    const existingScript = document.getElementById("tinymce-script");
-
-    if (!existingScript) {
-      const script = document.createElement("script");
-      script.id = "tinymce-script"; // 给 script 标签添加 ID
-      script.src = "/tinymce/js/tinymce/tinymce.min.js";
-      script.onload = initializeEditor;
-      document.body.appendChild(script);
     } else {
-      // 如果 script 已存在，但 window.tinymce 仍未定义，那么可能是 script 还在加载中。
-      // 使用事件监听器来检测何时 script 加载完成。
-      existingScript.addEventListener("load", initializeEditor);
+      let count = 0;
+      let timer = setInterval(() => {
+        if (window.tinymce) {
+          initializeEditor();
+          clearInterval(timer);
+        } else {
+          count++;
+          if (count > 3) {
+            clearInterval(timer);
+          }
+        }
+      }, 1000);
     }
   }
 };
@@ -129,7 +130,6 @@ function registerEventHandlers(editor) {
   editor.on("init", function () {
     show.value = false;
     editor.setContent(moduleValue);
-   
   });
   editor.on("change", (e) => {
     emit("update:moduleValue", editor.getContent());

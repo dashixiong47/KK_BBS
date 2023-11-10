@@ -3,6 +3,7 @@ package router
 import (
 	"fmt"
 	"github.com/dashixiong47/KK_BBS/apis"
+	"github.com/dashixiong47/KK_BBS/apis/admin"
 	"github.com/dashixiong47/KK_BBS/config"
 	"github.com/dashixiong47/KK_BBS/middleware"
 	"github.com/dashixiong47/KK_BBS/utils/klog"
@@ -36,6 +37,9 @@ func registerRoutes(r *gin.Engine) {
 	RegisterRoutes(v1, &apis.Login{})
 	RegisterRoutes(v1, &apis.Group{})
 	RegisterRoutes(v1, &apis.Comment{})
+	RegisterRoutes(v1, &apis.Integral{})
+	RegisterRoutes(v1, &apis.Attachment{})
+	RegisterRoutes(v1, &admin.RedeemCode{})
 
 }
 

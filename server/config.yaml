@@ -12,6 +12,8 @@ application:
   #id混淆
   idConfusion: 123456
   i18: zh-CN
+  #卡密生成密钥
+  redeemKey: 123456
 postgresql:
     host: 127.0.0.1
     port: 5432

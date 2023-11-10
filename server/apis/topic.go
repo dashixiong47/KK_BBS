@@ -168,6 +168,7 @@ func (t *Topic) handleAttachments(doc *formData, uintId uint) ([]models.Attachme
 			Hidden: v.Hidden,
 			Type:   v.Type,
 			Order:  v.Order,
+			Name:   v.Name,
 			Remake: v.Remake,
 		}
 		// 根据附件类型，处理特定字段

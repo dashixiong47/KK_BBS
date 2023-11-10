@@ -1,6 +1,6 @@
 <template>
   <div class="flex justify-center">
-    <div class="flex items-center shadow-center rounded-2xl bg-[#dddde2] overflow-hidden">
+    <div class="flex items-center shadow-center rounded-2xl  overflow-hidden">
       <div
         v-for="(tab, index) in tabs"
         :key="index"

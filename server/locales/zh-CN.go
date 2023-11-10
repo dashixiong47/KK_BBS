@@ -27,4 +27,11 @@ var ZHCN = map[string]string{
 	"is_not_topic":               "该帖子不存在",
 	"unsupported_post_type":      "不支持的帖子类型",
 	"invalid_type":               "无效的类型",
+	"insufficient_funds":         "余额不足",
+	"attachment_not_found":       "附件不存在",
+	"attachment_free":            "附件已经免费",
+	"attachment_buy":             "附件已经购买",
+	"max_retries_exceeded":       "重试次数超过最大值",
+	//admin
+	"create_redeem_code_error": "创建兑换码失败",
 }

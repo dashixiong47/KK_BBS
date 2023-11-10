@@ -14,32 +14,13 @@ module.exports = {
     theme: {
         extend: {
             colors: {
-                'dark-1': '#1f2937',
-                'dark-2': '#374151',
-                'dark-3': '#4b5563',
-                'dark-4': '#6b7280',
-                'dark-5': '#9ca3af',
-                'dark-6': '#d1d5db',
-                'dark-7': '#e5e7eb',
-                'dark-8': '#f3f4f6',
-
-                'light-1': '#ffffff',
-                'light-2': '#f9fafb',
-                'light-3': '#e5e7eb',
-                'light-4': '#d1d5db',
-                'light-5': '#9ca3af',
-                'light-6': '#6b7280',
-                'light-7': '#4b5563',
-                'light-8': '#374151',
-                'primary': '#333333',
-                'secondary': '#666666',
-                'general': '#999999',
+                
 
             },
             boxShadow: {
                 // 'center': '0 0px 20px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1)'
                 'default': '-1px -1px 3px rgb(255,255,255,.25), 1px 1px 3px rgb(174,174,192,.4), 4px 4px 8px rgb(174,174,192,.4), -4px -4px 12px #fff;',
-                'active':'-1px -1px 3px rgb(255,255,255,.25), 1px 1px 3px rgb(174,174,192,.4), 4px 4px 8px rgb(174,174,192,.4), -4px -4px 12px #fff, inset 4px 4px 8px rgb(174,174,192,.4);'
+                'active':'inset 5px 5px 17px #cacaca,inset -5px -5px 17px #f6f6f6'
             },
             gridTemplateColumns: {
                 '24': 'repeat(24, minmax(0, 1fr))',
@@ -215,36 +196,62 @@ module.exports = {
         // },
         function ({ addUtilities }) {
             const newUtilities = {
-                '.primary-text': {
-                    color: 'var(--primary-text)'
+                '.illuminate-color':{
+                    color: 'var(--illuminate-color)'
                 },
-                '.regular-text': {
-                    color: 'var(--regular-text)'
+                '.font-main-color': {
+                    color: 'var(--font-main-color)'
                 },
-                '.secondary-text': {
-                    color: 'var(--secondary-text)'
+                '.font-regular-color': {
+                    color: 'var(--font-regular-color)'
                 },
-                '.placeholder-text': {
-                    color: 'var(--placeholder-text)'
+                '.font-secondary-color': {
+                    color: 'var(--font-secondary-color)'
                 },
-                '.border-basis': {
-                    borderColor: 'var(--border-basis)'
+                '.font-disable-color': {
+                    color: 'var(--font-disable-color)'
                 },
-                '.border-light': {
-                    borderColor: 'var(--border-light)'
+                '.bg-disable-color': {
+                    backgroundColor: 'var(--bg-disable-color)'
                 },
-                '.border-lighter': {
-                    borderColor: 'var(--border-lighter)'
+                '.bg-color': {
+                    backgroundColor: 'var(--bg-color)'
                 },
-                '.border-extralight': {
-                    borderColor: 'var(--border-extralight)'
-                }
-            }
-            // 创建暗色模式的工具类
+                '.bg-masking-color': {
+                    backgroundColor: 'var(--bg-masking-color)'
+                },
+                '.bg-active-color': {
+                    backgroundColor: 'var(--bg-active-color)'
+                },
+                '.font-active-color': {
+                    color:'var(--font-active-color)'
+                },
+                '.bg-inactive-color': {
+                    backgroundColor: 'var(--bg-inactive-color)'
+                },
+                '.font-inactive-color': {
+                    color: 'var(--font-inactive-color)'
+                },
+            };
+            
             const darkUtilities = Object.keys(newUtilities).reduce((acc, key) => {
                 // 删除 . 的前缀
-                key = key.replace(/^\./, '');
-                acc[`.dark .${key}`] = { color: `var(--dark-${key})` };
+                const className = key.replace(/^\./, '');
+                // 获取原始类的属性和值
+                const originalProperties = newUtilities[key];
+            
+                // 创建一个对应的暗色模式属性对象
+                const darkProperties = Object.keys(originalProperties).reduce((props, prop) => {
+                    // 对于每个属性，生成暗色模式下的变量名
+                    // 例如: --font-main-color 变成 --dark-font-main-color
+                    const value = originalProperties[prop];
+                    const variableName = value.match(/\(--(.*)\)/)[1];
+                    props[prop] = `var(--dark-${variableName})`;
+                    return props;
+                }, {});
+            
+                // 将生成的暗色模式属性对象添加到累加器对象中
+                acc[`.dark .${className}`] = darkProperties;
                 return acc;
             }, {});
             

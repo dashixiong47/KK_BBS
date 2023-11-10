@@ -11,15 +11,18 @@
   <div class="flex items-center mb-5">
     <div class="flex items-center">
       <span class="text-base font-extrabold">{{ $t("comments-title") }}</span>
-      <span class="ml-2 text-sm font-normal text-light-5">{{ total }}</span>
+      <span class="ml-2 text-sm font-normal text-light-5 font-regular-color">{{
+        total
+      }}</span>
     </div>
     <div class="ml-5 text-sm text-light-5">
       <button
         class="border px-2 rounded-l-md"
-        :class="{
-          'bg-light-3 dark:bg-light-4': !selected,
-          'text-blue-400': !selected,
-        }"
+        :class="[
+          !selected
+            ? 'text-[--illuminate-color] dark:text-[--dark-illuminate-color]'
+            : '',
+        ]"
         @click="change(0)"
       >
         {{ $t("comments-hot") }}
@@ -50,27 +53,29 @@
         <div class="text-sm">
           {{ item.content }}
         </div>
-        <div class="text-xs text-light-5 flex items-center">
-          <span class="mr-2 cursor-pointer">{{
-            getRelativeTime(item.createdAt)
-          }}</span>
-          <span
-            class="mr-2 cursor-pointer flex items-center"
-            :class="{
-              'text-[--color-primary]': item.likeState,
-              'dark:text-[--dark-color-primary]': item.likeState,
-            }"
-            @click="commentLikeChange(item, item.id, 0)"
-          >
-            <Icon name="icon-park-solid:thumbs-up" class="mr-1" />{{
-              item.like
-            }}
+        <div
+          class="text-xs text-light-5 flex items-center text-[--font-secondary-color] dark:text-[--dark-font-secondary-color]"
+        >
+          <span class="mr-2 cursor-pointer">
+            {{ getRelativeTime(item.createdAt) }}
           </span>
           <span
-            class="cursor-pointer"
-            @click="(e) => subReply(e, item, item.id)"
-            >{{ $t("comments-reply") }}</span
+            class="mr-2 cursor-pointer flex items-center"
+            :class="[
+              item.likeState
+                ? 'text-[--illuminate-color] dark:text-[--dark-illuminate-color]'
+                : '',
+            ]"
+            @click="commentLikeChange(item, item.id, 0)"
           >
+            <Icon name="icon-park-solid:thumbs-up" class="mr-1" />
+            {{ item.like }}
+          </span>
+          <span
+            class="cursor-pointer text-[--illuminate-color] dark:text-[--dark-illuminate-color]"
+            @click="(e) => subReply(e, item, item.id)"
+            >{{ $t("comments-reply") }}
+          </span>
         </div>
         <div class="reply"></div>
         <div>
@@ -210,6 +215,7 @@ const subReply = (e, item, parentId) => {
 // ----------------------------------------------------------------
 
 const loadMore = () => {
+  console.log("----");
   if (page.page * page.pageSize >= total.value) {
     notice({
       title: "提示",
@@ -224,7 +230,6 @@ const loadMore = () => {
 async function getComments() {
   try {
     let { data } = await useGetComments(topicId, { ...page, type: type.value });
-
     // 计算当前页面在 comments.value 数组中的起始和结束索引
     const startIndex = (page.page - 1) * page.pageSize;
     const endIndex = startIndex + page.pageSize;
