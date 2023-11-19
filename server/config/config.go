@@ -37,6 +37,12 @@ type Settings struct {
 		IdleTimeout        int    `yaml:"idleTimeout"`
 		IdleCheckFrequency int    `yaml:"idleCheckFrequency"`
 	} `yaml:"redis"`
+	Smtp struct {
+		Host     string `yaml:"host"`
+		Port     string `yaml:"port"`
+		User     string `yaml:"user"`
+		Password string `yaml:"password"`
+	} `yaml:"email"`
 }
 
 var SettingsConfig = new(Settings)

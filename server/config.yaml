@@ -32,3 +32,9 @@ redis:
     poolTimeout: 30
     idleTimeout: 5
     idleCheckFrequency: 60
+# 邮件服务器配置，用于邮件通知
+Smtp:
+  Host: us2.smtp.mailhostbox.com
+  Port: 587
+  Username: admin@hxsj.in
+  Password: fmzqUps2

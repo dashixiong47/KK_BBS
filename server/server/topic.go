@@ -133,6 +133,15 @@ func (s *TopicServer) GetTopicDetail(topicId, userId int) (any, error) {
 	if err != nil {
 		return nil, errors.New("unknown")
 	}
+	if doc.Type == 1 && detail["hidden"] == int16(1) {
+		var count int64
+		db.DB.Model(models.Comment{}).Where("topic_id = ?", topicId).
+			Where("user_id = ?", userId).Count(&count)
+		if count == 0 {
+			detail["hidden_content"] = "该内容已隐藏，需要评论后才能查看"
+
+		}
+	}
 	// 查询用户信息
 	user, err := models.GetUser(doc.UserID)
 	if err != nil {

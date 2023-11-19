@@ -77,6 +77,7 @@ const toCreate = () => {
   addMessage("请先登录", "warning");
 };
 function getPath() {
+  console.log(userInfo);
   return `/user/${userInfo.value.id}`;
 }
 userStore.fetchUserInfo();

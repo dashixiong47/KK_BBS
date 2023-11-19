@@ -18,21 +18,21 @@ type Model struct {
 }
 type User struct {
 	ID           uint         `json:"id" gorm:"primaryKey;AUTO_INCREMENT"`
-	Username     string       `json:"username" gorm:"size:10;not null;unique;index:index_username"` // 用户名
-	Password     string       `json:"password" gorm:"size:255;not null"`                            // 用户密码
-	Email        string       `json:"email" gorm:"size:255;index:index_email"`                      // 用户邮箱
-	Phone        string       `json:"phone" gorm:"size:11;"`                                        // 用户手机号
-	Avatar       string       `json:"avatar" gorm:"size:255;"`                                      // 用户头像
-	Nickname     string       `json:"nickname" gorm:"size:20;"`                                     // 用户昵称
-	Background   string       `json:"background" gorm:"size:255;"`                                  // 用户背景
-	Introduction string       `json:"introduction" gorm:"size:255;"`                                // 用户简介
-	Role         *db.IntArray `json:"role" gorm:"type:integer[];"`                                  // 用户角色
-	Status       int          `json:"status" gorm:"size:1;"`                                        // 用户状态
-	Coins        int          `json:"coins" gorm:"-"`                                               // 金币
-	Exp          int          `json:"exp" gorm:"-"`                                                 // 经验
-	Level        int          `json:"level" gorm:"-"`                                               // 等级
-	Follow       int          `json:"follow" gorm:"-"`                                              // 关注
-	Fans         int          `json:"fans" gorm:"-"`                                                // 粉丝
+	Username     string       `json:"username" gorm:"size:255;not null;unique;index:index_username"` // 用户名
+	Password     string       `json:"password" gorm:"size:255;not null"`                             // 用户密码
+	Email        string       `json:"email" gorm:"size:255;index:index_email"`                       // 用户邮箱
+	Phone        string       `json:"phone" gorm:"size:11;"`                                         // 用户手机号
+	Avatar       string       `json:"avatar" gorm:"size:255;"`                                       // 用户头像
+	Nickname     string       `json:"nickname" gorm:"size:20;"`                                      // 用户昵称
+	Background   string       `json:"background" gorm:"size:255;"`                                   // 用户背景
+	Introduction string       `json:"introduction" gorm:"size:255;"`                                 // 用户简介
+	Role         *db.IntArray `json:"role" gorm:"type:integer[];"`                                   // 用户角色
+	Status       int          `json:"status" gorm:"size:1;"`                                         // 用户状态
+	Coins        int          `json:"coins" gorm:"-"`                                                // 金币
+	Exp          int          `json:"exp" gorm:"-"`                                                  // 经验
+	Level        int          `json:"level" gorm:"-"`                                                // 等级
+	Follow       int          `json:"follow" gorm:"-"`                                               // 关注
+	Fans         int          `json:"fans" gorm:"-"`                                                 // 粉丝
 	Model
 }
 
