@@ -1,6 +1,7 @@
 package server
 
 import (
+	"encoding/json"
 	"errors"
 	"github.com/dashixiong47/KK_BBS/db"
 	"github.com/dashixiong47/KK_BBS/models"
@@ -8,6 +9,7 @@ import (
 	"github.com/dashixiong47/KK_BBS/server/data/group"
 	"github.com/dashixiong47/KK_BBS/utils"
 	"github.com/dashixiong47/KK_BBS/utils/klog"
+	"log"
 )
 
 type TopicServer struct {
@@ -64,15 +66,26 @@ func (s *TopicServer) Create(post *models.Topic, attachments *[]models.Attachmen
 }
 
 // GetTopicList 获取帖子列表
-func (s *TopicServer) GetTopicList(_type string, userId, selfUserId uint, paging utils.Paging) (any, error) {
+func (s *TopicServer) GetTopicList(_type string, groupId, userId, selfUserId uint, paging utils.Paging) (any, error) {
 	var docs []Topic
-	tx := paging.SetPaging(db.DB).
-		Order("id desc")
+	var count int64
+	tx := db.DB
+	tx = tx.
+		Order("id desc").Model(&models.Topic{})
 	if userId != 0 {
 		tx = tx.Where("user_id = ?", userId)
 	}
+	if groupId != 0 {
+		tx = tx.Where("group_id = ?", groupId)
+	}
+	if _type != "" {
+		tx = tx.Where("type = ?", _type)
+	}
+	tx.Count(&count)
+	tx = paging.SetPaging(tx)
 	err := tx.Find(&docs).Error
 	if err != nil {
+		klog.Error("GetTopicList", err)
 		return nil, errors.New("unknown")
 	}
 	userIDs := make([]uint, 0)
@@ -83,7 +96,7 @@ func (s *TopicServer) GetTopicList(_type string, userId, selfUserId uint, paging
 	userDetails := make(map[uint]map[string]any)
 	for _, user := range data.GetUserList(userIDs) {
 		userDetails[user.ID] = map[string]any{
-			"id":       db.GetID(user.ID),
+			"id":       db.GetStrID(user.ID),
 			"avatar":   user.Avatar,
 			"username": user.Username,
 			"nickname": user.Nickname,
@@ -93,9 +106,9 @@ func (s *TopicServer) GetTopicList(_type string, userId, selfUserId uint, paging
 	// 将详情填充到Post列表中
 	for _, topic := range docs {
 		topicList = append(topicList, map[string]any{
-			"id":           db.GetID(topic.ID),
+			"id":           db.GetStrID(topic.ID),
 			"user":         userDetails[topic.UserID],
-			"userId":       db.GetID(topic.UserID),
+			"userId":       db.GetStrID(topic.UserID),
 			"title":        topic.Title,
 			"tags":         topic.Tags,
 			"covers":       topic.Covers,
@@ -114,7 +127,7 @@ func (s *TopicServer) GetTopicList(_type string, userId, selfUserId uint, paging
 	}
 	return map[string]any{
 		"list":  topicList,
-		"total": data.GetTopicCount(),
+		"total": count,
 	}, nil
 }
 
@@ -127,7 +140,7 @@ func (s *TopicServer) GetTopicDetail(topicId, userId int) (any, error) {
 		return nil, errors.New("unknown")
 	}
 	var detail map[string]any
-	// 根据Type字段将Post IDs进行分组 1:默认 2:视频 3:图片 4:文本
+	// 根据Type字段将Post IDs进行分组 1:默认 2:图片 3:视频 4:文本
 	err = db.DB.Table(models.GetTopicType(doc.Type)).Where("topic_id = ?", topicId).
 		Scan(&detail).Error
 	if err != nil {
@@ -141,6 +154,22 @@ func (s *TopicServer) GetTopicDetail(topicId, userId int) (any, error) {
 			detail["hidden_content"] = "该内容已隐藏，需要评论后才能查看"
 
 		}
+	} else if doc.Type == 2 {
+		images := make([]map[string]any, 0)
+		err := json.Unmarshal([]byte(detail["images"].(string)), &images)
+		if err != nil {
+			log.Println("json.Unmarshal", err)
+		}
+		detail["images"] = images
+
+	} else if doc.Type == 4 {
+		texts := make([]map[string]any, 0)
+		err := json.Unmarshal([]byte(detail["texts"].(string)), &texts)
+		if err != nil {
+			log.Println("json.Unmarshal", err)
+		}
+		detail["texts"] = texts
+
 	}
 	// 查询用户信息
 	user, err := models.GetUser(doc.UserID)
@@ -153,9 +182,9 @@ func (s *TopicServer) GetTopicDetail(topicId, userId int) (any, error) {
 	}
 
 	return map[string]any{
-		"id": db.GetID(doc.ID),
+		"id": db.GetStrID(doc.ID),
 		"user": map[string]any{
-			"id":       db.GetID(user.ID),
+			"id":       db.GetStrID(user.ID),
 			"avatar":   user.Avatar,
 			"username": user.Username,
 			"nickname": user.Nickname,

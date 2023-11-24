@@ -4,7 +4,6 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
-	"github.com/dashixiong47/KK_BBS/config"
 	"github.com/dashixiong47/KK_BBS/db"
 	"github.com/dashixiong47/KK_BBS/models"
 	"github.com/dashixiong47/KK_BBS/utils/klog"
@@ -15,7 +14,7 @@ import (
 type UploadServer struct{}
 
 func (u *UploadServer) Query(md5 string) any {
-	
+
 	var fileInfo models.File
 	ctx := context.Background()
 	// 从redis中查询
@@ -34,7 +33,7 @@ func (u *UploadServer) Query(md5 string) any {
 	_ = saveToRedis(fileInfo)
 	return map[string]interface{}{
 		"id":   fileInfo.ID,
-		"url":  config.SettingsConfig.Application.Host + fileInfo.Url,
+		"url":  fileInfo.Url,
 		"name": fileInfo.FileName,
 	}
 }
@@ -62,7 +61,7 @@ func saveToRedis(file models.File) error {
 	data := map[string]interface{}{
 		"id":   file.ID,
 		"name": file.FileName,
-		"url":  config.SettingsConfig.Application.Host + file.Url,
+		"url":  file.Url,
 	}
 	marshal, _ := json.Marshal(data)
 	// 保存到redis 过期时间2小时

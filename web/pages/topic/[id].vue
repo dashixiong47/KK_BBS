@@ -19,11 +19,7 @@
             </div>
           </div>
           <h2 class="font-medium text-xl mt-5">{{ detail.title }}</h2>
-          <div class="py-5" v-html="detail.topicDetail?.content"></div>
-          <div v-if="detail.topicDetail?.hidden">
-            <div class="text-md font-bold">隐藏内容</div>
-            <div v-html="detail.topicDetail?.hidden_content"></div>
-          </div>
+          <component :is="type[detail.type]" :detail="detail.topicDetail" />
         </Card>
         <Card id="comment" class="mt-5">
           <Comments :topicId="route.params.id" @change="commentChange" />
@@ -33,7 +29,7 @@
         <div class="sticky top-0">
           <Card>
             <p class="border-b pb-2 mb-2 font-bold">附件</p>
-            <AttachmentList :topicId="route.params.id"/>
+            <AttachmentList :topicId="route.params.id" />
           </Card>
         </div>
       </div>
@@ -45,23 +41,27 @@
 import { useRoute } from "#app";
 import { useGetTopicDetail } from "~/api/server";
 import { useAppConfigStore } from "~/stores/init";
-
-import useMobileDetect from "~/composables/useMobileDetect";
-import useFormatNumber from "~/composables/useFormatNumber";
+import Default from "~/components/detail/Index.vue";
+import Images from "~/components/detail/Images.vue";
+import Texts from "~/components/detail/Texts.vue";
 let appConfigStore = useAppConfigStore();
 let appConfig = computed(() => appConfigStore.getConfig);
 
-const { formatNumber } = useFormatNumber();
-const { isMobile } = useMobileDetect();
 const { getRelativeTime } = useTime();
 const route = useRoute();
 
 let detail = ref({});
+let type = {
+  1: Default,
+  2: Images,
+  4: Texts,
+};
 async function getTopicDetail() {
   try {
     // const {data} = await useFetch("http://localhost:8080/api/v1/topic/" + route.params.id);
     let { data } = await useGetTopicDetail(route.params.id);
     detail.value = data || {};
+    console.log(data);
     useHead({
       title: detail.value.title + " - " + appConfig.value.appName,
     });

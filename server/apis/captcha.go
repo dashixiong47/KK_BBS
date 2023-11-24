@@ -3,11 +3,17 @@ package apis
 import (
 	"github.com/dashixiong47/KK_BBS/utils"
 	"github.com/dashixiong47/KK_BBS/utils/captcha"
+	"github.com/dashixiong47/KK_BBS/utils/stmp"
 	"github.com/gin-gonic/gin"
 )
 
 type Captcha struct {
 	Ctx *gin.Context
+}
+type fromData struct {
+	Email     string `json:"email" binding:"required"`
+	Code      string `json:"code" binding:"required"`
+	CaptchaId string `json:"captchaId" binding:"required"`
 }
 
 func (c *Captcha) Get() utils.ResponseData {
@@ -22,10 +28,17 @@ func (c *Captcha) Get() utils.ResponseData {
 	})
 }
 
-//func (c *Captcha) Post() utils.ResponseData {
-//	verify := captcha.VerifyCaptcha(c.Ctx)
-//	if !verify {
-//		return utils.JsonParameterError("验证码错误")
-//	}
-//	return utils.JsonSuccess(nil)
-//}
+// PostCode 发送验证码
+func (c *Captcha) PostCode() utils.ResponseData {
+	var info fromData
+	err := c.Ctx.ShouldBindJSON(&info)
+	if err != nil {
+		return utils.JsonFail("json_error")
+	}
+	// 发送验证码
+	err = stmp.SendVerificationEmail(info.Email, info.Email)
+	if err != nil {
+		return utils.JsonFail(err)
+	}
+	return utils.JsonSuccess(nil)
+}

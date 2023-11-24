@@ -4,7 +4,6 @@ import (
 	"github.com/dashixiong47/KK_BBS/server"
 	"github.com/dashixiong47/KK_BBS/utils"
 	"github.com/dashixiong47/KK_BBS/utils/captcha"
-	"github.com/dashixiong47/KK_BBS/utils/stmp"
 	"github.com/gin-gonic/gin"
 )
 
@@ -12,9 +11,11 @@ type Login struct {
 	Ctx *gin.Context
 }
 type user struct {
-	Username  string `json:"username" binding:"required"`
-	Password  string `json:"password" binding:"required"`
-	Code      string `json:"code" binding:"required"`
+	Username  string `json:"username"`
+	Password  string `json:"password"`
+	Code      string `json:"code"`
+	Email     string `json:"email"`
+	VCode     string `json:"vCode"`
 	LoginType *int   `json:"loginType"`
 	CaptchaId string `json:"captchaId"`
 }
@@ -32,17 +33,42 @@ func (c *Login) Post() utils.ResponseData {
 	if err != nil {
 		return utils.JsonFail("json_error")
 	}
-	verifyCaptcha := captcha.VerifyCaptcha(info.CaptchaId, info.Code)
-	if !verifyCaptcha {
-		return utils.JsonFail("code_error")
-	}
-	md5 := utils.MD5(info.Password)
+
 	var loginServer server.LoginServer
-	userInfo, err := loginServer.Login(info.Username, md5)
-	if err != nil {
-		return utils.JsonFail(err)
+	if info.LoginType == nil || *info.LoginType == 1 {
+		if info.CaptchaId == "" {
+			return utils.JsonFail("captcha_id_is_empty")
+		}
+		if info.Code == "" {
+			return utils.JsonFail("code_is_empty")
+		}
+		verifyCaptcha := captcha.VerifyCaptcha(info.CaptchaId, info.Code)
+		if !verifyCaptcha {
+			return utils.JsonFail("code_error")
+		}
+		if info.Password == "" {
+			return utils.JsonFail("password_error")
+		}
+		md5 := utils.MD5(info.Password)
+		userInfo, err := loginServer.Login(info.Username, md5)
+		if err != nil {
+			return utils.JsonFail(err)
+		}
+		return utils.JsonSuccess(userInfo)
+	} else {
+		if info.VCode == "" {
+			return utils.JsonFail("vcode_is_empty")
+		}
+		if info.Email == "" {
+			return utils.JsonFail("email_is_empty")
+		}
+		userInfo, err := loginServer.Register(info.Email, info.VCode)
+		if err != nil {
+			return utils.JsonFail(err)
+		}
+		return utils.JsonSuccess(userInfo)
 	}
-	return utils.JsonSuccess(userInfo)
+
 }
 
 // PostRegister 注册
@@ -62,19 +88,4 @@ func (c *Login) PostRegister() utils.ResponseData {
 		return utils.JsonFail(err)
 	}
 	return utils.JsonSuccess(userInfo)
-}
-
-// PostCode 发送验证码
-func (c *Login) PostCode() utils.ResponseData {
-	var info register
-	err := c.Ctx.ShouldBindJSON(&info)
-	if err != nil {
-		return utils.JsonFail("json_error")
-	}
-	// 发送验证码
-	err = stmp.SendVerificationEmail(info.Email, info.Email)
-	if err != nil {
-		return utils.JsonFail(err)
-	}
-	return utils.JsonSuccess(nil)
 }

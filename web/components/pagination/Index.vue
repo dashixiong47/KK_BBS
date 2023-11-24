@@ -3,11 +3,10 @@
     <KButton
       class="w-full mb-5"
       :class="{
-        'disableColor':
-          modelValue.currentPage === total,
+        disableColor: modelValue.page === total,
       }"
-      :disabled="modelValue.currentPage === total"
-      @click="change(modelValue.currentPage + 1)"
+      :disabled="modelValue.page === total"
+      @click="change(modelValue.page + 1)"
     >
       下一页
     </KButton>
@@ -17,18 +16,18 @@
         <button
           class="shadow-center uncheckedColor mr-2 w-10 h-10 flex items-center justify-center rounded-lg cursor-pointer"
           :class="{
-            'disableColor': modelValue.currentPage === 1,
-            'cursor-not-allowed': modelValue.currentPage === 1,
+            disableColor: modelValue.page === 1,
+            'cursor-not-allowed': modelValue.page === 1,
           }"
-          :disabled="modelValue.currentPage === 1"
-          @click="change(modelValue.currentPage - 1)"
+          :disabled="modelValue.page === 1"
+          @click="change(modelValue.page - 1)"
         >
           <Icon name="iconoir:nav-arrow-left" />
         </button>
 
         <!-- 显示省略号 -->
         <button
-          v-if="shouldShowEllipsis && modelValue.currentPage > 4"
+          v-if="shouldShowEllipsis && modelValue.page > 4"
           class="shadow-center uncheckedColor mr-2 w-10 h-10 flex items-center justify-center rounded-lg cursor-pointer"
           @click="moveLeft"
         >
@@ -40,7 +39,7 @@
           :key="item"
           class="shadow-center uncheckedColor mr-2 w-10 h-10 flex items-center justify-center rounded-lg cursor-pointer"
           :class="{
-            activeColor: item === modelValue.currentPage,
+            activeColor: item === modelValue.page,
           }"
           @click="change(item)"
         >
@@ -49,7 +48,7 @@
 
         <!-- 显示省略号 -->
         <button
-          v-if="shouldShowEllipsis && total - modelValue.currentPage >= 4"
+          v-if="shouldShowEllipsis && total - modelValue.page >= 4"
           class="shadow-center uncheckedColor mr-2 w-10 h-10 flex items-center justify-center rounded-lg cursor-pointer"
           @click="moveRight"
         >
@@ -60,11 +59,11 @@
         <button
           class="shadow-center uncheckedColor w-10 h-10 flex items-center justify-center rounded-lg cursor-pointer"
           :class="{
-            'disableColor': modelValue.currentPage === total,
-            'cursor-not-allowed': modelValue.currentPage === total,
+            disableColor: modelValue.page === total,
+            'cursor-not-allowed': modelValue.page === total,
           }"
-          :disabled="modelValue.currentPage === total"
-          @click="change(modelValue.currentPage + 1)"
+          :disabled="modelValue.page === total"
+          @click="change(modelValue.page + 1)"
         >
           <Icon name="iconoir:nav-arrow-right" />
         </button>
@@ -82,31 +81,31 @@ const props = defineProps({
     default: () => ({
       total: 0,
       pageSize: 10,
-      currentPage: 1,
+      page: 1,
     }),
   },
 });
-
-const modelValue = reactive({
-  ...props.modelValue,
+const modelValue = computed(() => props.modelValue);
+const total = computed(() => {
+  return modelValue.value.total
+    ? Math.ceil(modelValue.value.total / modelValue.value.pageSize)
+    : 1;
 });
-const total = computed(() =>
-  modelValue.total ? Math.ceil(modelValue.total / modelValue.pageSize) : 1
-);
 const shouldShowEllipsis = computed(() => total.value > 9); // 根据总页数决定是否显示省略号
-const emit = defineEmits(["update:modelValue"]);
+const emit = defineEmits(["update:modelValue", "query"]);
 
 function change(index) {
-  modelValue.currentPage = index;
-  emit("update:modelValue", modelValue);
+  modelValue.value.page = index;
+  emit("update:modelValue", modelValue.value);
+  emit("query");
 }
 
 function moveLeft() {
-  change(Math.max(1, modelValue.currentPage - 5)); // 向左移动5页，但不超过第1页
+  change(Math.max(1, modelValue.value.page - 5)); // 向左移动5页，但不超过第1页
 }
 
 function moveRight() {
-  change(Math.min(total.value, modelValue.currentPage + 5)); // 向右移动5页，但不超过最后一页
+  change(Math.min(total.value, modelValue.value.page + 5)); // 向右移动5页，但不超过最后一页
 }
 
 const pages = computed(() => {
@@ -116,8 +115,8 @@ const pages = computed(() => {
     end = total.value;
   } else {
     const sideButtons = 3; // 当总页数大于9时，每边显示3个按钮
-    start = modelValue.currentPage - sideButtons;
-    end = modelValue.currentPage + sideButtons;
+    start = modelValue.value.page - sideButtons;
+    end = modelValue.value.page + sideButtons;
 
     if (start < 1) {
       end += 1 - start; // 如果起始页码小于1，则相应增加结束页码

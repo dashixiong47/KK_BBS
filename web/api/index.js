@@ -2,6 +2,10 @@
 export const captcha = async () => {
     return await useRequest.get('/api/v1/captcha');
 }
+// 获取邮箱验证码
+export const emailCode = async (data) => {
+    return await useRequest.post('/api/v1/captcha/code',data);
+}
 // 登录
 export const login = async (data) => {
     return await useRequest.post('/api/v1/login', data);
@@ -49,4 +53,3 @@ export const topicCollect = async (id, data) => {
 export const buyAttachment = async (id, data) => {
     return await useRequest.post('/api/v1/attachment/buy/' + id, data);
 }
-

@@ -8,34 +8,60 @@
         <Topic :detail="item" />
       </li>
     </ul>
-    <Pagination v-model="pages" />
+    <Pagination v-model="pages" @query="init" />
   </div>
 </template>
 
 <script setup>
 import { useGetTopicList } from "@/api/server";
+import { useGroupStore } from "~/stores/init.js";
+const store = useGroupStore();
+const actived = computed(() => {
+  return store.actived;
+});
 let props = defineProps({
   userId: {
     type: String,
     default: "",
   },
+  type: {
+    type: Number,
+    default: "",
+  },
 });
 let pages = ref({
   total: 0,
-  currentPage: 1,
+  page: 1,
   pageSize: 10,
 });
+watch(
+  () => actived.value,
+  (val) => {
+    init(val);
+  },
+  {
+    immediate: true,
+  }
+);
 const list = ref([]);
 async function init() {
   try {
-    const { data } = await useGetTopicList({
+    let query = {
       ...pages.value,
-      userId: props.userId,
-    });
+
+      type: props.type,
+    };
+    if (props.userId) {
+      query["userId"] = props.userId;
+    }
+    if (actived.value) {
+      query["groupId"] = actived.value;
+    }
+    const { data = { list: [], total: 0 } } = await useGetTopicList(query);
     list.value = data.list;
     pages.value.total = data.total;
-  } catch (error) {}
+  } catch (error) {
+    console.log(error);
+  }
 }
-
-init();
 </script>

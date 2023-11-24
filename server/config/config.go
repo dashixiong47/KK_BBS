@@ -16,6 +16,7 @@ type Settings struct {
 		IdConfusion  int    `yaml:"idConfusion"`
 		I18          string `yaml:"i18"`
 		RedeemKey    string `yaml:"redeemKey"`
+		FileHost     string `yaml:"fileHost"`
 	} `yaml:"application"`
 	Postgresql struct {
 		Host     string `yaml:"host"`
@@ -40,9 +41,9 @@ type Settings struct {
 	Smtp struct {
 		Host     string `yaml:"host"`
 		Port     string `yaml:"port"`
-		User     string `yaml:"user"`
+		Username string `yaml:"username"`
 		Password string `yaml:"password"`
-	} `yaml:"email"`
+	} `yaml:"smtp"`
 }
 
 var SettingsConfig = new(Settings)

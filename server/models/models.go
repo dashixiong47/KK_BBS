@@ -5,7 +5,6 @@ import (
 	"time"
 
 	"github.com/dashixiong47/KK_BBS/db"
-	"github.com/dashixiong47/KK_BBS/server/data/group"
 	"github.com/dashixiong47/KK_BBS/utils/klog"
 	"gorm.io/gorm"
 )
@@ -44,7 +43,7 @@ type Topic struct {
 	Title      string        `json:"title" gorm:"size:255;not null;index:index_title" binding:"required"` // 标题
 	Tags       *db.IntArray  `json:"tags" gorm:"type:integer[];"`                                         // 标签
 	Covers     *db.JSONSlice `json:"covers" gorm:"type:jsonb;"`                                           // 封面
-	Type       int           `json:"type" gorm:"size:1;not null;index:index_type"`                        // 类型 1:默认 2:视频 3:图片 4:文本
+	Type       int           `json:"type" gorm:"size:1;not null;index:index_type"`                        // 类型 1:默认 2:图片 3:视频 4:文本
 	Summary    string        `json:"summary" gorm:"size:255;"`                                            // 摘要
 	TopicBasic TopicBasic    `json:"topicBasic" gorm:"foreignKey:TopicID"`
 	TopicVideo TopicVideo    `json:"topicVideo" gorm:"foreignKey:TopicID"`
@@ -72,18 +71,18 @@ type TopicVideo struct {
 
 // TopicImage 图片
 type TopicImage struct {
-	ID           uint         `json:"id" gorm:"primaryKey;AUTO_INCREMENT"`
-	TopicID      uint         `gorm:"unique;index"`                   // 外键，并且是唯一的
-	ImageID      *db.IntArray `json:"imageId" gorm:"type:integer[];"` // 图片
-	Introduction string       `json:"introduction" gorm:"size:255"`   // 简介
+	ID           uint   `json:"id" gorm:"primaryKey;AUTO_INCREMENT"`
+	TopicID      uint   `gorm:"unique;index"`                 // 外键，并且是唯一的
+	Images       string `json:"images" gorm:"type:jsonb;"`    // 图片
+	Introduction string `json:"introduction" gorm:"size:255"` // 简介
 }
 
 // TopicText 文本
 type TopicText struct {
-	ID           uint         `json:"id" gorm:"primaryKey;AUTO_INCREMENT"`
-	TopicID      uint         `gorm:"unique;index"`                 // 外键，并且是唯一的
-	TextID       *db.IntArray `json:"text" gorm:"type:integer[];"`  // 文本
-	Introduction string       `json:"introduction" gorm:"size:255"` // 简介
+	ID           uint   `json:"id" gorm:"primaryKey;AUTO_INCREMENT"`
+	TopicID      uint   `gorm:"unique;index"`                 // 外键，并且是唯一的
+	Texts        string `json:"texts" gorm:"type:jsonb;"`     // 文本
+	Introduction string `json:"introduction" gorm:"size:255"` // 简介
 }
 
 // TopicView 浏览
@@ -113,9 +112,10 @@ type File struct {
 
 // Group 分组
 type Group struct {
-	ID   uint   `json:"id" gorm:"primaryKey;AUTO_INCREMENT"`
-	Name string `json:"name" gorm:"size:10;not null;unique;index:index_name"` // 分组名
-	Icon string `json:"icon" gorm:"size:255;not null"`                        // 分组图标
+	ID    uint   `json:"id" gorm:"primaryKey;AUTO_INCREMENT"`
+	Name  string `json:"name" gorm:"size:10;not null;unique;index:index_name"` // 分组名
+	Icon  string `json:"icon" gorm:"size:255;not null"`                        // 分组图标
+	Order int    `json:"order" gorm:"size:1;not null"`                         // 排序
 	Model
 }
 
@@ -215,16 +215,6 @@ type RedeemCode struct {
 	Model
 }
 
-// Config admin 管理后台
-// 配置
-type Config struct {
-	ID    uint   `json:"id" gorm:"primaryKey;AUTO_INCREMENT"`
-	Code  string `json:"code" gorm:"size:255;not null;unique;index:index_code"` // 配置代码
-	Name  string `json:"name" gorm:"size:255;not null;unique;index:index_name"` // 配置名
-	Value string `json:"value" gorm:"size:255;not null;"`                       // 配置值
-	Model
-}
-
 func init() {
 	initData()
 	autoMigrate()
@@ -237,12 +227,15 @@ func initData() {
 		if err != nil {
 			klog.Error("Failed to connect to database: %v", err)
 		}
-		db.DB.Create(&User{
+		err = db.DB.Create(&User{
 			Username: "admin",
 			Password: "e10adc3949ba59abbe56e057f20f883e", //123456
 			Nickname: "admin",
-			Role:     &db.IntArray{1, 2, 3},
-		})
+			Role:     &db.IntArray{1},
+		}).Error
+		if err != nil {
+			klog.Error("Failed to connect to database: %v", err)
+		}
 	}
 	if !db.DB.Migrator().HasTable(&Group{}) {
 		err := db.DB.Migrator().CreateTable(&Group{})
@@ -250,19 +243,20 @@ func initData() {
 			klog.Error("Failed to connect to database: %v", err)
 		}
 		var groups = Group{
-			Name: "默认分组",
+			Name:  "默认分组",
+			Order: 1,
 		}
-		db.DB.Create(&groups)
-		err = group.CreateGroup(groups.ID, groups.Name)
+		err = db.DB.Create(&groups).Error
 		if err != nil {
 			klog.Error("Failed to connect to database: %v", err)
 		}
 	}
+
 }
 func autoMigrate() {
 	// 自动迁移
 	err := db.DB.AutoMigrate(&TopicLike{}, &Topic{}, &TopicBasic{}, &TopicImage{}, &TopicVideo{}, &TopicText{}, &TopicView{}, &Tag{}, &File{}, &Comment{}, &CommentLike{},
-		&Attachment{}, &Collection{}, &Follow{}, &Share{}, &IntegralLog{}, &RedeemCode{}, &Config{})
+		&Attachment{}, &Collection{}, &Follow{}, &Share{}, &IntegralLog{}, &RedeemCode{})
 	if err != nil {
 		klog.Info("Failed to connect to database: %v", err)
 	}
@@ -271,7 +265,7 @@ func autoMigrate() {
 // LoadSystemConfig 加载systemConfig
 func LoadSystemConfig() {
 	//	读取数据库里的配置
-	var sysConfig []Config
+	var sysConfig []SysConfig
 	tx := db.DB.Find(&sysConfig)
 	if tx.Error != nil {
 		klog.Error("Error reading config: %s\n", tx.Error)

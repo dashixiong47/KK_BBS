@@ -1,6 +1,5 @@
 <template>
   <div>
-    
     <!-- 默认编辑器 -->
     <Editor
       ref="content"
@@ -10,7 +9,9 @@
     />
 
     <!-- 是否回复可见 -->
-    <p class="flex">评论可见:<KSwitch class="ml-2" v-model="hiddenContentStatus"></KSwitch></p>
+    <p class="flex">
+      评论可见:<KSwitch class="ml-2" v-model="hiddenContentStatus"></KSwitch>
+    </p>
 
     <!-- 隐藏内容 -->
     <Editor
@@ -22,6 +23,8 @@
 </template>
 
 <script setup>
+import { useAppConfigStore } from "~/stores/init.js";
+const appConfigStore = useAppConfigStore();
 // 隐藏内容状态
 let hiddenContentStatus = ref(false);
 
@@ -39,6 +42,7 @@ const checkParams = () => {
   }
   return false;
 };
+
 // 提交
 const getFormData = () => {
   return formData.value;

@@ -59,7 +59,7 @@ export default defineNuxtConfig({
   },
   nitro: {
     devProxy: {
-      "/api": {
+      "/api/v1": {
         target: "http://localhost:8080", // 这里是接口地址
         changeOrigin: true,
       },

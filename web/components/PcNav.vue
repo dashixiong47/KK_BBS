@@ -18,26 +18,11 @@
       <ul
         class="w-4/6 h-full flex items-center px-5 text-[--illuminate-color] dark:text-[--dark-illuminate-color]"
       >
-        <li class="mr-2">
+        <li class="mr-2" v-for="item in type">
           <button class="shadow-center rounded-full w-10 h-10">
-            <KLink to="/">
-              <Icon name="clarity:house-line" size="1.5rem"></Icon>
+            <KLink :to="item.path">
+              <Icon :name="item.icon" size="1.5rem"></Icon>
             </KLink>
-          </button>
-        </li>
-        <li class="mr-2">
-          <button class="shadow-center rounded-full w-10 h-10">
-            <Icon name="bi:journal-richtext" size="1.5rem"></Icon>
-          </button>
-        </li>
-        <li class="mr-2">
-          <button class="shadow-center rounded-full w-10 h-10">
-            <Icon name="ic:round-ondemand-video" size="1.5rem"></Icon>
-          </button>
-        </li>
-        <li class="mr-2">
-          <button class="shadow-center rounded-full w-10 h-10">
-            <Icon name="bi:journal-text" size="1.5rem"></Icon>
           </button>
         </li>
       </ul>
@@ -46,9 +31,9 @@
       <KButton @click="toCreate">发表</KButton>
       <!-- <SwitcherTheme /> -->
 
-      <div class="ml-4 w-12 h-12">
+      <div class="ml-4 flex-shrink-0">
         <KLink v-if="isLogin" :to="getPath()">
-          <Avatar :url="userInfo.avatar" class="w-full h-full" />
+          <Avatar :url="userInfo.avatar" class="w-12 h-12" />
         </KLink>
         <KButton v-else @click="setLoginStatus">登录</KButton>
       </div>
@@ -60,6 +45,7 @@
 
 <script setup>
 import { useLoginStore, useUserStore } from "~/stores/main.js";
+const { addMessage } = useMessage();
 const store = useLoginStore();
 const userStore = useUserStore();
 const userInfo = computed(() => userStore.getUserInfo);
@@ -68,16 +54,42 @@ const { to } = useToRoute();
 const setLoginStatus = () => {
   store.setLoginStatus();
 };
-
+const type = [
+  {
+    name: "首页",
+    icon: "clarity:house-line",
+    path: "/",
+  },
+  {
+    name: "默认",
+    icon: "icon-park-solid:topic",
+    path: "/topic",
+  },
+  {
+    name: "图片",
+    icon: "lets-icons:img-box-fill",
+    path: "/img",
+  },
+  {
+    name: "视频",
+    icon: "ic:round-ondemand-video",
+    path: "/video",
+  },
+  {
+    name: "小说",
+    icon: "mdi:text-box-multiple",
+    path: "/text",
+  },
+];
 const toCreate = () => {
   if (isLogin.value) {
-    to(`/topic/create`);
+    to(`/create`);
     return;
   }
   addMessage("请先登录", "warning");
+  setLoginStatus();
 };
 function getPath() {
-  console.log(userInfo);
   return `/user/${userInfo.value.id}`;
 }
 userStore.fetchUserInfo();

@@ -5,9 +5,10 @@ import (
 	"encoding/json"
 	"fmt"
 	"github.com/dashixiong47/KK_BBS/db"
+	"github.com/dashixiong47/KK_BBS/models"
 )
 
-// CreateGroup 创建帖子点赞
+// CreateGroup 创建群组
 func CreateGroup(groupId uint, name string) error {
 	ctx := context.Background()
 	data := map[string]any{
@@ -32,6 +33,29 @@ func GetAllGroup() []map[string]any {
 		_ = json.Unmarshal([]byte(group), &item)
 		data = append(data, item)
 	}
+
+	if len(data) == 0 {
+		data = append(data, map[string]any{
+			"id":    0,
+			"order": 0,
+			"name":  "默认",
+		})
+		var doc []models.Group
+		db.DB.Find(&doc)
+		for _, item := range doc {
+			data = append(data, map[string]any{
+				"id":    db.GetStrID(item.ID),
+				"order": item.Order,
+				"name":  item.Name,
+			})
+		}
+		for _, item := range data {
+			jsonData, _ := json.Marshal(item)
+			_, _ = db.Rdb.HSet(ctx, "group", item["id"], jsonData).Result()
+
+		}
+	}
+
 	return data
 }
 

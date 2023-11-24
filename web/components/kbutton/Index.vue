@@ -7,6 +7,7 @@
     }"
     :disabled="porps.disabled"
   >
+   
     <div
       v-if="actived"
       class="absolute h-10 w-4 -right-0 -top-3 text-white bg-[--illuminate-color] dark:bg-[--dark-illuminate-color] -rotate-45"
@@ -17,6 +18,7 @@
         class="text-[--color-white] dark:text-[--dark-color-white] absolute rotate-45 left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2"
       />
     </div>
+    
     <slot></slot>
   </button>
 </template>
@@ -46,7 +48,7 @@ const throttleTime = 1000; // 节流时间设为1000毫秒（1秒）
 
 const throttledClick = () => {
   console.log("---------");
- if (porps.disabled || typeof throttle.value !== "function") return;
+  if (porps.disabled || typeof throttle.value !== "function") return;
   const now = Date.now();
   if (now - lastClicked.value >= throttleTime) {
     // 执行你的点击处理逻辑

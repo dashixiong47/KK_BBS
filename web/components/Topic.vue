@@ -36,6 +36,7 @@
         class="shadow-center rounded-2xl pt-[66.67%] relative flex items-center justify-center m-2 overflow-hidden"
         :class="getClassName(images.length, index)"
       >
+      
         <KImage
           class="object-cover absolute inset-0"
           :source="getPath(item)"
@@ -148,7 +149,7 @@ const getClassName = (length, index) => {
     case 1:
     case 2:
     case 4:
-      return "col-span-3";
+      return "col-span-2";
     case 5:
     case 8:
       if (index < 2) {

@@ -14,6 +14,8 @@ application:
   i18: zh-CN
   #卡密生成密钥
   redeemKey: 123456
+  # 文件域名
+  fileHost: http://127.0.0.1:8080
 postgresql:
     host: 127.0.0.1
     port: 5432
@@ -33,8 +35,8 @@ redis:
     idleTimeout: 5
     idleCheckFrequency: 60
 # 邮件服务器配置，用于邮件通知
-Smtp:
-  Host: us2.smtp.mailhostbox.com
-  Port: 587
-  Username: admin@hxsj.in
-  Password: fmzqUps2
+smtp:
+  host: us2.smtp.mailhostbox.com
+  port: 587
+  username: admin@hxsj.in
+  password: fmzqUps2

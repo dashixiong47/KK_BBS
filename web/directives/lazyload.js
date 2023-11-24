@@ -6,9 +6,11 @@ export const lazyload = {
     el.classList.add('placeholder');
 
     const img = new Image();
+ 
     img.onload = () => {
       // 当图片加载完毕后，img添加到div里面
       img.className = 'w-full h-full object-cover block'
+
       el.appendChild(img)
     };
 

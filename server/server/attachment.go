@@ -37,9 +37,9 @@ func (s *AttachmentServer) List(topId int, userId uint) ([]map[string]any, error
 	docs := make([]map[string]any, 0, len(attachmentsInfo))
 	for _, info := range attachmentsInfo {
 		doc := make(map[string]any)
-		doc["id"] = db.GetID(info.ID)
-		doc["topicId"] = db.GetID(info.TopicID)
-		doc["userId"] = db.GetID(info.UserID)
+		doc["id"] = db.GetStrID(info.ID)
+		doc["topicId"] = db.GetStrID(info.TopicID)
+		doc["userId"] = db.GetStrID(info.UserID)
 		doc["name"] = info.Name
 		doc["createdAt"] = info.CreatedAt
 		doc["type"] = info.Type

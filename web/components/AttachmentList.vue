@@ -49,8 +49,8 @@ const isLogin = computed(() => userStore.getIsLogin);
 const { addMessage } = useMessage();
 let props = defineProps({
   topicId: {
-    type: Number,
-    default: undefined,
+    type: String,
+    default: "",
   },
 });
 let showTips = ref(false);

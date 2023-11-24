@@ -51,7 +51,7 @@ func getRedisUserInfo(id int) map[string]any {
 func setRedisUserInfo(user models.User) {
 	ctx := context.Background()
 	userData := map[string]any{
-		"id":           db.GetID(user.ID),
+		"id":           db.GetStrID(user.ID),
 		"username":     user.Username,
 		"nickname":     user.Nickname,
 		"avatar":       user.Avatar,

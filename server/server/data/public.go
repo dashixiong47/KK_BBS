@@ -21,7 +21,7 @@ func GetUserInfo(userId uint) any {
 		var user models.User
 		db.DB.Where("id = ?", userId).Find(&user)
 		var data = map[string]interface{}{
-			"id":       db.GetID(user.ID),
+			"id":       db.GetStrID(user.ID),
 			"avatar":   user.Avatar,
 			"username": user.Username,
 			"nickname": user.Nickname,

@@ -40,12 +40,10 @@ func (es *EmailSender) SendEmail(to []string, subject, body string) error {
 		"Subject: " + subject + "\r\n\r\n"
 
 	message := []byte(header + body)
-
 	err := smtp.SendMail(es.SMTPHost+":"+es.SMTPPort, auth, es.SenderEmail, to, message)
 	if err != nil {
 		return err
 	}
-
 	return nil
 }
 
@@ -97,9 +95,8 @@ func (es *EmailSender) SendVerificationCode(to, username string) error {
 func SendVerificationEmail(to, username string) error {
 	log.Println("Verification email test------------------------")
 	// 创建 EmailSender 实例
-	emailSender := NewEmailSender("us2.smtp.mailhostbox.com", "587", "admin@hxsj.in", "fmzqUps2")
-	//emailSender := NewEmailSender(config.SettingsConfig.Smtp.Host, config.SettingsConfig.Smtp.Port, config.SettingsConfig.Smtp.User, config.SettingsConfig.Smtp.Password)
-	log.Println(to, username, config.SettingsConfig.Smtp)
+	emailSender := NewEmailSender(config.SettingsConfig.Smtp.Host, config.SettingsConfig.Smtp.Port, config.SettingsConfig.Smtp.Username, config.SettingsConfig.Smtp.Password)
+
 	// 发送验证码邮件
 	err := emailSender.SendVerificationCode(to, username)
 	if err != nil {

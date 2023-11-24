@@ -11,9 +11,9 @@ func GetTopicType(_type int) string {
 	case 1:
 		tableName = TopicBasic{}.TableName()
 	case 2:
-		tableName = TopicVideo{}.TableName()
-	case 3:
 		tableName = TopicImage{}.TableName()
+	case 3:
+		tableName = TopicVideo{}.TableName()
 	case 4:
 		tableName = TopicText{}.TableName()
 	}

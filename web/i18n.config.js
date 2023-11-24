@@ -1,5 +1,5 @@
-import zh from '~/locales/zh-CN.js'
-import en from '~/locales/en-US.js'
+import zh from '~/locales/zh-CN.json'
+import en from '~/locales/en-US.json'
 
 
 export default defineI18nConfig(() => ({

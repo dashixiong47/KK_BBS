@@ -51,3 +51,12 @@ func IntegralSourceTypeToString(s IntegralSourceType) string {
 		return "未知"
 	}
 }
+
+// 系统配置
+const (
+	SiteName        = "siteName"        // 网站名称
+	SiteHost        = "siteHost"        // 网站域名
+	SiteDescription = "siteDescription" //	网站描述
+	SiteKeywords    = "siteKeywords"    //	网站关键字
+	SiteNotice      = "siteNotice"      //	网站公告
+)

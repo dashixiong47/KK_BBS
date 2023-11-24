@@ -2,11 +2,11 @@
   <div>
     <CardTitleCard
       title="More Pages"
-      v-model="groupActived"
+      v-model="actived"
       :list="data"
       class="mb-5 max-h-80"
     />
-    <CardTitleCard title="More Pages" class="mb-5 h-80" />
+    <!-- <CardTitleCard title="More Pages" class="mb-5 h-80" /> -->
   </div>
 </template>
 
@@ -14,6 +14,12 @@
 import { useGroupStore } from "~/stores/init.js";
 const store = useGroupStore();
 const data = computed(() => store.getGroup);
-let groupActived = ref(0);
+const actived = computed({
+  get: () => store.actived,
+  set: (val) => {
+    store.setActived(val);
+  },
+});
+
 store.fetchGroup();
 </script>

@@ -57,11 +57,11 @@ func GetCommentList(topicId int, docs []Comment, comments, allReplyComments []mo
 		for _, replyComment := range allReplyComments {
 			if comment.ID == replyComment.ParentID {
 				reply = append(reply, ReplyComment{
-					Id:          db.GetID(replyComment.ID),
+					Id:          db.GetStrID(replyComment.ID),
 					Content:     replyComment.Content,
-					TopicId:     db.GetID(replyComment.TopicID),
-					ParentId:    db.GetID(replyComment.ParentID),
-					ReplyToUser: db.GetID(replyComment.ReplyToUserID),
+					TopicId:     db.GetStrID(replyComment.TopicID),
+					ParentId:    db.GetStrID(replyComment.ParentID),
+					ReplyToUser: db.GetStrID(replyComment.ReplyToUserID),
 					User:        GetUserInfo(replyComment.UserID),
 					ReplyUser:   GetUserInfo(replyComment.ReplyToUserID),
 					CreatedAt:   replyComment.CreatedAt,
@@ -72,11 +72,11 @@ func GetCommentList(topicId int, docs []Comment, comments, allReplyComments []mo
 
 		docs = append(docs, Comment{
 			ReplyComment: ReplyComment{
-				Id:          db.GetID(comment.ID),
+				Id:          db.GetStrID(comment.ID),
 				Content:     comment.Content,
-				TopicId:     db.GetID(comment.TopicID),
-				ParentId:    db.GetID(comment.ParentID),
-				ReplyToUser: db.GetID(comment.ReplyToUserID),
+				TopicId:     db.GetStrID(comment.TopicID),
+				ParentId:    db.GetStrID(comment.ParentID),
+				ReplyToUser: db.GetStrID(comment.ReplyToUserID),
 				CreatedAt:   comment.CreatedAt,
 				UpdatedAt:   comment.UpdatedAt,
 				Total:       totalReplyComments,

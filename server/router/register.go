@@ -39,7 +39,13 @@ func registerRoutes(r *gin.Engine) {
 	RegisterRoutes(v1, &apis.Comment{})
 	RegisterRoutes(v1, &apis.Integral{})
 	RegisterRoutes(v1, &apis.Attachment{})
-	RegisterRoutes(v1, &admin.RedeemCode{})
+	RegisterRoutes(v1, &apis.Host{})
+	_admin := r.Group("/api/v1/admin")
+	RegisterRoutes(_admin, &admin.RedeemCode{})
+	RegisterRoutes(_admin, &admin.Login{})
+	RegisterRoutes(_admin, &admin.User{})
+	RegisterRoutes(_admin, &admin.Authority{})
+	RegisterRoutes(_admin, &admin.Role{})
 
 }
 

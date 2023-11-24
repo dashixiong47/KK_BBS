@@ -3,10 +3,10 @@
 </template>
 
 <script setup>
-const { source } = defineProps({
+const props = defineProps({
   source: {
     type: String,
-    required: true,
+    required: "",
   },
 });
 </script>

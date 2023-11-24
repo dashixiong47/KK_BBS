@@ -149,11 +149,11 @@ func (s *CommentServer) GetSubCommentList(topicId, subId int, paging utils.Pagin
 	var docs []map[string]interface{}
 	for _, v := range comment {
 		docs = append(docs, map[string]interface{}{
-			"id":          db.GetID(v.ID),
+			"id":          db.GetStrID(v.ID),
 			"content":     v.Content,
-			"topicId":     db.GetID(v.TopicID),
-			"parentId":    db.GetID(v.ParentID),
-			"replyToUser": db.GetID(v.ReplyToUserID),
+			"topicId":     db.GetStrID(v.TopicID),
+			"parentId":    db.GetStrID(v.ParentID),
+			"replyToUser": db.GetStrID(v.ReplyToUserID),
 			"user":        data.GetUserInfo(v.UserID),
 			"replyUser":   data.GetUserInfo(v.ReplyToUserID),
 			"createdAt":   v.CreatedAt,

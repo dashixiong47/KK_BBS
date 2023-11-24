@@ -2,7 +2,6 @@ package apis
 
 import (
 	"errors"
-
 	"github.com/dashixiong47/KK_BBS/db"
 	"github.com/dashixiong47/KK_BBS/middleware"
 	"github.com/dashixiong47/KK_BBS/models"
@@ -12,6 +11,7 @@ import (
 	"github.com/dashixiong47/KK_BBS/utils/html"
 	"github.com/dashixiong47/KK_BBS/utils/klog"
 	"github.com/gin-gonic/gin"
+	"log"
 )
 
 type Topic struct {
@@ -115,7 +115,6 @@ func (t *Topic) createPostByType(doc *formData, post *models.Topic) error {
 	post.Covers = doc.Covers
 	post.Type = doc.Type
 	post.GroupID = doc.GroupID
-
 	// 根据帖子类型，填充特定字段
 	switch doc.Type {
 	case 1: // 基本帖子类型
@@ -136,7 +135,7 @@ func (t *Topic) createPostByType(doc *formData, post *models.Topic) error {
 	case 2: // 图片帖子类型
 		var imagePost = models.TopicImage{
 			Introduction: doc.TopicImage.Introduction,
-			ImageID:      doc.TopicImage.ImageID,
+			Images:       doc.TopicImage.Images,
 		}
 		post.TopicImage = imagePost
 	case 3: // 视频帖子类型
@@ -146,9 +145,10 @@ func (t *Topic) createPostByType(doc *formData, post *models.Topic) error {
 		}
 		post.TopicVideo = videoPost
 	case 4: // 文本帖子类型
+		log.Println(doc.TopicText.Texts)
 		var textPost = models.TopicText{
 			Introduction: doc.TopicText.Introduction,
-			TextID:       doc.TopicText.TextID,
+			Texts:        doc.TopicText.Texts,
 		}
 		post.TopicText = textPost
 	default:
@@ -198,12 +198,11 @@ func (t *Topic) handleAttachments(doc *formData, uintId uint) ([]models.Attachme
 // GetList 帖子列表
 func (t *Topic) GetList() utils.ResponseData {
 	middleware.AuthMiddleware(t.Ctx)
-	var _type = t.Ctx.DefaultQuery("type", "1")
+	var _type = t.Ctx.DefaultQuery("type", "")
 	var userIdStr = t.Ctx.DefaultQuery("userId", "0")
-	var userId uint
-	if userIdStr != "" {
-		userId = uint(db.GetIntID(userIdStr))
-	}
+	var groupIDStr = t.Ctx.DefaultQuery("groupId", "0")
+	userId := uint(db.GetIntID(userIdStr))
+	groupId := uint(db.GetIntID(groupIDStr))
 	var paging utils.Paging
 	paging.GetPaging(t.Ctx)
 	var selfUserId uint
@@ -214,7 +213,7 @@ func (t *Topic) GetList() utils.ResponseData {
 		selfUserId = uint(selfUserIdFlot.(float64))
 	}
 	var topicServer server.TopicServer
-	list, err := topicServer.GetTopicList(_type, userId, selfUserId, paging)
+	list, err := topicServer.GetTopicList(_type, groupId, userId, selfUserId, paging)
 	if err != nil {
 		return utils.JsonFail(err)
 	}

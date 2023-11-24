@@ -113,16 +113,6 @@ func GetTopicViewCount(topicId uint) int64 {
 	return int64(count)
 }
 
-// GetTopicCount 获取帖子总数
-func GetTopicCount() int64 {
-	ctx := context.Background()
-	count, err := db.Rdb.ZCard(ctx, "topic_like").Result()
-	if err != nil {
-		return 0
-	}
-	return count
-}
-
 const (
 	cacheTTL = 2 * time.Hour // 定义缓存的过期时间为2小时
 )

@@ -37,6 +37,11 @@ var ZHCN = map[string]string{
 	"email_already_exists":              "邮箱已经存在",
 	"register_error":                    "注册失败",
 	"failed_to_send_verification_email": "发送验证码失败",
+	"password_error":                    "密码不能为空",
+	"code_is_empty":                     "验证码不能为空",
+	"captcha_id_is_empty":               "验证码ID不能为空",
+	"vcode_is_empty":                    "验证码不能为空",
+	"email_is_empty":                    "邮箱不能为空",
 	//admin
 	"create_redeem_code_error": "创建兑换码失败",
 }

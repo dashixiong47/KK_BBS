@@ -1,68 +1,103 @@
 <template>
+  <div class="w-full flex justify-center my-5">
+    <el-avatar :size="50" :src="''" />
+  </div>
   <el-menu
-    default-active="2"
-    class="el-menu-vertical-demo"
-    :collapse="isCollapse"
+    :default-active="getActive"
+    class="w-[200px]"
+    :collapse="props.modelValue"
     active-text-color="#ffd04b"
     background-color="#545c64"
     text-color="#fff"
-    @open="handleOpen"
-    @close="handleClose"
+    @select="select"
   >
-    <el-sub-menu index="1">
+    <component
+      :is="item.children ? ElSubMenu : ElMenuItem"
+      v-for="(item, index) in getRouter"
+      :index="item.name"
+    >
+      <el-icon v-if="item.meta?.icon">
+        <component :is="item.meta.icon"></component>
+      </el-icon>
       <template #title>
-        <el-icon><location /></el-icon>
-        <span>Navigator One</span>
+        <el-icon v-if="item.meta?.icon && item.children">
+          <component :is="item.meta.icon"></component>
+        </el-icon>
+        <span>{{ item.label }}</span>
       </template>
-      <el-menu-item-group>
-        <template #title><span>Group One</span></template>
-        <el-menu-item index="1-1">item one</el-menu-item>
-        <el-menu-item index="1-2">item two</el-menu-item>
-      </el-menu-item-group>
-      <el-menu-item-group title="Group Two">
-        <el-menu-item index="1-3">item three</el-menu-item>
-      </el-menu-item-group>
-      <el-sub-menu index="1-4">
-        <template #title><span>item four</span></template>
-        <el-menu-item index="1-4-1">item one</el-menu-item>
-      </el-sub-menu>
-    </el-sub-menu>
-    <el-menu-item index="2">
-      <el-icon><icon-menu /></el-icon>
-      <template #title>Navigator Two</template>
-    </el-menu-item>
-    <el-menu-item index="3" disabled>
-      <el-icon><document /></el-icon>
-      <template #title>Navigator Three</template>
-    </el-menu-item>
-    <el-menu-item index="4">
-      <el-icon><setting /></el-icon>
-      <template #title>Navigator Four</template>
-    </el-menu-item>
+      <template #default v-if="item.children">
+        <el-menu-item-group v-for="(val, i) in item.children">
+          <el-menu-item :index="val.name">
+            <template #title>
+              <el-icon>
+                <component
+                  v-if="val.meta?.icon"
+                  :is="val.meta.icon"
+                ></component>
+              </el-icon>
+              {{ val.label }}
+            </template>
+          </el-menu-item>
+        </el-menu-item-group>
+      </template>
+    </component>
   </el-menu>
 </template>
 
-<script lang="ts" setup>
-import { ref } from "vue";
-import {
-  Document,
-  Menu as IconMenu,
-  Location,
-  Setting,
-} from "@element-plus/icons-vue";
+<script setup>
+import { computed, ref } from "vue";
+import { useRouter } from "vue-router";
+import { ElMenuItem, ElSubMenu } from "element-plus";
+const router = useRouter();
+const props = defineProps({
+  modelValue: {
+    type: Boolean,
+    default: false,
+  },
+});
 
-const isCollapse = ref(false);
-const handleOpen = (key: string, keyPath: string[]) => {
-  console.log(key, keyPath);
-};
-const handleClose = (key: string, keyPath: string[]) => {
-  console.log(key, keyPath);
+const getRouter = computed(() => {
+  // 辅助函数，用于决定是否包含路由
+  const shouldIncludeRoute = (route) => {
+    // 如果路由没有 meta 或 meta.show 为 true 或 undefined，返回 true
+    return !route.meta || route.meta.show !== false;
+  };
+
+  // 递归函数处理路由及其子路由
+  const processRoute = (route) => {
+    // 判断当前路由是否应该包含
+    if (shouldIncludeRoute(route)) {
+      return {
+        path: route.path,
+        name: route.name,
+        meta: route.meta,
+        label: route.label,
+        // 如果有子路由，递归处理并过滤
+        children: route.children
+          ? route.children.map(processRoute).filter((child) => child !== null)
+          : undefined,
+      };
+    }
+    return null;
+  };
+
+  // 遍历路由，应用处理函数，并过滤掉所有 null 值
+  return router.options.routes[0].children
+    .map(processRoute)
+    .filter((route) => route !== null);
+});
+const getActive = computed(() => {
+  return router.currentRoute.value.name;
+});
+const select = (key, keyPath) => {
+  router.push({
+    name: key,
+  });
 };
 </script>
 
 <style scoped>
-.el-menu-vertical-demo:not(.el-menu--collapse) {
-  width: 200px;
-  min-height: 400px;
+.el-menu {
+  border: none;
 }
 </style>

@@ -1,6 +1,6 @@
 <template>
   <div class="w-full relative glass rounded-xl overflow-hidden">
-    <DragColumn :columns="columns" :tableData="modelValue">
+    <DragColumn :columns="columns" :tableData="modelValue" @update="newValue => { tableData = newValue }">
       <template #coins="{ record }">
         <KInput
           class="w-20 py-1 px-4 rounded-lg text-center"

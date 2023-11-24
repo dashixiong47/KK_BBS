@@ -4,11 +4,11 @@
       <div class="h-full m-1 col-span-9">
         <Card>
           <!-- 帖子类型 -->
-          <TopicType />
+          <TopicType @selectd="selectdTopicType" />
           <!-- 通用 标题封面 -->
           <div class="border-t mt-5 py-5">
             <Skeleton :lines="3" v-if="!getGroup.length" />
-            <ul class="mb-5">
+            <ul class="mb-5 flex">
               <li v-for="item in getGroup">
                 <KButton
                   @click="formData.groupId = item.id"
@@ -29,7 +29,7 @@
               <!-- 选择封面 -->
               <UploadCover @selectd="(val) => (formData.covers = val)" />
             </div>
-            <component ref="publish" :is="Topic"></component>
+            <component ref="publish" :is="selectdTopic"></component>
           </div>
           <!-- 是否回复可见 -->
           <p class="flex mb-5">
@@ -67,51 +67,66 @@
 </template>
 
 <script setup>
-import { useGroupStore } from "~/stores/init.js";
+import { useGroupStore, useAppConfigStore } from "~/stores/init.js";
 import { createTopic } from "~/api";
 import { useUserStore } from "~/stores/main.js";
 import Topic from "~/components/publish/Index.vue";
+import Video from "~/components/publish/Video.vue";
+import Text from "~/components/publish/Text.vue";
+import Image from "~/components/publish/Image.vue";
 let userStore = useUserStore();
 const { t } = useI18n();
-
+const appConfigStore = useAppConfigStore();
 let { addMessage } = useMessage();
 let { to } = useToRoute();
 let store = useGroupStore();
 let getGroup = computed(() => store.getGroup);
 let captchaRef = ref(null);
+let TopicTypeOptions = ref({
+  topic: Topic,
+  video: Video,
+  text: Text,
+  image: Image,
+});
 // 上传文件显示of隐藏
 let uploadShow = ref(false);
 // 发布组件
 let publish = ref(null);
-// 用户信息
-let userInfo = computed(() => userStore.getUserInfo);
 
 // 附件列表
 let fileList = ref([]);
-let activeCoverList = ref([]);
 // 表单数据
 let formData = ref({
   code: "",
   title: "",
   tags: [],
   covers: [],
-  type: 1,
+  
   groupId: getGroup.value[0]?.id,
   captchaId: "",
   attachment: fileList.value,
 });
-
+let selectdTopic = ref(TopicTypeOptions.value.topic);
+const selectdTopicType = (item) => {
+  formData.value.type = item.index;
+  selectdTopic.value = TopicTypeOptions.value[item.type];
+};
 const submit = async () => {
   let message = checkParams();
   if (message) {
     addMessage(message, "warning");
     return;
   }
+  let form = {
+    ...formData.value,
+    ...publish.value.getFormData(),
+  };
+  let regex = new RegExp(`${appConfigStore.host}`, "g");
+
   try {
-    let {data} = await createTopic({
-      ...formData.value,
-      ...publish.value.getFormData(),
-    });
+    let { data } = await createTopic(
+      JSON.parse(JSON.stringify(form).replace(regex, ""))
+    );
     to("/topic/" + data);
     addMessage(t("submitted-success"));
   } catch (error) {

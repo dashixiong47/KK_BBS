@@ -44,6 +44,7 @@ async function init() {
   try {
     const { data } = await useGetUserInfo(route.params.id);
     userInfo.value = data;
+    console.log(data);
   } catch (error) {
     console.log(error);
   }

@@ -1,5 +1,5 @@
 <template>
-  <NuxtLayout >
+  <NuxtLayout>
     <NuxtLoadingIndicator class="!transform-none top-16" />
     <NuxtPage />
   </NuxtLayout>
@@ -7,4 +7,8 @@
     <FloatingList />
   </Teleport>
 </template>
-<script setup></script>
+<script setup>
+import { useAppConfigStore } from "~/stores/init";
+let app = useAppConfigStore();
+app.fetchHost();
+</script>

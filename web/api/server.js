@@ -23,3 +23,7 @@ export const useGetComments = async (id, params) => {
 export const useGetAttachment = async (id, params) => {
   return await useRequest.get(`/api/v1/attachment/list/${id}`, params);
 }
+// 获取文件域名
+export const useGetHost = async ( params) => {
+  return await useRequest.get(`/api/v1/host`, params);
+}

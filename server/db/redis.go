@@ -39,8 +39,8 @@ func init() {
 	klog.Info("连接 Redis 成功: %s", ping)
 }
 
-// GetID 获取 Redis 中的值
-func GetID(key interface{}) string {
+// GetStrID 获取 Redis 中的值
+func GetStrID(key interface{}) string {
 	strID := fmt.Sprintf("%v", key)
 	id, err := Rdb.HGet(context.Background(), "confusionID", strID).Result()
 	if err == nil {

@@ -15,12 +15,12 @@
             class="flex-shrink-0 w-10 h-10 flex items-center justify-center rounded-full bg-gradient-to-t from-indigo-200 via-purple-200 to-pink-200"
           >
             <img v-if="item.icon" src="" alt="" srcset="" />
-            <div v-else>{{ $t('default') }}</div>
+            <div v-else>{{ $t("default") }}</div>
           </div>
           <span
             class="ml-3 text-md w-full truncate whitespace-nowrap hover:text-blue-400"
           >
-            {{ item.name }}
+            {{ item.name }}-{{ item.id }}
           </span>
         </KLink>
       </li>
@@ -39,7 +39,7 @@ let { list } = defineProps({
     default: () => [],
   },
   modelValue: {
-    type: Number,
+    type: String,
     default: 0,
   },
 });

@@ -17,26 +17,28 @@ export const useRequest = {
   _fetch: async (url, method, body, params) => {
     const config = useRuntimeConfig()
     url = config.public.baseUrl + url
-
+    let token = getCookie('token')
     try {
       let { data } = await useFetch(url, {
         method: method,
         params: params,
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': getCookie('token')
+          ...(token ? { Authorization: token } : {})
         },
         body: body
       })
+      if (!data.value) {
+        console.log(data);
+        return data
+      }
       let { code, message } = data.value
       if (code === 200) {
         return data.value;
       } else if (code === 401) {
         setCookie('token', null)
-        throw new Error(message);
-      } else {
-        throw new Error(message);
       }
+      throw new Error(message)
     } catch (error) {
       throw error;
     }
