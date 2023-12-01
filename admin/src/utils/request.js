@@ -14,7 +14,7 @@ class Request {
     // 通用的fetch封装
     async request(url, method, body = null, params = {}) {
         // 如果是GET请求且有参数，则构建查询字符串
-        if (method === 'GET' && Object.keys(params).length) {
+        if (Object.keys(params).length) {
             url += '?' + new URLSearchParams(params).toString();
         }
 
@@ -57,8 +57,26 @@ class Request {
     }
 
     // DELETE请求
-    delete(url) {
-        return this.request(url, 'DELETE');
+    delete(url,params) {
+        return this.request(url, 'DELETE', null, params);
+    }
+    async upload(url, body) {
+        console.log(url, body);
+        const headers = new Headers({
+            'Authorization': this.getToken(),
+        });
+        const options = {
+            method: 'POST',
+            headers,
+            body: body,
+        };
+        try {
+            const response = await fetch(`${this.baseUrl}${url}`, options);
+            let jsonData = await response.json();
+            return jsonData;
+        } catch (error) {
+            console.error('请求错误:', error);
+        }
     }
 }
 export default Request;

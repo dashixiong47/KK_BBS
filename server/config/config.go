@@ -38,6 +38,14 @@ type Settings struct {
 		IdleTimeout        int    `yaml:"idleTimeout"`
 		IdleCheckFrequency int    `yaml:"idleCheckFrequency"`
 	} `yaml:"redis"`
+	Es struct {
+		Host     string `yaml:"host"`
+		Port     int    `yaml:"port"`
+		Username string `yaml:"username"`
+		Password string `yaml:"password"`
+		Index    string `yaml:"index"`
+	} `yaml:"es"`
+
 	Smtp struct {
 		Host     string `yaml:"host"`
 		Port     string `yaml:"port"`

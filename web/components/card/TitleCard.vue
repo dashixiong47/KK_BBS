@@ -7,20 +7,20 @@
       <li
         v-for="item in list"
         @click="change(item)"
-        class="cursor-pointer hover:bg-blue-100 rounded-2xl h-12 flex items-center px-2"
+        class="cursor-pointer hover:bg-blue-100 rounded-2xl h-12 flex items-center px-2 my-2"
         :class="modelValue === item.id ? 'bg-blue-100' : ''"
       >
         <KLink to="#" class="my-4 w-full flex items-center">
           <div
-            class="flex-shrink-0 w-10 h-10 flex items-center justify-center rounded-full bg-gradient-to-t from-indigo-200 via-purple-200 to-pink-200"
+            class="overflow-hidden flex-shrink-0 w-10 h-10 flex items-center justify-center rounded-full bg-gradient-to-t from-indigo-200 via-purple-200 to-pink-200"
           >
-            <img v-if="item.icon" src="" alt="" srcset="" />
+            <img v-if="item.icon" :src="getPath(item.icon)" alt="" srcset="" />
             <div v-else>{{ $t("default") }}</div>
           </div>
           <span
             class="ml-3 text-md w-full truncate whitespace-nowrap hover:text-blue-400"
           >
-            {{ item.name }}-{{ item.id }}
+            {{ item.name }}
           </span>
         </KLink>
       </li>
@@ -29,6 +29,7 @@
 </template>
 
 <script setup>
+const { getPath } = usePath();
 let { list } = defineProps({
   title: {
     type: String,

@@ -10,7 +10,6 @@ import (
 
 // RegisterRoutes 函数用于将控制器的方法自动注册到路由
 func RegisterRoutes(router *gin.RouterGroup, ctrl interface{}) {
-
 	t := reflect.TypeOf(ctrl) // 获取控制器的反射类型
 	name := t.Name()
 	if t.Kind() == reflect.Ptr { // 检查类型是否为指针

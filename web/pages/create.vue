@@ -74,13 +74,16 @@ import Topic from "~/components/publish/Index.vue";
 import Video from "~/components/publish/Video.vue";
 import Text from "~/components/publish/Text.vue";
 import Image from "~/components/publish/Image.vue";
+useHead({
+  title: "发布",
+});
 let userStore = useUserStore();
 const { t } = useI18n();
 const appConfigStore = useAppConfigStore();
 let { addMessage } = useMessage();
 let { to } = useToRoute();
 let store = useGroupStore();
-let getGroup = computed(() => store.getGroup);
+let getGroup = computed(() => store.getGroup.filter((item) => item.id));
 let captchaRef = ref(null);
 let TopicTypeOptions = ref({
   topic: Topic,
@@ -101,7 +104,7 @@ let formData = ref({
   title: "",
   tags: [],
   covers: [],
-  
+  type: 0,
   groupId: getGroup.value[0]?.id,
   captchaId: "",
   attachment: fileList.value,

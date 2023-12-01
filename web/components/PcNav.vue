@@ -19,17 +19,24 @@
         class="w-4/6 h-full flex items-center px-5 text-[--illuminate-color] dark:text-[--dark-illuminate-color]"
       >
         <li class="mr-2" v-for="item in type">
-          <button class="shadow-center rounded-full w-10 h-10">
-            <KLink :to="item.path">
+          <KLink :to="item.path">
+            <button
+              class="shadow-center rounded-full w-10 h-10"
+              :class="[
+                item.path === route.path
+                  ? 'bg-[--illuminate-color] dark:bg-[--dark-illuminate-color] text-white'
+                  : 'bg-white dark:bg-[--dark-bg] text-[--illuminate-color] dark:text-[--dark-illuminate-color]',
+              ]"
+            >
               <Icon :name="item.icon" size="1.5rem"></Icon>
-            </KLink>
-          </button>
+            </button>
+          </KLink>
         </li>
       </ul>
     </div>
     <div class="md:col-span-1 flex items-center justify-end">
       <KButton @click="toCreate">发表</KButton>
-      <!-- <SwitcherTheme /> -->
+      <SwitcherTheme />
 
       <div class="ml-4 flex-shrink-0">
         <KLink v-if="isLogin" :to="getPath()">
@@ -54,6 +61,14 @@ const { to } = useToRoute();
 const setLoginStatus = () => {
   store.setLoginStatus();
 };
+const route = useRoute();
+
+watch(
+  () => route.path,
+  (val) => {
+    console.log(val);
+  }
+);
 const type = [
   {
     name: "首页",

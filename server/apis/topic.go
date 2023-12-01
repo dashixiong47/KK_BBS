@@ -115,6 +115,7 @@ func (t *Topic) createPostByType(doc *formData, post *models.Topic) error {
 	post.Covers = doc.Covers
 	post.Type = doc.Type
 	post.GroupID = doc.GroupID
+
 	// 根据帖子类型，填充特定字段
 	switch doc.Type {
 	case 1: // 基本帖子类型
@@ -201,8 +202,8 @@ func (t *Topic) GetList() utils.ResponseData {
 	var _type = t.Ctx.DefaultQuery("type", "")
 	var userIdStr = t.Ctx.DefaultQuery("userId", "0")
 	var groupIDStr = t.Ctx.DefaultQuery("groupId", "0")
+
 	userId := uint(db.GetIntID(userIdStr))
-	groupId := uint(db.GetIntID(groupIDStr))
 	var paging utils.Paging
 	paging.GetPaging(t.Ctx)
 	var selfUserId uint
@@ -213,7 +214,7 @@ func (t *Topic) GetList() utils.ResponseData {
 		selfUserId = uint(selfUserIdFlot.(float64))
 	}
 	var topicServer server.TopicServer
-	list, err := topicServer.GetTopicList(_type, groupId, userId, selfUserId, paging)
+	list, err := topicServer.GetTopicList(_type, groupIDStr, userId, selfUserId, paging)
 	if err != nil {
 		return utils.JsonFail(err)
 	}

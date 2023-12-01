@@ -61,7 +61,6 @@ async function getTopicDetail() {
     // const {data} = await useFetch("http://localhost:8080/api/v1/topic/" + route.params.id);
     let { data } = await useGetTopicDetail(route.params.id);
     detail.value = data || {};
-    console.log(data);
     useHead({
       title: detail.value.title + " - " + appConfig.value.appName,
     });

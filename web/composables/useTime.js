@@ -4,7 +4,7 @@ import relativeTime from 'dayjs/plugin/relativeTime';
 import 'dayjs/locale/zh-cn';  // 加载简体中文
 import 'dayjs/locale/en';  // 加载英文
 
-export default function usePath() {
+export default function useTime() {
     const format = (time) => {
         return dayjs(time).format('YYYY-MM-DD HH:mm:ss');
     }

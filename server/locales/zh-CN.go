@@ -8,6 +8,7 @@ var ZHCN = map[string]string{
 	"parameter_error":                   "参数错误",
 	"json_error":                        "解析错误，请确认参数是否正确",
 	"code_error":                        "验证码错误",
+	"update_user_info_error":            "更新用户信息失败",
 	"username_or_password_error":        "用户名或密码错误",
 	"token_error":                       "无权限，请重新登录",
 	"please_login":                      "请登录后访问",
@@ -42,6 +43,10 @@ var ZHCN = map[string]string{
 	"captcha_id_is_empty":               "验证码ID不能为空",
 	"vcode_is_empty":                    "验证码不能为空",
 	"email_is_empty":                    "邮箱不能为空",
+	"get_file_error":                    "获取文件失败",
+	"file_size_exceeds_limit":           "文件大小超出限制",
+	"failed_to_open_file":               "打开文件失败",
+	"save_file_info_error":              "保存文件信息失败",
 	//admin
 	"create_redeem_code_error": "创建兑换码失败",
 }

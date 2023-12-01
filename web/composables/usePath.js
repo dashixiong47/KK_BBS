@@ -25,5 +25,9 @@ export default function usePath() {
             return url
         }
     }
-    return { getPath, getPathname };
+    const getRouter = (url) => {
+        const localePath = useLocalePath();
+        return localePath(url)
+    }
+    return { getPath, getPathname, getRouter };
 }

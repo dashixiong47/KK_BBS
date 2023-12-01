@@ -30,4 +30,5 @@ let emit = defineEmits(["selectd"]);
 const selectd = (index) => {
   emit("selectd", types[index]);
 };
+emit("selectd", types[0]);
 </script>

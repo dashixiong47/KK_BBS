@@ -83,12 +83,12 @@ func getMessage(message string) string {
 	// 获取该语言的所有消息
 	messages, ok := locales.I18[lang]
 	if !ok {
-		return "" // 语言不存在
+		return message // 语言不存在
 	}
 	// 获取特定消息
 	msg, ok := messages[message]
 	if !ok {
-		return "" // 消息不存在
+		return message // 消息不存在
 	}
 	return msg
 }

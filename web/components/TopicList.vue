@@ -37,6 +37,11 @@ let pages = ref({
 watch(
   () => actived.value,
   (val) => {
+    pages.value = {
+      total: 0,
+      page: 1,
+      pageSize: 10,
+    };
     init(val);
   },
   {

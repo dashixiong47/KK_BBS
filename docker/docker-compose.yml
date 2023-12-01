@@ -31,6 +31,32 @@ services:
     networks:
       - my-network
 
+  # Elasticsearch 容器配置
+  elasticsearch:
+    image: elasticsearch:8.4.3
+    container_name: my-elasticsearch
+    environment:
+      - "discovery.type=single-node" # 对于单节点设置
+      - "ELASTIC_USERNAME=elastic"  # 设置 Elasticsearch 用户名
+      - "ELASTIC_PASSWORD=123456"    # 设置 Elasticsearch 密码
+      - "xpack.security.enabled=false" # 启用 X-Pack 安全(可选)
+    ports:
+      - "9200:9200"
+      - "9300:9300"
+    volumes:
+      - ./elasticsearch-data:/usr/share/elasticsearch/data
+    restart: always
+    networks:
+      - my-network
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+    healthcheck:
+      test: ["CMD-SHELL", "curl --silent --fail localhost:9200/_cluster/health || exit 1"]
+      interval: 1m
+      timeout: 20s
+      retries: 3
 
 # 自定义网络配置，使容器能够相互通信
 networks:

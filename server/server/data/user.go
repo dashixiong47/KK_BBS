@@ -2,6 +2,7 @@ package data
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"github.com/dashixiong47/KK_BBS/db"
 	"strconv"
@@ -18,4 +19,12 @@ func UserIntegral(userId uint) int {
 		return 0
 	}
 	return integral
+}
+
+func RemoveUserRedis(userId int) error {
+	err := db.Rdb.Del(context.Background(), fmt.Sprintf("userInfo:%v", userId)).Err()
+	if err != nil {
+		return errors.New("update_user_info_error")
+	}
+	return nil
 }

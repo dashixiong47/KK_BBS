@@ -30,12 +30,12 @@ const router = createRouter({
             icon: "User",
           },
         },
-        // 角色管理
+        // 分组管理
         {
-          path: '/role',
-          name: 'role',
-          label: '角色管理',
-          component: () => import('@/views/role/Index.vue'),
+          path: '/group',
+          name: 'group',
+          label: '分组管理',
+          component: () => import('@/views/group/Index.vue'),
           meta: {
             icon: "User",
           },

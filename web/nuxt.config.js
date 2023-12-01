@@ -64,12 +64,12 @@ export default defineNuxtConfig({
         changeOrigin: true,
       },
     },
-    prerender: {
-      crawlLinks: true,
-      routes: [
-        '/',
-      ]
-    },
+    // prerender: {
+    //   crawlLinks: true,
+    //   routes: [
+    //     '/',
+    //   ]
+    // },
   },
   css: [
     '~/assets/kk_bbs_icon/iconfont.css',

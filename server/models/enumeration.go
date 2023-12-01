@@ -60,3 +60,8 @@ const (
 	SiteKeywords    = "siteKeywords"    //	网站关键字
 	SiteNotice      = "siteNotice"      //	网站公告
 )
+
+// GrouplistKey 分组Rediskey
+const (
+	GroupListKey = "groupList" // 分组列表
+)

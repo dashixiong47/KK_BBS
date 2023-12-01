@@ -1,6 +1,5 @@
 import { defineStore } from 'pinia'
 import { useGetUserInfo } from '~/api/server';
-import { useCookie } from "#app"
 export const useLoginStore = defineStore('login', {
     state: () => ({
         loginStatus: false,

@@ -69,7 +69,7 @@ async function loginEvt() {
   try {
     let { data } = await login(form.value);
     localStorage.setItem("token", data.token);
-    router.push("/");
+    router.replace({ path: "/" });
   } catch (error) {
     console.log(error);
   }

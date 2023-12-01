@@ -65,3 +65,30 @@ func setRedisUserInfo(user models.User) {
 	jsonData, _ := json.Marshal(userData)
 	db.Rdb.Set(ctx, fmt.Sprintf("userInfo:%v", user.ID), jsonData, time.Hour*1)
 }
+
+// UpdateUserInfo 修改用户信息
+func (u *UserServer) UpdateUserInfo(id int, nickname, avatar, background, introduction string) (any, error) {
+
+	tx := db.DB.Begin().Model(models.User{}).Where("id = ?", id)
+	if nickname != "" {
+		tx = tx.Update("nickname", nickname)
+	}
+	if avatar != "" {
+		tx = tx.Update("avatar", avatar)
+	}
+	if background != "" {
+		tx = tx.Update("background", background)
+	}
+	if introduction != "" {
+		tx = tx.Update("introduction", introduction)
+	}
+	err := data.RemoveUserRedis(id)
+	if err != nil {
+		return nil, err
+	}
+	err = tx.Commit().Error
+	if err != nil {
+		return nil, errors.New("update_user_info_error")
+	}
+	return nil, nil
+}

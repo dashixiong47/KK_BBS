@@ -4,7 +4,7 @@ export const captcha = async () => {
 }
 // 获取邮箱验证码
 export const emailCode = async (data) => {
-    return await useRequest.post('/api/v1/captcha/code',data);
+    return await useRequest.post('/api/v1/captcha/code', data);
 }
 // 登录
 export const login = async (data) => {
@@ -53,3 +53,9 @@ export const topicCollect = async (id, data) => {
 export const buyAttachment = async (id, data) => {
     return await useRequest.post('/api/v1/attachment/buy/' + id, data);
 }
+
+// 修改用户信息
+export const updateUserInfo = async (data) => {
+    return await useRequest.put('/api/v1/user', data);
+}
+

@@ -1,4 +1,5 @@
 <script setup>
+const { getPath } = usePath();
 let props = defineProps({
   size: {
     type: Number,
@@ -25,6 +26,6 @@ const sizeClass = computed(() => {
     class="shadow-center rounded-full overflow-hidden bg-slate-200 flex-shrink-0"
     :class="sizeClass"
   >
-    <img :src="url" alt="" srcset="" />
+    <img :src="getPath(props.url)" alt="" srcset="" />
   </div>
 </template>

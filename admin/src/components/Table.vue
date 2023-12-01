@@ -1,5 +1,5 @@
 <template>
-  <div class="table w-full h-full">
+  <div class="tableHight w-full h-full">
     <el-card v-loading="props.loading">
       <template v-if="header" #header>
         <slot name="header"> </slot>
@@ -73,7 +73,7 @@ let handleCurrentChange = (val) => {
 };
 let emit = defineEmits(["update:modelValue", "query"]);
 onMounted(() => {
-  let content = document.querySelector(".table");
+  let content = document.querySelector(".tableHight");
   emit("update:modelValue", {
     ...props.modelValue,
     pageSize: Number((content.offsetHeight / 40).toFixed(0)),

@@ -47,7 +47,6 @@ let lastClicked = ref(0);
 const throttleTime = 1000; // 节流时间设为1000毫秒（1秒）
 
 const throttledClick = () => {
-  console.log("---------");
   if (porps.disabled || typeof throttle.value !== "function") return;
   const now = Date.now();
   if (now - lastClicked.value >= throttleTime) {

@@ -27,3 +27,7 @@ export const useGetAttachment = async (id, params) => {
 export const useGetHost = async ( params) => {
   return await useRequest.get(`/api/v1/host`, params);
 }
+// 获取搜索结果
+export const useSearch = async ( params) => {
+  return await useRequest.get(`/api/v1/search`, params);
+}

@@ -7,7 +7,7 @@
     class="w-[200px]"
     :collapse="props.modelValue"
     active-text-color="#ffd04b"
-    background-color="#545c64"
+    background-color="#00152a"
     text-color="#fff"
     @select="select"
   >

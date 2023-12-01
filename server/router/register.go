@@ -5,27 +5,30 @@ import (
 	"github.com/dashixiong47/KK_BBS/apis"
 	"github.com/dashixiong47/KK_BBS/apis/admin"
 	"github.com/dashixiong47/KK_BBS/config"
-	"github.com/dashixiong47/KK_BBS/middleware"
 	"github.com/dashixiong47/KK_BBS/utils/klog"
 	"github.com/gin-gonic/gin"
 )
 
 func init() {
+
 	r := gin.Default() // 创建一个 Gin 实例
 	r.Static("/files", "./files")
+	r.GET("/ws", websocketHandler) // 使用 /ws 路径来处理 WebSocket 连接
 
 	if config.SettingsConfig.Application.Mode == "dev" {
 		r.Use(crossAllow)
 	}
 
-	r.Use(middleware.Logger())
+	//r.Use(middleware.Logger())
 	port := fmt.Sprintf(":%d", config.SettingsConfig.Application.Port)
 	klog.Info("Server starting on port %s", port)
 	registerRoutes(r) // 注册路由
+
 	err := r.Run(port)
 	if err != nil {
 		klog.Error("Server failed to start: %v", err)
 	}
+
 }
 func registerRoutes(r *gin.Engine) {
 	v1 := r.Group("/api/v1")
@@ -40,12 +43,14 @@ func registerRoutes(r *gin.Engine) {
 	RegisterRoutes(v1, &apis.Integral{})
 	RegisterRoutes(v1, &apis.Attachment{})
 	RegisterRoutes(v1, &apis.Host{})
+	RegisterRoutes(v1, &apis.Search{})
 	_admin := r.Group("/api/v1/admin")
 	RegisterRoutes(_admin, &admin.RedeemCode{})
 	RegisterRoutes(_admin, &admin.Login{})
 	RegisterRoutes(_admin, &admin.User{})
 	RegisterRoutes(_admin, &admin.Authority{})
-	RegisterRoutes(_admin, &admin.Role{})
+	RegisterRoutes(_admin, &admin.Group{})
+	RegisterRoutes(_admin, &admin.Upload{})
 
 }
 

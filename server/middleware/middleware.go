@@ -60,7 +60,6 @@ func Logger() gin.HandlerFunc {
 
 func AuthMiddleware(c *gin.Context) (bool, *utils.ResponseData) {
 	header := c.GetHeader("Authorization")
-
 	var jsonError utils.ResponseData
 	if header == "" {
 		jsonError = utils.JsonError(401, "please_login")

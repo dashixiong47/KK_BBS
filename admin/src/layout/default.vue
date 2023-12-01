@@ -1,23 +1,28 @@
 <template>
-  <div class="main flex h-[100vh] w-full">
-    <div class="left bg-[#545c64] h-full">
+  <el-container>
+    <el-aside class="bg-[#00152a] h-[100vh] !w-auto absolute">
       <Menu v-model="isCollapse" />
-    </div>
-    <div class="right flex flex-1 flex-col">
-      <Nav @switchCollapse="(val) => (isCollapse = val)"></Nav>
-      <div class="content flex-1 w-full p-5">
+    </el-aside>
+    <el-container :class="getWidth" class="transition-all duration-300">
+      <el-header>
+        <Nav @switchCollapse="(val) => (isCollapse = val)"></Nav>
+      </el-header>
+      <el-main>
         <router-view />
-      </div>
-    </div>
-  </div>
+      </el-main>
+    </el-container>
+  </el-container>
 </template>
 
 <script setup>
-import { ref } from "vue";
+import { computed, ref } from "vue";
 import Nav from "@/components/Nav.vue";
 import Menu from "@/components/Menu.vue";
 import router from "../router";
 const isCollapse = ref(false);
+const getWidth = computed(() => {
+  return isCollapse.value ? "ml-[64px]" : "ml-[200px]";
+});
 </script>
 
 <style scoped lang="postcss"></style>

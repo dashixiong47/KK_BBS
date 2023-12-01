@@ -1,7 +1,7 @@
 <template>
   <div>
     <CardTitleCard
-      title="More Pages"
+      title="更多分组"
       v-model="actived"
       :list="data"
       class="mb-5 max-h-80"

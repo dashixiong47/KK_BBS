@@ -113,9 +113,9 @@ type File struct {
 // Group 分组
 type Group struct {
 	ID    uint   `json:"id" gorm:"primaryKey;AUTO_INCREMENT"`
-	Name  string `json:"name" gorm:"size:10;not null;unique;index:index_name"` // 分组名
-	Icon  string `json:"icon" gorm:"size:255;not null"`                        // 分组图标
-	Order int    `json:"order" gorm:"size:1;not null"`                         // 排序
+	Name  string `json:"name" gorm:"size:10;not null;unique;index:index_name" binding:"required"` // 分组名
+	Icon  string `json:"icon" gorm:"size:255;not null"`                                           // 分组图标
+	Order int    `json:"order" gorm:"size:1;not null"`                                            // 排序
 	Model
 }
 
@@ -213,6 +213,16 @@ type RedeemCode struct {
 	Number int    `json:"number" gorm:"size:255;default:0;"`                     // 数量 1:金币 2:会员 时长为天数
 	Remake string `json:"remake" gorm:"size:255;"`                               // 备注
 	Model
+}
+
+// Search 搜索
+type Search struct {
+	ID      string `json:"id"`
+	Cover   string `json:"cover"`
+	Type    string `json:"type"`
+	GroupID string `json:"groupId"`
+	Title   string `json:"title"`
+	Content string `json:"content"`
 }
 
 func init() {

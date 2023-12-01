@@ -1,8 +1,10 @@
 package server
 
 import (
+	"context"
 	"encoding/json"
 	"errors"
+	"github.com/dashixiong47/KK_BBS/config"
 	"github.com/dashixiong47/KK_BBS/db"
 	"github.com/dashixiong47/KK_BBS/models"
 	"github.com/dashixiong47/KK_BBS/server/data"
@@ -10,6 +12,7 @@ import (
 	"github.com/dashixiong47/KK_BBS/utils"
 	"github.com/dashixiong47/KK_BBS/utils/klog"
 	"log"
+	"strconv"
 )
 
 type TopicServer struct {
@@ -41,12 +44,13 @@ func (s *TopicServer) Create(post *models.Topic, attachments *[]models.Attachmen
 			attachment.TopicID = post.ID
 
 		}
-		if err := tx.Debug().Create(&attachments).Error; err != nil {
+		if err := tx.Create(&attachments).Error; err != nil {
 			tx.Rollback()
 			klog.Error("Create Attachment", err)
 			return "", errors.New("unknown")
 		}
 	}
+
 	// 每次创建新帖子的时候，都会在Redis里设置该帖子的点赞默认为0
 	err := data.CreateTopicLike(int(post.ID))
 	if err != nil {
@@ -62,20 +66,34 @@ func (s *TopicServer) Create(post *models.Topic, attachments *[]models.Attachmen
 	if err := tx.Commit().Error; err != nil {
 		return "", errors.New("unknown")
 	}
+	go func() {
+		var search models.Search
+		marshal, _ := json.Marshal(post.Covers)
+		search.Title = post.Title
+		search.ID = db.GetStrID(post.ID)
+		search.Type = strconv.Itoa(post.Type)
+		search.Cover = string(marshal)
+		search.GroupID = db.GetStrID(post.GroupID)
+		if post.Type == 1 {
+			search.Content = post.TopicBasic.Content
+		}
+		IndexPost(search.ID, search)
+	}()
 	return utils.EncryptID(int(post.ID)), nil
 }
 
 // GetTopicList 获取帖子列表
-func (s *TopicServer) GetTopicList(_type string, groupId, userId, selfUserId uint, paging utils.Paging) (any, error) {
+func (s *TopicServer) GetTopicList(_type, groupId string, userId, selfUserId uint, paging utils.Paging) (any, error) {
 	var docs []Topic
 	var count int64
-	tx := db.DB
+	tx := db.DB.Debug()
 	tx = tx.
 		Order("id desc").Model(&models.Topic{})
 	if userId != 0 {
 		tx = tx.Where("user_id = ?", userId)
 	}
-	if groupId != 0 {
+	log.Println("groupId", groupId)
+	if groupId != "0" {
 		tx = tx.Where("group_id = ?", groupId)
 	}
 	if _type != "" {
@@ -217,11 +235,6 @@ func (s *TopicServer) LikeTopic(topicId, userId int) error {
 	db.DB.Unscoped().Where("topic_id = ? and user_id = ?", topicId, userId).
 		First(&topicLike)
 	tx := db.DB.Begin()
-	defer func() {
-		if r := recover(); r != nil {
-			tx.Rollback()
-		}
-	}()
 	// 如果已经点赞 则取消点赞
 	if topicLike.ID != 0 && topicLike.DeletedAt.Valid {
 		if err := tx.Model(&topicLike).
@@ -321,4 +334,16 @@ func (s *TopicServer) CollectTopic(topicId, userId int) error {
 		return errors.New("unknown")
 	}
 	return nil
+}
+
+// IndexPost 插入es
+func IndexPost(id string, post models.Search) {
+	_, err := db.EDB.Index().
+		Index(config.SettingsConfig.Es.Index).
+		Id(id).
+		BodyJson(post).
+		Do(context.Background())
+	if err != nil {
+		klog.Error("IndexPost", err)
+	}
 }
