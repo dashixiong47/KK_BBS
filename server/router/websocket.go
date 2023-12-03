@@ -3,10 +3,10 @@ package router
 import (
 	"encoding/json"
 	"github.com/dashixiong47/KK_BBS/utils/jwt"
+	"github.com/dashixiong47/KK_BBS/utils/klog"
 	"github.com/gin-gonic/gin"
 	jwtv5 "github.com/golang-jwt/jwt/v5"
 	"github.com/gorilla/websocket"
-	"log"
 	"net/http"
 	"sync"
 	"time"
@@ -14,9 +14,9 @@ import (
 
 // UserConn 用户连接信息结构体
 type UserConn struct {
-	user  int
-	conn  *websocket.Conn
-	_chan chan Message
+	UserId int
+	Conn   *websocket.Conn
+	Chan   chan Message
 }
 
 // Message 消息结构体
@@ -27,10 +27,10 @@ type Message struct {
 
 // MsgData 消息数据结构体
 type MsgData struct {
-	Type      int    `json:"type"`
-	UserId    int    `json:"userId"`
-	TimeStamp int64  `json:"timeStamp"`
-	Data      string `json:"data"`
+	Type   int    `json:"type"`
+	UserId int    `json:"userId"`
+	Ping   int64  `json:"ping"`
+	Data   string `json:"data"`
 }
 
 // userConns 存储所有用户的连接信息
@@ -60,45 +60,43 @@ func websocketHandler(c *gin.Context) {
 
 	conn, err := upgrade.Upgrade(c.Writer, c.Request, nil)
 	if err != nil {
-		log.Printf("WebSocket升级失败: %v\n", err)
+		klog.Error("WebSocket升级失败: %v\n", err)
 		return
 	}
 	defer conn.Close()
 
 	ch := make(chan Message, 100)
-	defer close(ch)
 
 	go handleMessages(conn, ch)
 
 	userConns.Store(userId, UserConn{
-		user:  userId,
-		conn:  conn,
-		_chan: ch,
+		UserId: userId,
+		Conn:   conn,
+		Chan:   ch,
 	})
 
 	for {
 		messageType, message, err := conn.ReadMessage()
 		if err != nil {
-			log.Printf("读取消息失败: %v\n", err)
+			klog.Error("websocketHandler", err)
 			break
 		}
 		var msgData MsgData
 		err = json.Unmarshal(message, &msgData)
 		if err != nil {
-			log.Printf("JSON解析失败: %v\n", err)
+			klog.Error("解析JSON失败:%v", err)
 			continue
 		}
-		if msgData.TimeStamp != 0 {
+
+		if msgData.Ping != 0 {
 			ping := map[string]int64{
-				"timeStamp": time.Now().UnixNano(),
+				"ping": time.Now().Unix(),
 			}
 			marshal, _ := json.Marshal(ping)
 			SendMsg(userId, Message{Type: messageType, Data: marshal})
-			return
+
 		}
-		if msgData.UserId != userId {
-			SendMsg(msgData.UserId, Message{Type: messageType, Data: message})
-		}
+
 	}
 }
 
@@ -106,13 +104,13 @@ func websocketHandler(c *gin.Context) {
 func handleMessages(conn *websocket.Conn, ch chan Message) {
 	defer func() {
 		if err := recover(); err != nil {
-			log.Printf("handleMessages中出现panic: %v\n", err)
+			klog.Error("handleMessages", err)
 		}
 	}()
 
 	for msg := range ch {
 		if err := conn.WriteMessage(websocket.TextMessage, msg.Data); err != nil {
-			log.Printf("消息发送失败: %v\n", err)
+			klog.Error("handleMessages", err)
 			break
 		}
 	}
@@ -122,6 +120,6 @@ func handleMessages(conn *websocket.Conn, ch chan Message) {
 func SendMsg(userId int, msg Message) {
 	if val, ok := userConns.Load(userId); ok {
 		userConn := val.(UserConn)
-		userConn._chan <- msg
+		userConn.Chan <- msg
 	}
 }

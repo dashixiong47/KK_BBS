@@ -30,7 +30,7 @@
 
 <script setup>
 const { getPath } = usePath();
-let { list } = defineProps({
+let props= defineProps({
   title: {
     type: String,
     default: "More Pages",
@@ -46,6 +46,11 @@ let { list } = defineProps({
 });
 let emit = defineEmits(["update:modelValue", "change"]);
 const change = (data) => {
+  if (data.id === props.modelValue) {
+    emit("update:modelValue", null);
+    emit("change", null);
+    return;
+  }
   emit("update:modelValue", data.id);
   emit("change", data.id);
 };

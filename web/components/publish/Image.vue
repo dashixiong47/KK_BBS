@@ -67,7 +67,7 @@ const toRepeat = () => {
 };
 const sort = () => {
   tableData.value.sort((a, b) => {
-    return a.name.localeCompare(b.name);
+    return a.name.localeCompare(b.name, undefined, { numeric: true });
   });
 };
 // 校验参数

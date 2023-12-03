@@ -60,21 +60,29 @@
             )
           "
         />
-        <span v-show="introductionState" class="introductionEdit" @click="showIntroduction">
+        <span
+          v-show="introductionState"
+          class="introductionEdit"
+          @click="showIntroduction"
+        >
           <Icon name="material-symbols-light:edit-square-outline-rounded" />
         </span>
       </p>
     </div>
-
     <!-- Tab栏 -->
     <div>
       <ul class="flex items-center border-t px-5">
         <li
-          v-for="(item, index) in 3"
+          v-for="(item, index) in tabs"
           class="h-12 flex items-center mx-5 cursor-pointer"
-          :class="{ 'border-b-2': index === 0, 'border-blue-500': index === 0 }"
+          :class="[activeTab(item.path) ? 'border-b-2 border-blue-500' : '']"
         >
-          Tab{{ index }}
+          <KLink :to="item.path" class="flex items-center">
+            <span class="text-sm">{{ item.name }}</span>
+            <!-- <span class="ml-1 text-xs text-gray-400">{{
+              formatNumber(userInfo[item.name.toLowerCase()])
+            }}</span> -->
+          </KLink>
         </li>
       </ul>
     </div>
@@ -88,10 +96,30 @@ import { useUserStore } from "~/stores/main";
 const userStore = useUserStore();
 const { addMessage } = useMessage();
 const route = useRoute();
+let tabs = [
+  {
+    name: "动态",
+    path: "/user/" + route.params.id,
+    active: "",
+  },
+  {
+    name: "关注",
+    path: "/user/" + route.params.id + "/follow",
+    active: "follow",
+  },
+  {
+    name: "粉丝",
+    path: "/user/" + route.params.id + "/fans",
+    active: "fans",
+  },
+];
 let userInfo = ref({});
 let nicknameState = ref(true);
 let introductionState = ref(true);
 
+let activeTab = (path) => {
+  return path === route.path;
+};
 const showNickname = () => {
   nicknameState.value = false;
 };
