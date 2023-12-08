@@ -20,7 +20,7 @@ func UploadFile(c *gin.Context) (any, error) {
 	// 获取文件
 	file, err := c.FormFile("file")
 	if err != nil {
-		return nil, errors.New("file_not_found")
+		return nil, err
 	}
 	//判断文件大小 超出限制
 	if file.Size > 1024*1024*10 {

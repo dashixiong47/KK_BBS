@@ -59,3 +59,19 @@ export const updateUserInfo = async (data) => {
     return await useRequest.put('/api/v1/user', data);
 }
 
+// 获取消息
+export const messageList = async (data) => {
+    return await useRequest.get('/api/v1/message', data);
+}
+// 获取未读消息
+export const unreadMessage = async (data) => {
+    return await useRequest.get('/api/v1/message/unread', data);
+}
+// 读单个消息
+export const readMessage = async (id,data) => {
+    return await useRequest.post('/api/v1/message/read/'+id, data);
+}
+// 读所有消息
+export const readMessageAll = async (id,data) => {
+    return await useRequest.post('/api/v1/message/read/all', data);
+}

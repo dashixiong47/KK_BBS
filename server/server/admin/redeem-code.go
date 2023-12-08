@@ -2,8 +2,8 @@ package admin
 
 import (
 	"errors"
+	"github.com/dashixiong47/KK_BBS/data"
 	"github.com/dashixiong47/KK_BBS/models"
-	"github.com/dashixiong47/KK_BBS/server/data"
 )
 
 type RedeemCodeServer struct {

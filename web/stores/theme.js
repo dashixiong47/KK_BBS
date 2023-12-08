@@ -39,29 +39,29 @@ export const useThemeStore = defineStore('theme', {
             // blurValue: 10,
             // bgBodyImg: "url('https://images.hxsj.in/test/1.jpg')",
             // 点亮颜色
-            illuminateColor: "#60a5fb",
+            illuminateColor: "#1E90FF",
             // 默认主字体颜色
-            fontMainColor: "#303133",
+            fontMainColor: "#D1E1F8",
             // 常规文本颜色
-            fontRegularColor: "#909399",
+            fontRegularColor: "#C0C6CC",
             // 次要文本颜色
-            fontSecondaryColor: "#C0C4CC",
+            fontSecondaryColor: "#E1EAF3",
             // 禁用色
-            fontDisableColor: '#eaeaea',
+            fontDisableColor: '#404040',
             // 禁用背景色
             bgDisableColor: '#f4f4f5',
             // 默认主背景色
-            bgColor: 'rgba(241, 245, 249, 1)',
+            bgColor: '#323A48',
             // 遮罩颜色
-            bgMaskingColor: 'rgba(0,0,0,0.2)',
+            bgMaskingColor: 'rgba(255,255,255,0.1)',
             // 选中背景色
-            bgActiveColor: 'rgb(250, 250, 250)',
+            bgActiveColor: '#404E5A',
             // 选中字体颜色
-            fontActiveColor: 'rgb(29, 28, 26)',
+            fontActiveColor: '#FFFFFF',
             // 未选中背景色
-            bgInactiveColor: 'rgba(241, 245, 249, 1)',
+            bgInactiveColor: '#37414F',
             // 未选中字体颜色
-            fontInactiveColor: 'rgb(65, 98, 240)',
+            fontInactiveColor: '#ADD8E6',
         },
     }),
     getters: {

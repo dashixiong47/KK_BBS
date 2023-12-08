@@ -1,5 +1,5 @@
 <template>
-  <div class="glass rounded-2xl p-5">
+  <div class="shadow-center rounded-2xl p-5">
     <slot />
   </div>
 </template>

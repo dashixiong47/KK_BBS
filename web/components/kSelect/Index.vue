@@ -1,12 +1,12 @@
 <template>
-  <div class="relative inline-block text-left w-40" ref="dropdown">
+  <div class="relative inline-block text-left w-40 h-11" ref="dropdown">
     <div>
       <button
         type="button"
         class="inline-flex justify-between w-full shadow-center rounded-xl px-4 py-3 text-sm font-medium text-gray-700 hover:bg-gray-50"
         @click="toggleDropdown"
       >
-        {{ selected }}
+        {{ getSelected.name }}
         <Icon
           size="2rem"
           name="mdi:triangle-small-down"
@@ -17,7 +17,7 @@
 
     <div
       v-if="isOpen"
-      class="origin-top-right absolute right-0 mt-2 w-56 rounded-xl overflow-hidden shadow-center ring-1 ring-black ring-opacity-5 focus:outline-none"
+      class="z-10  origin-top-right absolute right-0 mt-2 w-full rounded-xl overflow-hidden shadow-center ring-1 ring-black ring-opacity-5 focus:outline-none"
     >
       <div
         class="py-1"
@@ -28,12 +28,12 @@
       >
         <a
           v-for="item in options"
-          :key="item"
+          :key="item.value"
           @click="selectItem(item)"
           class="text-gray-700 block px-4 py-2 text-sm hover:bg-gray-100"
           role="menuitem"
           tabindex="-1"
-          >{{ item }}
+          >{{ item.name }}
         </a>
       </div>
     </div>
@@ -42,18 +42,29 @@
 
 <script setup>
 import { ref, onMounted, onUnmounted } from "vue";
-
+const props = defineProps({
+  modelValue: {
+    type: [String, Number],
+    default: "",
+  },
+  options: {
+    type: Array,
+    default: () => [],
+  },
+});
+const emit = defineEmits(["update:modelValue","change"]);
 const isOpen = ref(false);
-const selected = ref("请选择");
-const options = ["选项1", "选项2", "选项3"];
 const dropdown = ref(null);
-
+const getSelected = computed(() => {
+  return props.options.find((item) => item.value === props.modelValue) || {};
+});
 function toggleDropdown() {
   isOpen.value = !isOpen.value;
 }
 
 function selectItem(item) {
-  selected.value = item;
+  emit("update:modelValue", item.value);
+  emit("change", item.value);
   isOpen.value = false;
 }
 

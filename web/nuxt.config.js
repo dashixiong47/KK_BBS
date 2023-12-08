@@ -27,6 +27,33 @@ export default defineNuxtConfig({
   runtimeConfig: {
     public: {
       baseUrl: process.env.NUXT_PUBLIC_BASE_URL,
+      options: [
+        {
+          name: "全部",
+          type: "all",
+          value: 0,
+        },
+        {
+          name: "帖子",
+          value: 1,
+          type: "topic",
+        },
+        {
+          name: "图片",
+          type: "img",
+          value: 2,
+        },
+        {
+          name: "视频",
+          type: "video",
+          value: 3,
+        },
+        {
+          name: "小说",
+          type: "text",
+          value: 4,
+        },
+      ]
     }
   },
   i18n: {

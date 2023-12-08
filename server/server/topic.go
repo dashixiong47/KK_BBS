@@ -5,14 +5,17 @@ import (
 	"encoding/json"
 	"errors"
 	"github.com/dashixiong47/KK_BBS/config"
+	data2 "github.com/dashixiong47/KK_BBS/data"
+	"github.com/dashixiong47/KK_BBS/data/group"
 	"github.com/dashixiong47/KK_BBS/db"
 	"github.com/dashixiong47/KK_BBS/models"
-	"github.com/dashixiong47/KK_BBS/server/data"
-	"github.com/dashixiong47/KK_BBS/server/data/group"
 	"github.com/dashixiong47/KK_BBS/utils"
 	"github.com/dashixiong47/KK_BBS/utils/klog"
+	"github.com/dashixiong47/KK_BBS/utils/message"
+	"gorm.io/gorm"
 	"log"
 	"strconv"
+	"time"
 )
 
 type TopicServer struct {
@@ -52,13 +55,13 @@ func (s *TopicServer) Create(post *models.Topic, attachments *[]models.Attachmen
 	}
 
 	// 每次创建新帖子的时候，都会在Redis里设置该帖子的点赞默认为0
-	err := data.CreateTopicLike(int(post.ID))
+	err := data2.CreateTopicLike(int(post.ID))
 	if err != nil {
 		tx.Rollback()
 		return "", errors.New("unknown")
 	}
 	//
-	err = data.AddTopicIntegral(post.UserID, post.ID)
+	err = data2.AddTopicIntegral(post.UserID, post.ID)
 	if err != nil {
 		tx.Rollback()
 		return "", err
@@ -86,17 +89,16 @@ func (s *TopicServer) Create(post *models.Topic, attachments *[]models.Attachmen
 func (s *TopicServer) GetTopicList(_type, groupId string, userId, selfUserId uint, paging utils.Paging) (any, error) {
 	var docs []Topic
 	var count int64
-	tx := db.DB.Debug()
+	tx := db.DB
 	tx = tx.
 		Order("id desc").Model(&models.Topic{})
 	if userId != 0 {
 		tx = tx.Where("user_id = ?", userId)
 	}
-	log.Println("groupId", groupId)
-	if groupId != "0" {
+	if groupId != "-1" {
 		tx = tx.Where("group_id = ?", groupId)
 	}
-	if _type != "" {
+	if _type != "-1" {
 		tx = tx.Where("type = ?", _type)
 	}
 	tx.Count(&count)
@@ -112,7 +114,7 @@ func (s *TopicServer) GetTopicList(_type, groupId string, userId, selfUserId uin
 	}
 	// 查询用户信息
 	userDetails := make(map[uint]map[string]any)
-	for _, user := range data.GetUserList(userIDs) {
+	for _, user := range data2.GetUserList(userIDs) {
 		userDetails[user.ID] = map[string]any{
 			"id":       db.GetStrID(user.ID),
 			"avatar":   user.Avatar,
@@ -133,14 +135,14 @@ func (s *TopicServer) GetTopicList(_type, groupId string, userId, selfUserId uin
 			"type":         topic.Type,
 			"summary":      topic.Summary,
 			"createdAt":    topic.Model.CreatedAt,
-			"view":         data.GetTopicViewCount(topic.ID),
-			"comment":      data.GetTopicCommentCount(topic.ID),
-			"commentState": data.IsTopicComment(topic.ID, selfUserId),
-			"like":         data.GetTopicLikeCount(topic.ID),
-			"likeState":    data.IsTopicLike(topic.ID, selfUserId),
+			"view":         data2.GetTopicViewCount(topic.ID),
+			"comment":      data2.GetTopicCommentCount(topic.ID),
+			"commentState": data2.IsTopicComment(topic.ID, selfUserId),
+			"like":         data2.GetTopicLikeCount(topic.ID),
+			"likeState":    data2.IsTopicLike(topic.ID, selfUserId),
 			"group":        group.GetGroupKey(topic.GroupID),
-			"collect":      data.GetTopicCollectCount(topic.UserID),
-			"collectState": data.IsTopicCollect(topic.ID, selfUserId),
+			"collect":      data2.GetTopicCollectCount(topic.UserID),
+			"collectState": data2.IsTopicCollect(topic.ID, selfUserId),
 		})
 	}
 	return map[string]any{
@@ -194,7 +196,7 @@ func (s *TopicServer) GetTopicDetail(topicId, userId int) (any, error) {
 	if err != nil {
 		return nil, errors.New("user_not_found")
 	}
-	err = data.TopicViewPlus(uint(topicId), doc.UserID)
+	err = data2.TopicViewPlus(uint(topicId), doc.UserID)
 	if err != nil {
 		klog.Error("TopicViewPlus", err)
 	}
@@ -211,129 +213,222 @@ func (s *TopicServer) GetTopicDetail(topicId, userId int) (any, error) {
 		"tags":         doc.Tags,
 		"covers":       doc.Covers,
 		"type":         doc.Type,
-		"view":         data.GetTopicViewCount(uint(topicId)),
-		"like":         data.GetTopicLikeCount(uint(topicId)),
-		"likeState":    data.IsTopicLike(uint(topicId), doc.UserID),
-		"collect":      data.GetTopicCollectCount(doc.UserID),
-		"collectState": data.IsTopicCollect(uint(topicId), uint(userId)),
-		"comment":      data.GetTopicCommentCount(uint(topicId)),
-		"commentState": data.IsTopicComment(uint(topicId), uint(userId)),
+		"view":         data2.GetTopicViewCount(uint(topicId)),
+		"like":         data2.GetTopicLikeCount(uint(topicId)),
+		"likeState":    data2.IsTopicLike(uint(topicId), doc.UserID),
+		"collect":      data2.GetTopicCollectCount(doc.UserID),
+		"collectState": data2.IsTopicCollect(uint(topicId), uint(userId)),
+		"comment":      data2.GetTopicCommentCount(uint(topicId)),
+		"commentState": data2.IsTopicComment(uint(topicId), uint(userId)),
 		"summary":      doc.Summary,
 		"createdAt":    doc.Model.CreatedAt,
 		"topicDetail":  detail,
 	}, nil
 }
 
-// LikeTopic 点赞
+// LikeTopic 点赞帖子
 func (s *TopicServer) LikeTopic(topicId, userId int) error {
-	var topicLike models.TopicLike
-	state := data.IsTopic(topicId)
-	if !state {
-		return errors.New("is_not_topic")
-	}
-	// 查询是否已经点赞
-	db.DB.Unscoped().Where("topic_id = ? and user_id = ?", topicId, userId).
-		First(&topicLike)
-	tx := db.DB.Begin()
-	// 如果已经点赞 则取消点赞
-	if topicLike.ID != 0 && topicLike.DeletedAt.Valid {
-		if err := tx.Model(&topicLike).
-			Unscoped().
-			Update("deleted_at", nil).Error; err != nil {
-			tx.Rollback()
-			return errors.New("unknown")
-		}
-		err := data.TopicLickPlus(topicId)
-		if err != nil {
-			tx.Rollback()
-			return errors.New("unknown")
-		}
-		// 如果是正常的记录，则进行软删除
-	} else if topicLike.ID != 0 && !topicLike.DeletedAt.Valid {
-		if err := tx.Delete(&topicLike).Error; err != nil {
-			tx.Rollback()
-			return errors.New("unknown")
-		}
-		err := data.TopicLickMinus(topicId)
-		if err != nil {
-			tx.Rollback()
-			return errors.New("unknown")
-		}
-		// 不存在该记录，创建新记录
-	} else {
-		// 未点赞
-		topicLike = models.TopicLike{
-			TopicID: uint(topicId),
-			UserID:  uint(userId),
-		}
-		err := db.DB.Create(&topicLike).Error
-		if err != nil {
-			tx.Rollback()
-			return errors.New("error")
-		}
-		err = data.TopicLickPlus(topicId)
-		if err != nil {
-			tx.Rollback()
-			return errors.New("unknown")
-		}
-		return nil
+	// 检查帖子是否存在
+	if !data2.IsTopic(topicId) {
+		return errors.New("topic_not_found")
 	}
 
+	var topicLike models.TopicLike
+	err := db.DB.Unscoped().Where("topic_id = ? AND user_id = ?", topicId, userId).First(&topicLike).Error
+	if err != nil && !errors.Is(err, gorm.ErrRecordNotFound) {
+		return errors.New("database_query_error")
+	}
+
+	tx := db.DB.Begin()
+
+	// 更新或创建点赞记录
+	if topicLike.ID != 0 {
+		// 判断是取消点赞还是标记为已点赞
+		if topicLike.DeletedAt.Valid {
+			// 已经被软删除，需要恢复（取消软删除）
+			if err := tx.Unscoped().Model(&topicLike).Update("deleted_at", gorm.DeletedAt{}).Error; err != nil {
+				tx.Rollback()
+				return errors.New("restore_like_error")
+			}
+		} else {
+			// 标记为软删除（即取消点赞）
+			if err := tx.Model(&topicLike).Update("deleted_at", time.Now()).Error; err != nil {
+				tx.Rollback()
+				return errors.New("delete_like_error")
+			}
+		}
+	} else {
+		// 创建新的点赞记录
+		topicLike = models.TopicLike{TopicID: uint(topicId), UserID: uint(userId)}
+		if err := tx.Create(&topicLike).Error; err != nil {
+			tx.Rollback()
+			return errors.New("create_like_error")
+		}
+
+		// 增加帖子点赞计数
+		if err := data2.TopicLickPlus(topicId); err != nil {
+			tx.Rollback()
+			return errors.New("like_count_error")
+		}
+		err := sendLikeMessageIfNecessary(topicId, userId)
+		klog.Error("LikeTopic", err)
+	}
+
+	// 提交事务
 	if err := tx.Commit().Error; err != nil {
-		return errors.New("unknown")
+		return errors.New("transaction_commit_error")
+	}
+
+	return nil
+}
+
+// sendLikeMessageIfNecessary 发送点赞消息（如果需要）
+func sendLikeMessageIfNecessary(topicId, userId int) error {
+	var topicUserId uint
+	err := db.DB.Model(models.Topic{}).Select("user_id").Where("id = ?", topicId).
+		Row().Scan(&topicUserId)
+	if err != nil {
+		klog.Error("LikeTopic", err)
+		return nil // 不影响主要功能
+	}
+	if userId != int(topicUserId) {
+		err = message.SendLikeMessage(uint(userId), topicUserId, uint(topicId), "")
+		if err != nil {
+			klog.Error("LikeTopic", err)
+		}
 	}
 	return nil
 }
 
 // CollectTopic 收藏帖子
 func (s *TopicServer) CollectTopic(topicId, userId int) error {
+	// 检查帖子是否存在
+	if !data2.IsTopic(topicId) {
+		return errors.New("topic_not_found")
+	}
+
 	var topicCollect models.Collection
-	state := data.IsTopic(topicId)
-	if !state {
-		return errors.New("is_not_topic")
+	err := db.DB.Unscoped().Where("topic_id = ? AND user_id = ?", topicId, userId).First(&topicCollect).Error
+	if err != nil && !errors.Is(err, gorm.ErrRecordNotFound) {
+		return errors.New("database_query_error")
 	}
-	// 查询是否已经收藏
-	db.DB.Unscoped().Where("topic_id = ? and user_id = ?", topicId, userId).
-		First(&topicCollect)
+
 	tx := db.DB.Begin()
-	defer func() {
-		if r := recover(); r != nil {
-			tx.Rollback()
+
+	// 更新或创建收藏记录
+	if topicCollect.ID != 0 {
+		// 判断是取消收藏还是标记为已收藏
+		if topicCollect.DeletedAt.Valid {
+			// 已经被软删除，需要恢复（取消软删除）
+			if err := tx.Unscoped().Model(&topicCollect).Update("deleted_at", gorm.DeletedAt{}).Error; err != nil {
+				tx.Rollback()
+				return errors.New("restore_like_error")
+			}
+		} else {
+			// 标记为软删除（即取消收藏）
+			if err := tx.Model(&topicCollect).Update("deleted_at", time.Now()).Error; err != nil {
+				tx.Rollback()
+				return errors.New("delete_like_error")
+			}
 		}
-	}()
-	// 如果已经收藏 则取消收藏
-	if topicCollect.ID != 0 && topicCollect.DeletedAt.Valid {
-		if err := tx.Model(&topicCollect).
-			Unscoped().
-			Update("deleted_at", nil).Error; err != nil {
-			tx.Rollback()
-			return errors.New("unknown")
-		}
-		// 如果是正常的记录，则进行软删除
-	} else if topicCollect.ID != 0 && !topicCollect.DeletedAt.Valid {
-		if err := tx.Delete(&topicCollect).Error; err != nil {
-			tx.Rollback()
-			return errors.New("unknown")
-		}
-		// 不存在该记录，创建新记录
 	} else {
-		// 未收藏
-		topicCollect = models.Collection{
-			TopicID: uint(topicId),
-			UserID:  uint(userId),
-		}
-		err := db.DB.Create(&topicCollect).Error
-		if err != nil {
+		// 创建新的收藏记录
+		topicCollect = models.Collection{TopicID: uint(topicId), UserID: uint(userId)}
+		if err := tx.Create(&topicCollect).Error; err != nil {
 			tx.Rollback()
-			return errors.New("error")
+			return errors.New("create_collect_error")
 		}
-		return nil
+		err := sendCollectMessageIfNecessary(topicId, userId, topicCollect)
+		klog.Error("CollectTopic", err)
 	}
-	data.ClearTopicCollectCountCache(uint(userId))
+
+	// 清除相关缓存
+	data2.ClearTopicCollectCountCache(uint(userId))
+
+	// 提交事务
 	if err := tx.Commit().Error; err != nil {
-		return errors.New("unknown")
+		return errors.New("transaction_commit_error")
+	}
+
+	// 发送收藏消息（如果有必要）
+	return nil
+}
+
+// sendCollectMessageIfNecessary 发送收藏消息（如果需要）
+func sendCollectMessageIfNecessary(topicId, userId int, collect models.Collection) error {
+	var topicUserId uint
+	err := db.DB.Model(models.Topic{}).Select("user_id").Where("id = ?", topicId).
+		Row().Scan(&topicUserId)
+	if err != nil {
+		klog.Error("CollectTopic", err)
+		return nil // 不影响主要功能
+	}
+
+	if userId != int(topicUserId) {
+		err = message.SendCollectMessage(uint(userId), topicUserId, uint(topicId), "")
+		if err != nil {
+			klog.Error("CollectTopic", err)
+		}
 	}
 	return nil
+}
+
+// GetCollectList 获取收藏列表
+func (s *TopicServer) GetCollectList(userId int, paging utils.Paging) (any, error) {
+	var docs []models.Topic
+	var count int64
+	tx := db.DB.Model(&models.Topic{}).
+		Joins("left join kk_collection on kk_collection.topic_id = kk_topic.id").
+		Where("kk_collection.user_id = ?", userId).
+		Where("kk_collection.deleted_at is null")
+	tx.Count(&count)
+	tx = paging.SetPaging(tx)
+	err := tx.Find(&docs).Error
+	if err != nil {
+		klog.Error("GetCollectList", err)
+		return nil, err
+	}
+	userIDs := make([]uint, 0)
+	for _, doc := range docs {
+		userIDs = append(userIDs, doc.UserID)
+	}
+	// 查询用户信息
+	userDetails := make(map[uint]map[string]any)
+	for _, user := range data2.GetUserList(userIDs) {
+		userDetails[user.ID] = map[string]any{
+			"id":       db.GetStrID(user.ID),
+			"avatar":   user.Avatar,
+			"username": user.Username,
+			"nickname": user.Nickname,
+		}
+	}
+	var topicList []map[string]any
+	// 将详情填充到Post列表中
+	for _, topic := range docs {
+		topicList = append(topicList, map[string]any{
+			"id":           db.GetStrID(topic.ID),
+			"user":         userDetails[topic.UserID],
+			"userId":       db.GetStrID(topic.UserID),
+			"title":        topic.Title,
+			"tags":         topic.Tags,
+			"covers":       topic.Covers,
+			"type":         topic.Type,
+			"summary":      topic.Summary,
+			"createdAt":    topic.Model.CreatedAt,
+			"view":         data2.GetTopicViewCount(topic.ID),
+			"comment":      data2.GetTopicCommentCount(topic.ID),
+			"commentState": data2.IsTopicComment(topic.ID, uint(userId)),
+			"like":         data2.GetTopicLikeCount(topic.ID),
+			"likeState":    data2.IsTopicLike(topic.ID, uint(userId)),
+			"group":        group.GetGroupKey(topic.GroupID),
+			"collect":      data2.GetTopicCollectCount(topic.UserID),
+			"collectState": data2.IsTopicCollect(topic.ID, uint(userId)),
+		})
+	}
+	return map[string]any{
+		"list":  topicList,
+		"total": count,
+	}, nil
 }
 
 // IndexPost 插入es

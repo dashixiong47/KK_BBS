@@ -30,9 +30,9 @@ func (c *Attachment) PostBuyBy(attachmentId string) utils.ResponseData {
 	if authMiddleware, data := middleware.AuthMiddleware(c.Ctx); !authMiddleware {
 		return *data
 	}
-	userId, _ := c.Ctx.Get("id")
+	userId := utils.UserIDUint(c.Ctx)
 	var attachmentServer server.AttachmentServer
-	err := attachmentServer.Buy(db.GetIntID(attachmentId), uint(userId.(float64)))
+	err := attachmentServer.Buy(db.GetIntID(attachmentId), userId)
 	if err != nil {
 		return utils.JsonFail(err)
 	}

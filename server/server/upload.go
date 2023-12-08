@@ -28,7 +28,7 @@ func (u *UploadServer) Query(md5 string) any {
 	// 从数据库中查询
 	err := db.DB.Where("md5 = ?", md5).First(&fileInfo).Error
 	if err != nil {
-		return ""
+		return err
 	}
 	_ = saveToRedis(fileInfo)
 	return map[string]interface{}{

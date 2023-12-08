@@ -28,10 +28,12 @@ type User struct {
 	Role         *db.IntArray `json:"role" gorm:"type:integer[];"`                                   // 用户角色
 	Status       int          `json:"status" gorm:"size:1;"`                                         // 用户状态
 	Coins        int          `json:"coins" gorm:"-"`                                                // 金币
+	TopicTotal   int64        `json:"topicTotal" gorm:"-"`                                           // 帖子总数
 	Exp          int          `json:"exp" gorm:"-"`                                                  // 经验
+	Collect      int          `json:"collect" gorm:"-"`                                              // 收藏
 	Level        int          `json:"level" gorm:"-"`                                                // 等级
-	Follow       int          `json:"follow" gorm:"-"`                                               // 关注
-	Fans         int          `json:"fans" gorm:"-"`                                                 // 粉丝
+	Follow       int64        `json:"follow" gorm:"-"`                                               // 关注
+	Fans         int64        `json:"fans" gorm:"-"`                                                 // 粉丝
 	Model
 }
 
@@ -225,6 +227,18 @@ type Search struct {
 	Content string `json:"content"`
 }
 
+// Messages 消息类型 1.系统 2.评论 3.回复 4.点赞 5.关注 6.收藏 7.打赏 8.悬赏 9.积分 10.充值 11.购买附件 12.签到
+type Messages struct {
+	ID             uint   `json:"id" gorm:"primaryKey;AUTO_INCREMENT"`
+	UserID         uint   `json:"-" gorm:"not null;index:index_user_id"`                    // 用户ID，消息的所有者
+	RelatedUserID  uint   `json:"relatedUserId" gorm:"index:index_related_user_id"`         // 相关用户ID
+	Type           int    `json:"type" gorm:"size:1;not null;index:index_type"`             // 消息类型 1.系统 2.评论 3.回复 4.点赞 5.关注 6.收藏 7.打赏 8.悬赏 9.积分 10.充值 11.购买附件 12.签到
+	SupplementID   int    `json:"supplement" gorm:"size:1;not null;index:index_supplement"` // 补充ID
+	SupplementData string `json:"supplementData" gorm:"type:text;"`                         // 补充内容
+	IsView         int    `json:"isView" gorm:"size:1;not null;default:0;"`                 // 是否已读
+	Model
+}
+
 func init() {
 	initData()
 	autoMigrate()
@@ -266,7 +280,7 @@ func initData() {
 func autoMigrate() {
 	// 自动迁移
 	err := db.DB.AutoMigrate(&TopicLike{}, &Topic{}, &TopicBasic{}, &TopicImage{}, &TopicVideo{}, &TopicText{}, &TopicView{}, &Tag{}, &File{}, &Comment{}, &CommentLike{},
-		&Attachment{}, &Collection{}, &Follow{}, &Share{}, &IntegralLog{}, &RedeemCode{})
+		&Attachment{}, &Collection{}, &Follow{}, &Share{}, &IntegralLog{}, &RedeemCode{}, &Messages{})
 	if err != nil {
 		klog.Info("Failed to connect to database: %v", err)
 	}

@@ -31,3 +31,7 @@ export const useGetHost = async ( params) => {
 export const useSearch = async ( params) => {
   return await useRequest.get(`/api/v1/search`, params);
 }
+// 获取收藏的帖子
+export const useCollect = async ( params) => {
+  return await useRequest.get(`/api/v1/topic/collect/list`, params);
+}

@@ -46,6 +46,7 @@
       :class="{
         'border-b': index !== comments.length - 1,
       }"
+      @click="toUserCenter(item.user.id)"
     >
       <Avatar :url="item.user?.avatar" />
       <div class="ml-5 w-full">
@@ -112,6 +113,7 @@ let { topicId } = defineProps({
     required: true,
   },
 });
+const router = useRouter();
 const { t } = useI18n();
 const { notice } = useNotice();
 const { getRelativeTime } = useTime();
@@ -144,6 +146,11 @@ let subReplyIpt = ref(null);
 const getDisabled = computed(() => {
   return comments.value.length === total.value;
 });
+const toUserCenter = (id) => {
+  router.push({
+    path: "/user/" + id,
+  });
+};
 const change = (num) => {
   if (selected.value === num) return;
   selected.value = num;

@@ -2,9 +2,9 @@ package server
 
 import (
 	"errors"
+	"github.com/dashixiong47/KK_BBS/data"
 	"github.com/dashixiong47/KK_BBS/db"
 	"github.com/dashixiong47/KK_BBS/models"
-	"github.com/dashixiong47/KK_BBS/server/data"
 	"github.com/dashixiong47/KK_BBS/utils/klog"
 )
 

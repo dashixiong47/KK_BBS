@@ -6,6 +6,7 @@ import (
 	"github.com/dashixiong47/KK_BBS/apis/admin"
 	"github.com/dashixiong47/KK_BBS/config"
 	"github.com/dashixiong47/KK_BBS/utils/klog"
+	"github.com/dashixiong47/KK_BBS/websocket"
 	"github.com/gin-gonic/gin"
 )
 
@@ -13,7 +14,7 @@ func init() {
 
 	r := gin.Default() // 创建一个 Gin 实例
 	r.Static("/files", "./files")
-	r.GET("/ws", websocketHandler) // 使用 /ws 路径来处理 WebSocket 连接
+	r.GET("/ws", websocket.WebsocketHandler) // 使用 /ws 路径来处理 WebSocket 连接
 
 	if config.SettingsConfig.Application.Mode == "dev" {
 		r.Use(crossAllow)
@@ -44,6 +45,8 @@ func registerRoutes(r *gin.Engine) {
 	RegisterRoutes(v1, &apis.Attachment{})
 	RegisterRoutes(v1, &apis.Host{})
 	RegisterRoutes(v1, &apis.Search{})
+	RegisterRoutes(v1, &apis.Message{})
+	RegisterRoutes(v1, &apis.Follow{})
 	_admin := r.Group("/api/v1/admin")
 	RegisterRoutes(_admin, &admin.RedeemCode{})
 	RegisterRoutes(_admin, &admin.Login{})

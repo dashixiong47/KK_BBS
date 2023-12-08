@@ -66,8 +66,8 @@ func (c *Comment) PostCreate() utils.ResponseData {
 		comment.ReplyToUserID = uint(id)
 	}
 	// user_id
-	value, _ := c.Ctx.Get("id")
-	comment.UserID = uint(value.(float64))
+	userId := utils.UserIDUint(c.Ctx)
+	comment.UserID = userId
 	var commentServer server.CommentServer
 	doc, err := commentServer.Create(&comment)
 	if err != nil {
@@ -121,7 +121,7 @@ func (c *Comment) PostLikeBy(id string) utils.ResponseData {
 		return *data
 	}
 	var err error
-	userId, _ := c.Ctx.Get("id")
+	userId := utils.UserIDInt(c.Ctx)
 	var commentId commentId
 	err = c.Ctx.ShouldBindJSON(&commentId)
 	if err != nil {
@@ -129,7 +129,7 @@ func (c *Comment) PostLikeBy(id string) utils.ResponseData {
 	}
 	var commentServer server.CommentServer
 	intID := db.GetIntID(id)
-	err = commentServer.LikeComment(intID, int(userId.(float64)), db.GetIntID(commentId.CommentId), db.GetIntID(commentId.SubCommentId))
+	err = commentServer.LikeComment(intID, userId, db.GetIntID(commentId.CommentId), db.GetIntID(commentId.SubCommentId))
 	if err != nil {
 		return utils.JsonFail(err)
 	}

@@ -34,7 +34,7 @@
       <li
         v-for="(item, index) in images"
         class="shadow-center rounded-2xl pt-[66.67%] relative flex items-center justify-center m-2 overflow-hidden"
-        :class="getClassName(images.length, index)"
+        
       >
       
         <KImage

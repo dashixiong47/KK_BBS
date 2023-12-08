@@ -1,17 +1,18 @@
 <template>
-  <TopicType @selectd="selectdTopicType" />
-  <ul class="my-5 flex">
-    <li v-for="item in getGroup">
-      <KButton
-        class="mr-5 flex items-center"
-        @click="selectdGroup(item)"
-        :actived="queryData.group === item.id"
-      >
-        {{ item.name }}
-      </KButton>
-    </li>
-  </ul>
-  <ul>
+  <div class="flex items-center justify-between">
+    <Rolling
+      class="w-[70%]"
+      v-model="selectNode"
+      @change="selectdGroup"
+    ></Rolling>
+    <KSelect
+      class="w-[25%]"
+      v-model="selectType"
+      :options="options"
+      @change="selectdTopicType"
+    ></KSelect>
+  </div>
+  <ul class="mt-5">
     <li v-for="item in dataList" class="shadow-center rounded-xl p-4 mb-5">
       <KLink :to="getUrl(item)">
         <div class="flex max-h-40">
@@ -47,16 +48,37 @@ import { useGroupStore } from "~/stores/init.js";
 
 import { useSearch } from "@/api/server";
 const { getPath } = usePath();
-let store = useGroupStore();
-let getGroup = computed(() => [
-  {
-    id: -1,
-    name: "全部",
-  },
-  ...store.getGroup,
-]);
+let groupStore = useGroupStore();
+const selectType = ref(-1);
+const selectNode = ref(-1);
 const route = useRoute();
-
+const options = [
+  {
+    name: "全部",
+    type: "all",
+    value: -1,
+  },
+  {
+    name: "帖子",
+    value: 1,
+    type: "topic",
+  },
+  {
+    name: "图片",
+    type: "img",
+    value: 2,
+  },
+  {
+    name: "视频",
+    type: "video",
+    value: 3,
+  },
+  {
+    name: "小说",
+    type: "text",
+    value: 4,
+  },
+];
 let queryData = ref({
   q: route.query.q,
   type: -1,
@@ -73,20 +95,19 @@ async function init() {
   try {
     let { data } = await useSearch(queryData.value);
     dataList.value = data.list;
-    console.log(data);
   } catch (error) {}
 }
 function selectdTopicType(val) {
   queryData.value = {
     ...queryData.value,
-    type: val.index,
+    type: val,
   };
   init();
 }
 function selectdGroup(val) {
   queryData.value = {
     ...queryData.value,
-    group: val.id,
+    group: val,
   };
   init();
 }
@@ -103,7 +124,7 @@ watch(
     init();
   }
 );
-store.fetchGroup();
+groupStore.fetchGroup();
 init();
 </script>
 

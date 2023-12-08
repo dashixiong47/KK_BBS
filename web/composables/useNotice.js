@@ -1,6 +1,4 @@
 // composables/useNotice.js
-import { ref, computed } from 'vue';
-
 export default function useNotice() {
     let noticeCount = 0;
     let noticeContainer

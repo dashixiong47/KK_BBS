@@ -8,7 +8,6 @@
 </template>
 
 <script setup>
-import { ref } from "vue";
 import { Tippy,setDefaultProps } from "vue-tippy";
 
 const porps = defineProps({

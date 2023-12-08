@@ -5,11 +5,12 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	data2 "github.com/dashixiong47/KK_BBS/data"
 	"github.com/dashixiong47/KK_BBS/db"
 	"github.com/dashixiong47/KK_BBS/models"
-	"github.com/dashixiong47/KK_BBS/server/data"
 	"github.com/dashixiong47/KK_BBS/utils"
 	"github.com/dashixiong47/KK_BBS/utils/klog"
+	"github.com/dashixiong47/KK_BBS/utils/message"
 	"time"
 )
 
@@ -19,8 +20,16 @@ type CommentServer struct {
 // Create 创建评论
 func (s *CommentServer) Create(comment *models.Comment) (*models.Comment, error) {
 	tx := db.DB.Begin()
+	// 确认该帖存在
+	var userId uint
+	err := tx.Model(&models.Topic{}).Where("id = ?", comment.TopicID).
+		Select("user_id").
+		Scan(&userId).Error
+	if err != nil {
+		return nil, errors.New("is_not_topic")
+	}
 	// 评论积分
-	err := data.EarnPoints(tx, comment)
+	err = data2.EarnPoints(tx, comment, userId)
 	if err != nil {
 		tx.Rollback()
 		return nil, err
@@ -31,13 +40,30 @@ func (s *CommentServer) Create(comment *models.Comment) (*models.Comment, error)
 		tx.Rollback()
 		return nil, errors.New("create_comment_error")
 	}
-	// 更新评论点赞排行
+	// 更新评论排行
 	ctx := context.Background()
 	var zName, name string
 	if comment.ParentID == 0 {
-		zName, name = data.GetCommentLikeName(int(comment.TopicID), int(comment.ID), 0)
+		zName, name = data2.GetCommentLikeName(int(comment.TopicID), int(comment.ID), 0)
+		// 发送消息 自己评论自己的帖子不发送消息
+		if comment.UserID != userId {
+			err := message.SendCommentMessage(comment.UserID, userId, comment.TopicID, comment.Content)
+			if err != nil {
+				//记录错误 不处理
+				klog.Error("send_message_error: %v", err)
+			}
+		}
 	} else {
-		zName, name = data.GetCommentLikeName(int(comment.TopicID), int(comment.ParentID), int(comment.ID))
+
+		zName, name = data2.GetCommentLikeName(int(comment.TopicID), int(comment.ParentID), int(comment.ID))
+		if comment.UserID != comment.ReplyToUserID {
+			err := message.SendReplyMessage(comment.UserID, comment.ReplyToUserID, comment.TopicID, comment.Content)
+			if err != nil {
+				//记录错误 不处理
+				klog.Error("send_message_error: %v", err)
+			}
+		}
+
 	}
 
 	if _, err = db.Rdb.ZIncrBy(ctx, zName, 0, name).Result(); err != nil {
@@ -62,18 +88,18 @@ func (s *CommentServer) Create(comment *models.Comment) (*models.Comment, error)
 func (s *CommentServer) GetList(topicId int, paging utils.Paging, _type string) (any, error) {
 	name := fmt.Sprintf("comment_list:%v:p:%v:s:%v:%v", topicId, paging.Page, paging.PageSize, _type)
 	ctx := context.Background()
-	var response data.CommentData // 最终返回的数据
+	var response data2.CommentData // 最终返回的数据
 	// 尝试从 Redis 中获取缓存
 	result, err := db.Rdb.Get(ctx, name).Result()
 	if err == nil {
 		_ = json.Unmarshal([]byte(result), &response)
-		response.Comments = data.UpDataLike(response.Comments)
+		response.Comments = data2.UpDataLike(response.Comments)
 		return response, nil
 	}
 
 	var comments = make([]models.Comment, 0)         // 一级评论
 	var allReplyComments = make([]models.Comment, 0) // 所有子评论
-	var docs = make([]data.Comment, 0)               // 评论列表
+	var docs = make([]data2.Comment, 0)              // 评论列表
 
 	// 获取一级评论总数
 	var totalPrimaryComments int64
@@ -119,8 +145,8 @@ func (s *CommentServer) GetList(topicId int, paging utils.Paging, _type string) 
 	}
 
 	// 缓存结果到 Redis 并返回
-	response = data.CommentData{
-		Comments: data.GetCommentList(topicId, docs, comments, allReplyComments),
+	response = data2.CommentData{
+		Comments: data2.GetCommentList(topicId, docs, comments, allReplyComments),
 		Total:    totalPrimaryComments,
 	}
 	// 缓存到 Redis
@@ -131,7 +157,7 @@ func (s *CommentServer) GetList(topicId int, paging utils.Paging, _type string) 
 	if err := db.Rdb.Set(ctx, name, marshal, time.Hour).Err(); err != nil {
 		klog.Error("comments_redis_error: %v", err)
 	}
-	response.Comments = data.UpDataLike(response.Comments)
+	response.Comments = data2.UpDataLike(response.Comments)
 	return response, nil
 }
 
@@ -154,8 +180,8 @@ func (s *CommentServer) GetSubCommentList(topicId, subId int, paging utils.Pagin
 			"topicId":     db.GetStrID(v.TopicID),
 			"parentId":    db.GetStrID(v.ParentID),
 			"replyToUser": db.GetStrID(v.ReplyToUserID),
-			"user":        data.GetUserInfo(v.UserID),
-			"replyUser":   data.GetUserInfo(v.ReplyToUserID),
+			"user":        data2.GetUserInfo(v.UserID),
+			"replyUser":   data2.GetUserInfo(v.ReplyToUserID),
 			"createdAt":   v.CreatedAt,
 			"updatedAt":   v.UpdatedAt,
 		})
@@ -194,7 +220,7 @@ func (s *CommentServer) LikeComment(topicId, userId, commentId, subCommentId int
 			tx.Rollback()
 			return errors.New("comment_like_error")
 		}
-		err := data.CommentLickPlus(topicId, commentId, subCommentId)
+		err := data2.CommentLickPlus(topicId, commentId, subCommentId)
 		if err != nil {
 			tx.Rollback()
 			return errors.New("comment_like_error")
@@ -205,7 +231,7 @@ func (s *CommentServer) LikeComment(topicId, userId, commentId, subCommentId int
 			tx.Rollback()
 			return errors.New("comment_like_error")
 		}
-		err := data.CommentLickMinus(topicId, commentId, subCommentId)
+		err := data2.CommentLickMinus(topicId, commentId, subCommentId)
 		if err != nil {
 			tx.Rollback()
 			return errors.New("comment_like_error")
@@ -222,7 +248,7 @@ func (s *CommentServer) LikeComment(topicId, userId, commentId, subCommentId int
 			tx.Rollback()
 			return errors.New("comment_like_error")
 		}
-		err := data.CommentLickPlus(topicId, commentId, subCommentId)
+		err := data2.CommentLickPlus(topicId, commentId, subCommentId)
 		if err != nil {
 			tx.Rollback()
 			return errors.New("comment_like_error")

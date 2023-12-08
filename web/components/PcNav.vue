@@ -1,6 +1,6 @@
 <template>
   <nav
-    class="glass z-10 shadow-md border-b h-16 box-content flex-shrink-0 content-center px-5 grid grid-cols-2 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-4"
+    class="z-10 shadow-md border-b h-16 box-content flex-shrink-0 content-center px-5 grid grid-cols-2 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-4"
   >
     <div class="md:col-span-1 font-main-color">
       <KLink to="/" class="flex items-center h-full">
@@ -36,10 +36,23 @@
     </div>
     <div class="md:col-span-1 flex items-center justify-end">
       <KButton @click="toCreate">发表</KButton>
-      <SwitcherTheme />
+      <KLink v-if="isLogin" :to="getPath + '/message'" class="relative">
+        <Icon
+          size="1.8rem"
+          :name="
+            unreadMessage
+              ? 'ic:twotone-notifications-active'
+              : 'ic:twotone-notifications'
+          "
+          class="mx-4"
+          :class="{ message: unreadMessage }"
+        ></Icon>
+      </KLink>
 
-      <div class="ml-4 flex-shrink-0">
-        <KLink v-if="isLogin" :to="getPath()">
+      <!-- <SwitcherTheme /> -->
+
+      <div class="flex-shrink-0">
+        <KLink v-if="isLogin" :to="getPath">
           <Avatar :url="userInfo.avatar" class="w-12 h-12" />
         </KLink>
         <KButton v-else @click="setLoginStatus">登录</KButton>
@@ -52,17 +65,19 @@
 
 <script setup>
 import { useLoginStore, useUserStore } from "~/stores/main.js";
+import { useMessageStore } from "~/stores/message.js";
+const messageStore = useMessageStore();
 const { addMessage } = useMessage();
-const store = useLoginStore();
+const loginStore = useLoginStore();
 const userStore = useUserStore();
 const userInfo = computed(() => userStore.getUserInfo);
 const isLogin = computed(() => userStore.getIsLogin);
 const { to } = useToRoute();
 const setLoginStatus = () => {
-  store.setLoginStatus();
+  loginStore.setLoginStatus();
 };
 const route = useRoute();
-
+const unreadMessage = computed(() => messageStore.getUnreadMessage);
 watch(
   () => route.path,
   (val) => {
@@ -104,8 +119,23 @@ const toCreate = () => {
   addMessage("请先登录", "warning");
   setLoginStatus();
 };
-function getPath() {
-  return `/user/${userInfo.value.id}`;
-}
+const getPath = computed(() => `/user/${userInfo.value.id}`);
 userStore.fetchUserInfo();
+messageStore.fetchUnreadMessage();
 </script>
+
+<style scoped>
+.message {
+  animation: shaking 0.3s infinite ease-in-out;
+}
+
+@keyframes shaking {
+  0%,
+  100% {
+    transform: rotate(-5deg);
+  }
+  50% {
+    transform: rotate(5deg);
+  }
+}
+</style>

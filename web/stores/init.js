@@ -4,7 +4,7 @@ import { defineStore } from 'pinia';
 export const useGroupStore = defineStore('group', {
     state: () => ({
         group: [],
-        actived: null,
+        actived: -1,
         error: null,  // 用于存储错误信息
     }),
     getters: {
@@ -23,11 +23,19 @@ export const useGroupStore = defineStore('group', {
     actions: {
         // 异步 action
         async fetchGroup() {
-            if (!Object.keys(this.group).length) {
+             if (!Object.keys(this.group).length) {
                 try {
                     const { data } = await useGetGroupDetail();
-                    this.setGroup(data.sort((a, b) => a.order - b.order));
-                    console.log(data);
+                    let list=[
+                        {
+                            name: "全部",
+                            id: -1,
+                            order: -99,
+                            icon:""
+                        },
+                        ...data
+                    ]
+                    this.setGroup(list.sort((a, b) => a.order - b.order));
                     this.error = null;  // 清除任何旧的错误信息
                 } catch (error) {
                     this.error = error;  // 存储错误信息

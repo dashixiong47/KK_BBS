@@ -4,7 +4,6 @@
       title="更多分组"
       v-model="actived"
       :list="data"
-      class="mb-5 max-h-80"
     />
     <!-- <CardTitleCard title="More Pages" class="mb-5 h-80" /> -->
   </div>

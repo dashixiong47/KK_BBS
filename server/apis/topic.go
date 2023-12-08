@@ -199,9 +199,9 @@ func (t *Topic) handleAttachments(doc *formData, uintId uint) ([]models.Attachme
 // GetList 帖子列表
 func (t *Topic) GetList() utils.ResponseData {
 	middleware.AuthMiddleware(t.Ctx)
-	var _type = t.Ctx.DefaultQuery("type", "")
+	var _type = t.Ctx.DefaultQuery("type", "-1")
 	var userIdStr = t.Ctx.DefaultQuery("userId", "0")
-	var groupIDStr = t.Ctx.DefaultQuery("groupId", "0")
+	var groupIDStr = t.Ctx.DefaultQuery("groupId", "-1")
 
 	userId := uint(db.GetIntID(userIdStr))
 	var paging utils.Paging
@@ -263,4 +263,20 @@ func (t *Topic) PostCollectBy(topicId string) utils.ResponseData {
 		return utils.JsonFail(err)
 	}
 	return utils.JsonSuccess(nil)
+}
+
+// GetCollectList 获取用户收藏的帖子列表
+func (t *Topic) GetCollectList() utils.ResponseData {
+	if authMiddleware, data := middleware.AuthMiddleware(t.Ctx); !authMiddleware {
+		return *data
+	}
+	userId, _ := t.Ctx.Get("id")
+	var paging utils.Paging
+	paging.GetPaging(t.Ctx)
+	var topicServer server.TopicServer
+	list, err := topicServer.GetCollectList(int(userId.(float64)), paging)
+	if err != nil {
+		return utils.JsonFail(err)
+	}
+	return utils.JsonSuccess(list)
 }

@@ -10,7 +10,7 @@
     <slot></slot>
   </div>
   <Dialog v-model="dialogVisible" :title="dialogTitle" @confirm="cropImage">
-    <div ref="croppieRef" class="croppieRef"></div>
+    <div ref="croppieRef" class="croppieRef my-5"></div>
   </Dialog>
 </template>
 
@@ -19,15 +19,17 @@ import { ref, watch, computed } from "vue";
 import Croppie from "croppie";
 import "croppie/croppie.css";
 import { upload } from "~/api/upload";
-const {addMessage} = useMessage()
+const { addMessage } = useMessage();
 const props = defineProps({
   cropWidth: { type: Number, default: 200 },
   cropHeight: { type: Number, default: 200 },
   cropType: { type: String, default: "circle" }, // 'square' or 'circle'
   dialogTitle: { type: String, default: "裁剪图片" },
   acceptedTypes: { type: Array, default: () => ["image/jpeg", "image/png"] },
+  dialogWidth: { type: Number, default: 300 },
+  dialogHeight: { type: Number, default: 300 },
 });
-const originalFileName = ref('');
+const originalFileName = ref("");
 const croppieRef = ref(null);
 let croppieInstance = null;
 const imageUrl = ref("");
@@ -49,13 +51,21 @@ watch(
             height: props.cropHeight,
             type: props.cropType,
           },
-          boundary: { width: 300, height: 300 },
+          boundary: { width: props.dialogWidth, height: props.dialogHeight },
         });
       }, 0);
     }
   }
 );
-
+watch(
+  () => dialogVisible.value,
+  (newVal) => {
+    if (!newVal) {
+      croppieInstance.destroy();
+      croppieInstance = null;
+    }
+  }
+);
 const onFileChange = (e) => {
   const file = e.target.files[0];
   if (!props.acceptedTypes.includes(file.type)) {
@@ -109,5 +119,6 @@ const uploadFile = async (file) => {
   } catch (error) {
     addMessage(error, "error");
   }
+  imageUrl.value = "";
 };
 </script>

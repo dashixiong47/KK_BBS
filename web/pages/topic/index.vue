@@ -1,6 +1,6 @@
 <template>
     <div>
-      <TopicList :type="1"/>
+      <List :type="1"/>
     </div>
   </template>
   <script setup>

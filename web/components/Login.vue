@@ -231,10 +231,10 @@ const handleSubmit = async () => {
     // 发送登录请求
     let { data } = await login(obj);
     setCookie("token", data.token); // 设置token
-    await sleep(500); // 稍作延迟
-    await loginStore.setLoginStatus(); // 更新登录状态
-    await userStore.fetchUserInfo(); // 获取用户信息
-
+    // await sleep(500); // 稍作延迟
+    // await loginStore.setLoginStatus(); // 更新登录状态
+    // await userStore.fetchUserInfo(); // 获取用户信息
+    window.location.reload(); // 刷新页面
     // 显示登录成功通知
     notice({
       title: "提示",
