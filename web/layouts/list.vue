@@ -1,7 +1,7 @@
 <template>
   <!-- 导航 -->
   <PcNav />
-  <div class="overflow-y-auto relative flex justify-between p-2 xl:p-5  lg:p-5">
+  <div class="bigBox overflow-y-auto relative flex justify-between p-2 xl:p-5  lg:p-5">
     <LeftBox class="sticky top-0 left-0 w-[20%] hidden lg:block  lg:w-[20%]" />
     <main class="w-full flex lg:w-[75%] xl:w-[60%]">
       <div class="w-full">

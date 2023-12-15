@@ -11,7 +11,6 @@ import (
 	"github.com/dashixiong47/KK_BBS/utils/html"
 	"github.com/dashixiong47/KK_BBS/utils/klog"
 	"github.com/gin-gonic/gin"
-	"log"
 )
 
 type Topic struct {
@@ -48,20 +47,7 @@ func (t *Topic) PostCreate() utils.ResponseData {
 		return *data
 	}
 
-	// 从上下文中获取用户ID
-	id, exists := t.Ctx.Get("id")
-	if !exists {
-		klog.Error("ID not found in context")
-		return utils.JsonFail("id_error")
-	}
-
-	// 将ID从interface{}类型安全转换为float64，然后转换为uint
-	idFloat, ok := id.(float64)
-	if !ok {
-		klog.Error("Failed to convert ID to float64")
-		return utils.JsonFail("id_error")
-	}
-	uintId := uint(idFloat)
+	uintId := utils.UserIDUint(t.Ctx)
 
 	// 解析请求体中的JSON数据到formData结构体
 	var doc formData
@@ -142,11 +128,10 @@ func (t *Topic) createPostByType(doc *formData, post *models.Topic) error {
 	case 3: // 视频帖子类型
 		var videoPost = models.TopicVideo{
 			Introduction: doc.TopicVideo.Introduction,
-			VideoID:      doc.TopicVideo.VideoID,
+			Videos:       doc.TopicVideo.Videos,
 		}
 		post.TopicVideo = videoPost
 	case 4: // 文本帖子类型
-		log.Println(doc.TopicText.Texts)
 		var textPost = models.TopicText{
 			Introduction: doc.TopicText.Introduction,
 			Texts:        doc.TopicText.Texts,
@@ -225,11 +210,9 @@ func (t *Topic) GetList() utils.ResponseData {
 func (t *Topic) GetBy(topicId string) utils.ResponseData {
 	middleware.AuthMiddleware(t.Ctx)
 	var topicServer server.TopicServer
-	userId, _ := t.Ctx.Get("id")
-	if userId == nil {
-		userId = float64(0)
-	}
-	detail, err := topicServer.GetTopicDetail(db.GetIntID(topicId), int(userId.(float64)))
+
+	userId := utils.UserIDInt(t.Ctx)
+	detail, err := topicServer.GetTopicDetail(db.GetIntID(topicId), userId)
 	if err != nil {
 		return utils.JsonFail(err)
 	}

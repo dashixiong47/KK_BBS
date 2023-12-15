@@ -16,11 +16,6 @@ type CustomClaims struct {
 	// 其他字段
 }
 
-var whiteList = []string{
-	"/api/v1/topic/list",
-	"/api/v1/topic/",
-}
-
 func Logger() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		startTime := time.Now()

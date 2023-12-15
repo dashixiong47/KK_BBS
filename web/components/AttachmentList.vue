@@ -1,27 +1,30 @@
 <template>
-  <ul>
-    <li
-      class="p-2 mb-2 rounded-xl flex justify-between items-center"
-      v-for="item in attachmentList"
-    >
-      <div class="flex w-3/4">
-        <div class="mr-2 max-w-[60%] truncate">{{ item.name }}</div>
-        <div><Icon name="ri:coins-fill"></Icon>{{ item.coins }}</div>
-      </div>
-      <KButton
-        v-if="!item.status"
-        class="shadow-default rounded-xl"
-        @click="change(item)"
+  <Card v-if="attachmentList.length">
+    <p class="border-b pb-2 mb-2 font-bold">附件</p>
+    <ul>
+      <li
+        class="p-2 mb-2 rounded-xl flex justify-between items-center"
+        v-for="item in attachmentList"
       >
-        <Icon name="ic:baseline-add-card"></Icon>
-      </KButton>
-      <a v-else :href="item.fileUrl" :download="item.name">
-        <KButton>
-          <Icon name="material-symbols:download-rounded"></Icon>
+        <div class="flex w-3/4">
+          <div class="mr-2 max-w-[60%] truncate">{{ item.name }}</div>
+          <div><Icon name="ri:coins-fill"></Icon>{{ item.coins }}</div>
+        </div>
+        <KButton
+          v-if="!item.status"
+          class="shadow-default rounded-xl"
+          @click="change(item)"
+        >
+          <Icon name="ic:baseline-add-card"></Icon>
         </KButton>
-      </a>
-    </li>
-  </ul>
+        <a v-else :href="item.fileUrl" :download="item.name">
+          <KButton>
+            <Icon name="material-symbols:download-rounded"></Icon>
+          </KButton>
+        </a>
+      </li>
+    </ul>
+  </Card>
   <Dialog
     v-model="showTips"
     cancel-btn

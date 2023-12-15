@@ -13,12 +13,12 @@ import (
 func init() {
 
 	r := gin.Default() // 创建一个 Gin 实例
-	r.Static("/files", "./files")
-	r.GET("/ws", websocket.WebsocketHandler) // 使用 /ws 路径来处理 WebSocket 连接
 
 	if config.SettingsConfig.Application.Mode == "dev" {
 		r.Use(crossAllow)
 	}
+	r.Static("/files", "./files")
+	r.GET("/ws", websocket.WebsocketHandler) // 使用 /ws 路径来处理 WebSocket 连接
 
 	//r.Use(middleware.Logger())
 	port := fmt.Sprintf(":%d", config.SettingsConfig.Application.Port)

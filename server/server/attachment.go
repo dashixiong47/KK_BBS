@@ -2,9 +2,9 @@ package server
 
 import (
 	"errors"
-	"github.com/dashixiong47/KK_BBS/data"
 	"github.com/dashixiong47/KK_BBS/db"
 	"github.com/dashixiong47/KK_BBS/models"
+	"github.com/dashixiong47/KK_BBS/services"
 	"github.com/dashixiong47/KK_BBS/utils/klog"
 )
 
@@ -36,6 +36,7 @@ func (s *AttachmentServer) List(topId int, userId uint) ([]map[string]any, error
 	// 构建最终的文档列表
 	docs := make([]map[string]any, 0, len(attachmentsInfo))
 	for _, info := range attachmentsInfo {
+		isSelf := info.UserID == userId
 		doc := make(map[string]any)
 		doc["id"] = db.GetStrID(info.ID)
 		doc["topicId"] = db.GetStrID(info.TopicID)
@@ -53,16 +54,18 @@ func (s *AttachmentServer) List(topId int, userId uint) ([]map[string]any, error
 			doc["fileType"] = info.FileType
 			doc["fileSize"] = info.FileSize
 			// 如果用户已经购买了附件或者附件是免费的，则提供文件URL
-			if info.Purchased || info.Coins == 0 {
+			if info.Purchased || info.Coins == 0 || isSelf {
 				doc["fileUrl"] = info.FileUrl
+				doc["status"] = 1
 			}
 		}
 
 		// 对于类型为2的附件，如果用户有权访问或者附件是免费的，提供网盘信息
-		if info.Type == 2 && (info.Purchased || info.Coins == 0) {
+		if info.Type == 2 && (info.Purchased || info.Coins == 0) || isSelf {
 			doc["netDisk"] = info.NetDiskType
 			doc["netDiskUrl"] = info.NetDiskUrl
 			doc["netDiskCode"] = info.NetDiskCode
+			doc["status"] = 1
 		}
 
 		// 添加备注信息
@@ -103,7 +106,7 @@ func (s *AttachmentServer) Buy(attachmentId int, userId uint) error {
 	if attachment.Coins == 0 {
 		return errors.New("attachment_free")
 	}
-	err = data.BuyAttachment(userId, uint(attachmentId), attachment.Coins)
+	err = services.BuyAttachment(userId, uint(attachmentId), attachment.Coins)
 	if err != nil {
 		return err
 	}

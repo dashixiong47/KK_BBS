@@ -5,9 +5,9 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
-	data2 "github.com/dashixiong47/KK_BBS/data"
 	"github.com/dashixiong47/KK_BBS/db"
 	"github.com/dashixiong47/KK_BBS/models"
+	data2 "github.com/dashixiong47/KK_BBS/services"
 	"github.com/dashixiong47/KK_BBS/utils"
 	"github.com/dashixiong47/KK_BBS/utils/klog"
 	"github.com/dashixiong47/KK_BBS/utils/message"
@@ -193,7 +193,7 @@ func (s *CommentServer) GetSubCommentList(topicId, subId int, paging utils.Pagin
 // LikeComment 点赞
 func (s *CommentServer) LikeComment(topicId, userId, commentId, subCommentId int) error {
 	var commentLike models.CommentLike
-	//state := data.IsCommentLike(topicId, commentId, subCommentId)
+	//state := services.IsCommentLike(topicId, commentId, subCommentId)
 	//if !state {
 	//	return errors.New("is_not_comment")
 	//}

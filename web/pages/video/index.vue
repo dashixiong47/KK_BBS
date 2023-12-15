@@ -1,6 +1,6 @@
 <template>
     <div>
-      <List :type="1"/>
+      <List :type="3"/>
     </div>
   </template>
   <script setup>

@@ -1,5 +1,4 @@
 // composables/useRequest.js
-import { useRuntimeConfig } from '#app'
 const { setCookie, getCookie } = useCookies();
 export const useRequest = {
   get: (url, params) => {

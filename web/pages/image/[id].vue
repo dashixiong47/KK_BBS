@@ -1,0 +1,115 @@
+<template>
+  <div class="">
+    <!-- 侧边状态栏 -->
+    <Sidebar :detail="detail" />
+    <div class="grid grid-cols-9 gap-5">
+      <div class="relative h-full col-span-9 sm:col-span-6">
+        <Card>
+          <div class="flex" v-if="detail.user">
+            <Avatar :url="detail.user?.avatar" />
+            <div class="w-full ml-2 flex items-center justify-between">
+              <div class="flex flex-col items-start">
+                <KLink to="#" class="text-md font-bold font-main-color">
+                  {{ detail.user?.nickname }}
+                </KLink>
+                <span class="text-xs font-regular-color">
+                  发布时间:{{ getRelativeTime(detail.createdAt) }}
+                </span>
+              </div>
+            </div>
+          </div>
+          <h2 class="font-medium text-xl mt-5">{{ detail.title }}</h2>
+          <Images :detail="detail.topicDetail" @show="showImage" />
+        </Card>
+        <Card id="comment" class="mt-5">
+          <Comments :topicId="route.params.id" @change="commentChange" />
+        </Card>
+      </div>
+      <div class="sm:col-span-3 sm:block m-1">
+        <div class="sticky top-0">
+          <Card class="mb-5">
+            <p class="border-b pb-2 mb-2 font-bold">图片列表</p>
+            <ul>
+              <li
+                v-for="item in detail.topicDetail.images"
+                class="cursor-pointer truncate rounded-xl overflow-hidden px-2 hover:bg-[--illuminate-color] hover:text-white"
+                :class="{
+                  'text-[--illuminate-color]': currentImage === item.order,
+                }"
+                @click="scrollToImage(item.order)"
+              >
+                {{ item.name }}
+              </li>
+            </ul>
+          </Card>
+          <Card>
+            <p class="border-b pb-2 mb-2 font-bold">附件</p>
+            <AttachmentList :topicId="route.params.id" />
+          </Card>
+        </div>
+      </div>
+    </div>
+  </div>
+</template>
+
+<script setup>
+import { useRoute } from "#app";
+import { useGetTopicDetail } from "~/api/server";
+import { useAppConfigStore } from "~/stores/init";
+import Images from "~/components/detail/Images.vue";
+let appConfigStore = useAppConfigStore();
+let appConfig = computed(() => appConfigStore.getConfig);
+
+const { getRelativeTime } = useTime();
+const route = useRoute();
+let currentImage = ref(0);
+let detail = ref({
+  topicDetail: {
+    images: [],
+  },
+});
+let rollingStatus = false;
+let showImage = (imageId) => {
+  if (rollingStatus) {
+    currentImage.value = imageId;
+  }
+};
+onMounted(() => {
+  document.querySelector(".bigBox").addEventListener("scroll", (e) => {
+    if (rollingStatus) return;
+    rollingStatus = true;
+  });
+});
+const scrollToImage = (imageId) => {
+  currentImage.value = imageId;
+  const element = document.getElementById(`image_${imageId}`);
+  element.scrollIntoView({ behavior: "smooth" });
+};
+
+async function getTopicDetail() {
+  try {
+    let { data } = await useGetTopicDetail(route.params.id);
+    data.topicDetail.images = data.topicDetail.images.sort(
+      (a, b) => a.order - b.order
+    );
+    detail.value = data || {};
+    useHead({
+      title: detail.value.title + " - " + appConfig.value.appName,
+    });
+  } catch (error) {
+    console.log(error);
+    showError(error);
+  }
+}
+function commentChange() {
+  detail.value.comment = detail.value.comment + 1;
+  detail.value.commentState = true;
+  if (detail.value.topicDetail) {
+    getTopicDetail();
+  }
+}
+function init() {
+  getTopicDetail();
+}
+init();
+</script>

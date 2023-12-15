@@ -1,64 +1,102 @@
 <template>
-  <div class="py-5">
+  <div class="pt-5" ref="textBox">
     <!-- 使用已排序的响应式数据进行渲染 -->
-    <div v-for="item in sortedTextContent" :key="item.order">
-      <h2 class="text-xl font-bold mb-5">{{ item.name }}</h2>
-      <pre v-html="item.data" class="whitespace-pre-wrap"></pre>
+    <div v-if="textContent[modelValue]">
+      <h2 class="text-xl text-center font-bold mb-5">
+        {{ textContent[modelValue].name }}
+      </h2>
+      <pre
+        v-html="textContent[modelValue].data"
+        class="whitespace-pre-wrap"
+      ></pre>
+      <div class="flex items-center justify-between mt-5">
+        <KButton
+          class="w-[45%]"
+          :disabled="!modelValue"
+          :class="{ disableColor: !modelValue }"
+          @click="change(1)"
+          >上一章</KButton
+        >
+        <KButton
+          class="w-[45%]"
+          :disabled="modelValue === detail.texts.length - 1"
+          :class="{ disableColor: modelValue === detail.texts.length - 1 }"
+          @click="change(2)"
+          >下一章</KButton
+        >
+      </div>
     </div>
+    <Skeleton v-else :lines="20" />
   </div>
 </template>
 
 <script setup>
-import { ref, computed } from 'vue';
-const { getPath } = usePath();
 const props = defineProps({
   detail: {
     type: Object,
-    default: () => {},
+    default: () => ({}),
   },
+  modelValue: {
+    type: Number,
+    default: 0,
+  }, // 当前选中的文章编号
 });
-
-let textContent = ref([]);
-
-// 计算属性，用于排序textContent
-const sortedTextContent = computed(() => {
-  return textContent.value.sort((a, b) => a.order - b.order);
-});
-
-// 初始化函数
-async function init() {
-  try {
-    let list = props.detail.texts.map((item) => getText(item));
-    textContent.value = await Promise.all(list);
-  } catch (error) {
-    console.error("初始化数据时发生错误:", error);
-    // 这里可以添加更多错误处理逻辑
-  }
-}
-
+const { getPath } = usePath();
+const textContent = ref({});
+const textBox = ref(null);
+const emit = defineEmits(["update:modelValue"]);
 // 异步获取文本数据
 async function getText(item) {
   try {
-    let response = await useFetch("/api/text", {
-      method: "POST",
+    let res = await fetch(getPath(item.url), {
+      method: "GET",
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify({
-        url: getPath(item.url),
-      }),
     });
+    let data = await res.text();
     return {
       name: item.name,
       order: item.order,
-      data: response.data.value,
+      data: data,
     };
   } catch (error) {
     console.error("获取文本数据时发生错误:", error);
-    throw error; // 抛出错误，以便在调用链中处理
+    return {
+      name: item.name,
+      order: item.order,
+      data: "获取失败，请重新获取",
+    };
   }
 }
+function change(type) {
+  let order = props.modelValue;
+  if (type === 1) {
+    order--;
+  } else {
+    order++;
+  }
 
-// 调用初始化函数
-init();
+  emit("update:modelValue", order);
+  show();
+}
+watch(
+  () => props.modelValue,
+  async (newVal) => {
+    let info = props.detail.texts.find((item) => item.order === newVal);
+
+    if (textContent.value[newVal]) {
+      show();
+      return;
+    }
+    textContent.value[newVal] = await getText(info);
+  },
+  {
+    immediate: true,
+  }
+);
+function show() {
+  const element = textBox.value;
+  element.scrollIntoView({ behavior: "smooth" });
+}
 </script>

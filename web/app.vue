@@ -6,6 +6,7 @@
   <Teleport to="body">
     <FloatingList />
   </Teleport>
+  
 </template>
 <script setup>
 import { useUserStore } from "~/stores/main";

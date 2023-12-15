@@ -8,12 +8,14 @@
 <script setup>
 import { ref, onMounted, onBeforeUnmount } from "vue";
 import { upload } from "~/api/upload";
+
 useHead({
   script: {
     src: "/tinymce/js/tinymce/tinymce.min.js",
   },
 });
-const { sleep } = useSleep();
+const {getPath} = usePath();
+// const { sleep } = useSleep();
 let { placeholder, moduleValue } = defineProps({
   moduleValue: {
     type: String,
@@ -108,7 +110,7 @@ const initializeEditor = () => {
       return new Promise(async (resolve, reject) => {
         try {
           let res = await upload(blobInfo, progress);
-          resolve(res.url);
+          resolve(getPath(res.url));
         } catch (error) {
           removeFailedImage(blobInfo.blobUri());
           reject(error);

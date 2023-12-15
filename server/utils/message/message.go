@@ -24,8 +24,8 @@ func SendMessage(message models.Messages) {
 		klog.Error(err.Error())
 	}
 	var msg = map[string]any{
-		"type": message.Type,
-		"data": msgData[message.Type],
+		"type":     message.Type,
+		"services": msgData[message.Type],
 	}
 	marshal, err := json.Marshal(msg)
 	if err != nil {

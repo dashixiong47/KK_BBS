@@ -18,42 +18,28 @@ export default defineNuxtConfig({
   },
   plugins: [
     '~/plugins/global-directives.js',
+    '~/plugins/image-viewer-plugin.js',
+    '~/plugins/vconsole.client.js'
   ],
-  head() {
-    const i18nHead = this.$nuxtI18nHead({ addSeoAttributes: true });
-    i18nHead.title = this.$t("title");
-    return i18nHead;
+  // head() {
+  //   const i18nHead = this.$nuxtI18nHead({ addSeoAttributes: true });
+  //   i18nHead.title = this.$t("title");
+  //   return i18nHead;
+  // },
+  app: {
+    head: {
+      // 禁用缩放
+      meta: [
+        {
+          name: 'viewport',
+          content: 'width=device-width, initial-scale=1, minimum-scale=1, maximum-scale=1, user-scalable=no'
+        }
+      ]
+    }
   },
   runtimeConfig: {
     public: {
       baseUrl: process.env.NUXT_PUBLIC_BASE_URL,
-      options: [
-        {
-          name: "全部",
-          type: "all",
-          value: 0,
-        },
-        {
-          name: "帖子",
-          value: 1,
-          type: "topic",
-        },
-        {
-          name: "图片",
-          type: "img",
-          value: 2,
-        },
-        {
-          name: "视频",
-          type: "video",
-          value: 3,
-        },
-        {
-          name: "小说",
-          type: "text",
-          value: 4,
-        },
-      ]
     }
   },
   i18n: {
@@ -87,7 +73,7 @@ export default defineNuxtConfig({
   nitro: {
     devProxy: {
       "/api/v1": {
-        target: "http://localhost:8080", // 这里是接口地址
+        target: "http://192.168.31.124:8080", // 这里是接口地址
         changeOrigin: true,
       },
     },

@@ -78,8 +78,8 @@ func (c *Comment) PostCreate() utils.ResponseData {
 
 // GetListBy 获取评论列表
 func (c *Comment) GetListBy(id string) utils.ResponseData {
-	//if authMiddleware, data := middleware.AuthMiddleware(c.Ctx); !authMiddleware {
-	//	return *data
+	//if authMiddleware, services := middleware.AuthMiddleware(c.Ctx); !authMiddleware {
+	//	return *services
 	//}
 	_type := c.Ctx.DefaultQuery("type", "all")
 	var paging utils.Paging
@@ -95,8 +95,8 @@ func (c *Comment) GetListBy(id string) utils.ResponseData {
 
 // GetSubListBy 获取subComment列表
 func (c *Comment) GetSubListBy(id string) utils.ResponseData {
-	//if authMiddleware, data := middleware.AuthMiddleware(c.Ctx); !authMiddleware {
-	//	return *data
+	//if authMiddleware, services := middleware.AuthMiddleware(c.Ctx); !authMiddleware {
+	//	return *services
 	//}
 	topicId := c.Ctx.DefaultQuery("topicId", "")
 	if topicId == "" {

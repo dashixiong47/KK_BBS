@@ -4,7 +4,7 @@
       v-for="item in props.list"
       class="relative col-span-4 sm:col-span-3 lg:col-span-3"
     >
-      <KLink :to="`/topic/${item.id}`">
+      <KLink :to="`/text/${item.id}`">
         <div
           class="shadow-center flex items-center justify-center h-40 sm:h-60 rounded-xl relative overflow-hidden"
         >

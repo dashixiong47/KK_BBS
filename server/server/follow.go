@@ -2,9 +2,9 @@ package server
 
 import (
 	"errors"
-	"github.com/dashixiong47/KK_BBS/data"
 	"github.com/dashixiong47/KK_BBS/db"
 	"github.com/dashixiong47/KK_BBS/models"
+	"github.com/dashixiong47/KK_BBS/services"
 	"gorm.io/gorm"
 	"time"
 )
@@ -14,7 +14,7 @@ type FollowServer struct {
 
 func (f *FollowServer) CreateFollow(userId, followId int) error {
 	// 检查用户是否存在
-	if !data.IsUser(userId) {
+	if !services.IsUser(userId) {
 		return errors.New("user_not_found")
 	}
 

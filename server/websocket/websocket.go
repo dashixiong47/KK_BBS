@@ -23,7 +23,7 @@ type UserConn struct {
 // Message 消息结构体
 type Message struct {
 	Type int             `json:"type"`
-	Data json.RawMessage `json:"data"`
+	Data json.RawMessage `json:"services"`
 }
 
 // MsgData 消息数据结构体
@@ -31,7 +31,7 @@ type MsgData struct {
 	Type   int    `json:"type"`
 	UserId int    `json:"userId"`
 	Ping   int64  `json:"ping"`
-	Data   string `json:"data"`
+	Data   string `json:"services"`
 }
 
 // ConnManager 管理WebSocket连接

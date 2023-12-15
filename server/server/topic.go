@@ -5,10 +5,10 @@ import (
 	"encoding/json"
 	"errors"
 	"github.com/dashixiong47/KK_BBS/config"
-	data2 "github.com/dashixiong47/KK_BBS/data"
-	"github.com/dashixiong47/KK_BBS/data/group"
 	"github.com/dashixiong47/KK_BBS/db"
 	"github.com/dashixiong47/KK_BBS/models"
+	data2 "github.com/dashixiong47/KK_BBS/services"
+	"github.com/dashixiong47/KK_BBS/services/group"
 	"github.com/dashixiong47/KK_BBS/utils"
 	"github.com/dashixiong47/KK_BBS/utils/klog"
 	"github.com/dashixiong47/KK_BBS/utils/message"
@@ -181,6 +181,15 @@ func (s *TopicServer) GetTopicDetail(topicId, userId int) (any, error) {
 			log.Println("json.Unmarshal", err)
 		}
 		detail["images"] = images
+
+	} else if doc.Type == 3 {
+		log.Println(detail)
+		videos := make([]map[string]any, 0)
+		err := json.Unmarshal([]byte(detail["videos"].(string)), &videos)
+		if err != nil {
+			log.Println("json.Unmarshal", err)
+		}
+		detail["videos"] = videos
 
 	} else if doc.Type == 4 {
 		texts := make([]map[string]any, 0)

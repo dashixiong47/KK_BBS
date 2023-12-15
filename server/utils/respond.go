@@ -9,7 +9,7 @@ import (
 type ResponseData struct {
 	Code    int         `json:"code"`
 	Message string      `json:"message"`
-	Data    interface{} `json:"data,omitempty"`
+	Data    interface{} `json:"data"`
 }
 
 // JsonSuccess 成功响应

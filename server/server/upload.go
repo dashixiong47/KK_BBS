@@ -1,74 +1,74 @@
 package server
 
 import (
-	"context"
-	"encoding/json"
-	"fmt"
-	"github.com/dashixiong47/KK_BBS/db"
-	"github.com/dashixiong47/KK_BBS/models"
-	"github.com/dashixiong47/KK_BBS/utils/klog"
-	"log"
-	"time"
+	"github.com/dashixiong47/KK_BBS/services/upload"
+	"github.com/gin-gonic/gin"
 )
 
 type UploadServer struct{}
 
-func (u *UploadServer) Query(md5 string) any {
-
-	var fileInfo models.File
-	ctx := context.Background()
-	// 从redis中查询
-	if result, err := db.Rdb.Get(ctx, fmt.Sprintf("file:%v", md5)).Result(); err == nil {
-		log.Println("从redis中查询")
-		var data map[string]interface{}
-		_ = json.Unmarshal([]byte(result), &data)
-		return data
-	}
-	log.Println("从数据库中查询")
-	// 从数据库中查询
-	err := db.DB.Where("md5 = ?", md5).First(&fileInfo).Error
-	if err != nil {
-		return err
-	}
-	_ = saveToRedis(fileInfo)
-	return map[string]interface{}{
-		"id":   fileInfo.ID,
-		"url":  fileInfo.Url,
-		"name": fileInfo.FileName,
-	}
+// var sourceUrl = "files/videos/video"
+// var convertedUrl = "files/videos/converted/"
+//
+//	func init() {
+//		services.EnsureDir(sourceUrl)
+//		services.EnsureDir(convertedUrl)
+//	}
+func (u *UploadServer) UploadFile(c *gin.Context) (any, error) {
+	size := int64(1024 * 1024 * 10)
+	return upload.ProcessFile(c, size)
 }
 
-func (u *UploadServer) Save(md5, filename, _type, path string) (models.File, error) {
-	var fileInfo models.File
-	fileInfo.Md5 = md5
-	fileInfo.FileName = filename
-	fileInfo.Type = _type
-	fileInfo.Url = path
-
-	err := db.DB.Create(&fileInfo).Error
-	if err != nil {
-		klog.Error(err.Error())
-		return models.File{}, err
-	}
-	_ = saveToRedis(fileInfo)
-	return fileInfo, nil
-}
-
-// 存到redis
-func saveToRedis(file models.File) error {
-	// ExpireTime 过期时间
-	const ExpireTime = 2 * time.Hour
-	data := map[string]interface{}{
-		"id":   file.ID,
-		"name": file.FileName,
-		"url":  file.Url,
-	}
-	marshal, _ := json.Marshal(data)
-	// 保存到redis 过期时间2小时
-	ctx := context.Background()
-	err := db.Rdb.Set(ctx, fmt.Sprintf("file:%v", file.Md5), marshal, ExpireTime).Err()
-	if err != nil {
-		return err
-	}
-	return nil
-}
+//
+//// UploadVideo 获取视频
+//func (u *UploadServer) UploadVideo(ctx *gin.Context) (any, error) {
+//	file, err := ctx.FormFile("video")
+//	if err != nil {
+//		return nil, errors.New("video_not_found")
+//	}
+//	//判断文件大小 超出限制
+//	if file.Size > 1024*1024*10 {
+//		return nil, errors.New("file_size_exceeds_limit")
+//	}
+//	// 保存上传的视频文件
+//	path := filepath.Join(sourceUrl, file.Filename)
+//	err = ctx.SaveUploadedFile(file, path)
+//	if err != nil {
+//		klog.Error(err.Error())
+//		return nil, errors.New("video_save_error")
+//	}
+//
+//	// 转换视频为 HLS 流
+//	outputDir := filepath.Join(convertedUrl, file.Filename+"_hls")
+//	err = os.MkdirAll(outputDir, os.ModePerm) // 创建输出目录
+//	if err != nil {
+//		klog.Error(err.Error())
+//		return nil, errors.New("output_dir_create_error")
+//	}
+//
+//	output := filepath.Join(outputDir, "index.m3u8")
+//	// 添加图片水印
+//	// cmdArgs := []string{"-i", path, "-i", "watermark.png", "-filter_complex", "overlay=10:10", "-codec", "copy", "-start_number", "0", "-hls_time", "10", "-hls_list_size", "0", "-f", "hls", output}
+//
+//	// 添加文字水印
+//	fontPath := "static/SourceHanSansCN-Bold.ttf" // 替换为您系统上的默认字体路径
+//	text := "kkBBS.com"                           // 水印的文字内容
+//	cmdArgs := []string{"-i", path, "-vf", fmt.Sprintf("drawtext=text='%s':fontfile=%s:fontsize=24:fontcolor=white:x=(main_w-text_w-30):y=30", text, fontPath), "-start_number", "0", "-hls_time", "10", "-hls_list_size", "0", "-f", "hls", output}
+//
+//	// 正常转为 HLS 流
+//	// cmdArgs := []string{"-i", path, "-codec", "copy", "-start_number", "0", "-hls_time", "10", "-hls_list_size", "0", "-f", "hls", output}
+//	cmd := exec.Command("ffmpeg", cmdArgs...)
+//
+//	// 打印 FFmpeg 命令
+//	// log.Println("Executing FFmpeg command:", "ffmpeg", strings.Join(cmdArgs, " "))
+//	var stderr bytes.Buffer
+//	cmd.Stderr = &stderr
+//
+//	err = cmd.Run()
+//	if err != nil {
+//		klog.Error(stderr.String()) // 打印 FFmpeg 错误输出
+//		return nil, errors.New("video_convert_error")
+//	}
+//
+//	return map[string]string{"hls_playlist": output}, nil
+//}

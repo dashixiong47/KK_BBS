@@ -77,13 +77,12 @@ import Image from "~/components/publish/Image.vue";
 useHead({
   title: "发布",
 });
-let userStore = useUserStore();
 const { t } = useI18n();
 const appConfigStore = useAppConfigStore();
 let { addMessage } = useMessage();
 let { to } = useToRoute();
 let store = useGroupStore();
-let getGroup = computed(() => store.getGroup.filter((item) => item.id));
+let getGroup = computed(() => store.getGroup.filter((item) => item.id > 0));
 let captchaRef = ref(null);
 let TopicTypeOptions = ref({
   topic: Topic,
@@ -109,10 +108,12 @@ let formData = ref({
   captchaId: "",
   attachment: fileList.value,
 });
+let type = null;
 let selectdTopic = ref(TopicTypeOptions.value.topic);
 const selectdTopicType = (item) => {
   formData.value.type = item.index;
   selectdTopic.value = TopicTypeOptions.value[item.type];
+  type = item.type;
 };
 const submit = async () => {
   let message = checkParams();
@@ -130,7 +131,7 @@ const submit = async () => {
     let { data } = await createTopic(
       JSON.parse(JSON.stringify(form).replace(regex, ""))
     );
-    to("/topic/" + data);
+    to(`/${type}/${data}`);
     addMessage(t("submitted-success"));
   } catch (error) {
     captchaRef.value.init();
@@ -147,6 +148,10 @@ const checkParams = () => {
   }
   if (!formData.value.code) {
     return t("topic-create-code");
+  }
+  let state = publish.value.checkParams();
+  if (state) {
+    return state;
   }
   return false;
 };

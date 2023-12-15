@@ -34,7 +34,7 @@
         </li>
       </ul>
     </div>
-    <div class="md:col-span-1 flex items-center justify-end">
+    <div class="md:col-span-1 flex items-center justify-end ">
       <KButton @click="toCreate">发表</KButton>
       <KLink v-if="isLogin" :to="getPath + '/message'" class="relative">
         <Icon
@@ -51,11 +51,11 @@
 
       <!-- <SwitcherTheme /> -->
 
-      <div class="flex-shrink-0">
+      <div class="flex-shrink-0 ">
         <KLink v-if="isLogin" :to="getPath">
           <Avatar :url="userInfo.avatar" class="w-12 h-12" />
         </KLink>
-        <KButton v-else @click="setLoginStatus">登录</KButton>
+        <KButton v-else @click="setLoginStatus" class="ml-5">登录</KButton>
       </div>
       <!-- <div class="absolute">1212</div> -->
     </div>
@@ -87,27 +87,27 @@ watch(
 const type = [
   {
     name: "首页",
-    icon: "clarity:house-line",
+    icon: "ep:house",
     path: "/",
   },
   {
     name: "默认",
-    icon: "icon-park-solid:topic",
+    icon: "ep:chat-line-round",
     path: "/topic",
   },
   {
     name: "图片",
-    icon: "lets-icons:img-box-fill",
-    path: "/img",
+    icon: "ep:picture",
+    path: "/image",
   },
   {
     name: "视频",
-    icon: "ic:round-ondemand-video",
+    icon: "octicon:video-24",
     path: "/video",
   },
   {
     name: "小说",
-    icon: "mdi:text-box-multiple",
+    icon: "ep:document",
     path: "/text",
   },
 ];

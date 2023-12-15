@@ -4,9 +4,9 @@ import (
 	"context"
 	"errors"
 	"fmt"
-	"github.com/dashixiong47/KK_BBS/data"
 	"github.com/dashixiong47/KK_BBS/db"
 	"github.com/dashixiong47/KK_BBS/models"
+	"github.com/dashixiong47/KK_BBS/services"
 	"github.com/dashixiong47/KK_BBS/utils"
 	"github.com/dashixiong47/KK_BBS/utils/klog"
 	"github.com/go-redis/redis/v8"
@@ -95,7 +95,7 @@ func getContent(ctx context.Context, docs models.Messages) (map[string]any, erro
 		"createdAt": docs.CreatedAt,
 	}
 	if docs.RelatedUserID != 0 {
-		content["relatedUser"] = data.GetUserInfo(docs.RelatedUserID)
+		content["relatedUser"] = services.GetUserInfo(docs.RelatedUserID)
 	}
 	switch docs.Type {
 	case 1:

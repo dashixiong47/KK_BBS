@@ -27,6 +27,9 @@
       </div>
       <div class="sm:col-span-3 sm:block m-1">
         <div class="sticky top-0">
+          <Card class="mb-5">
+            <p class="border-b pb-2 mb-2 font-bold">附件1</p>
+          </Card>
           <Card>
             <p class="border-b pb-2 mb-2 font-bold">附件</p>
             <AttachmentList :topicId="route.params.id" />
@@ -44,6 +47,7 @@ import { useAppConfigStore } from "~/stores/init";
 import Default from "~/components/detail/Index.vue";
 import Images from "~/components/detail/Images.vue";
 import Texts from "~/components/detail/Texts.vue";
+import Video from "~/components/detail/Video.vue";
 let appConfigStore = useAppConfigStore();
 let appConfig = computed(() => appConfigStore.getConfig);
 
@@ -54,12 +58,14 @@ let detail = ref({});
 let type = {
   1: Default,
   2: Images,
+  3: Video,
   4: Texts,
 };
 async function getTopicDetail() {
   try {
     // const {data} = await useFetch("http://localhost:8080/api/v1/topic/" + route.params.id);
     let { data } = await useGetTopicDetail(route.params.id);
+    console.log(data);
     detail.value = data || {};
     useHead({
       title: detail.value.title + " - " + appConfig.value.appName,
@@ -72,6 +78,9 @@ async function getTopicDetail() {
 function commentChange() {
   detail.value.comment = detail.value.comment + 1;
   detail.value.commentState = true;
+  if (detail.value.topicDetail) {
+    getTopicDetail();
+  }
 }
 function init() {
   getTopicDetail();

@@ -1,15 +1,20 @@
 <template>
   <div class="py-5">
     <KImage
-      v-for="(item, index) in detail.images.sort((a, b) => a.order - b.order)"
+      :id="`image_${item.order}`"
+      v-for="(item, index) in detail.images"
+      @click="openViewer(index)"
       :key="index"
       :source="getPath(item.url)"
       :alt="item.name"
+      :rolling="true"
+      @show="scrollToImage(item.order)"
     />
   </div>
 </template>
 
 <script setup>
+const { $imageViewer } = useNuxtApp();
 const { getPath } = usePath();
 const props = defineProps({
   detail: {
@@ -17,5 +22,11 @@ const props = defineProps({
     default: () => {},
   },
 });
-console.log(props.detail);
+const emit = defineEmits(["show"]);
+function openViewer(index) {
+  $imageViewer.open(props.detail.images, index);
+}
+function scrollToImage(index) {
+  emit("show", index);
+}
 </script>

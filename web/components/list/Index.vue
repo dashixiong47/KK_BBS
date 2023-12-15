@@ -1,5 +1,12 @@
 <template>
   <div class="pb-5">
+    <div
+      v-if="!list"
+      class="w-full h-full text-[--font-secondary-color] flex flex-col items-center justify-center p-10"
+    >
+      <Icon name="ep:box" size="10rem"></Icon>
+      <span class="mt-2">无数据</span>
+    </div>
     <div v-if="loading">
       <Skeleton class="mb-5" :lines="5" v-for="item in 10"></Skeleton>
     </div>
@@ -19,6 +26,7 @@ import { useGroupStore } from "~/stores/init.js";
 import Topic from "./Topic.vue";
 import Img from "./Img.vue";
 import Text from "./Text.vue";
+import Video from "./Video.vue";
 let loading = ref(false);
 const store = useGroupStore();
 const actived = computed(() => {
@@ -47,6 +55,7 @@ let typeOptions = {
   "-1": Topic,
   1: Topic,
   2: Img,
+  3: Video,
   4: Text,
 };
 watch(

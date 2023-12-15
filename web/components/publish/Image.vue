@@ -1,86 +1,99 @@
 <template>
-  <div class="shadow-center rounded-xl overflow-hidden">
-    <DragColumn
-      :columns="columns"
-      :tableData="tableData"
-      @update="
-        (newValue) => {
-          tableData = newValue;
-        }
-      "
+  <div class="w-full rounded-xl flex flex-wrap" ref="imageList">
+    <div
+      :key="item.name + index"
+      v-for="(item, index) in images"
+      class="viewer w-32 h-32 shadow-center relative rounded-xl mr-5 mb-7"
     >
-      <template #index="{ index }">
-        {{ index + 1 }}
-      </template>
-      <template #img="{ record }">
-        <div class="flex justify-center">
-          <img class="h-20" :src="record.url" alt="" srcset="" />
-        </div>
-      </template>
-    </DragColumn>
-    <div class="w-full flex">
-      <Upload
-        class="w-full"
-        accept=".png,.jpg,.jpeg"
-        multiple
-        @uploadSuccess="uploadSuccess"
-      >
-        <KButtonNoStyle class="w-full border-r">上传</KButtonNoStyle>
-      </Upload>
+      <img
+        :src="item.url"
+        class="rounded-xl absolute object-cover w-full h-full"
+      />
+      <p class="text-sm text-center py-1 absolute -bottom-8 truncate w-full">
+        {{ item.name }}
+      </p>
+      <div class="mask rounded-xl absolute top-0 right-0 w-full h-full">
+        <Icon
+          @click="openViewer(index)"
+          class="cursor-pointer hover:text-[--illuminate-color]"
+          size="1.5rem"
+          name="ep:view"
+        ></Icon>
+        <Icon
+          @click="remove(index)"
+          class="ml-2 cursor-pointer hover:text-[--illuminate-color]"
+          size="1.5rem"
+          name="ep:delete"
+        ></Icon>
+      </div>
     </div>
-    <div @click="toRepeat">去除重复</div>
-    <div @click="sort">一键排序</div>
+    <Upload
+      class="w-32 h-32 flex items-center justify-center rounded-xl shadow-center active:shadow-active"
+      @uploadSuccess="uploadSuccess"
+      :multiple="true"
+      accept="image/*"
+    >
+      <div>+</div>
+    </Upload>
+  </div>
+  <div class="flex justify-end">
+    <KButton @click="toRepeat">去除重复</KButton>
+    <KButton class="ml-5" @click="sort">一键排序</KButton>
   </div>
 </template>
 
 <script setup>
+const { $imageViewer } = useNuxtApp();
+import Sortable from "sortablejs";
 const { getPath } = usePath();
-let columns = ref([
-  {
-    title: "顺序",
-    slot: "index",
-    width: "100px",
-  },
-  {
-    title: "名称",
-    prop: "name",
-    width: "200px",
-  },
-  {
-    title: "图片",
-    slot: "img",
-  },
-]);
-let tableData = ref([]);
+const { t } = useI18n();
+let images = ref([]);
+let imageList = ref(null);
+onMounted(() => {
+  new Sortable(imageList.value, {
+    animation: 150,
+    ghostClass: "sortable-ghost",
+    onUpdate: async (evt) => {
+      const oldIndex = evt.oldIndex;
+      const newIndex = evt.newIndex;
+      const movedItem = images.value.splice(oldIndex, 1)[0];
+      images.value.splice(newIndex, 0, movedItem);
+    },
+  });
+});
+const remove = (index) => {
+  images.value.splice(index, 1);
+};
 const uploadSuccess = (res) => {
-  tableData.value.push({
+  images.value.push({
     name: res.name,
     url: getPath(res.url),
   });
 };
 const toRepeat = () => {
   let obj = {};
-  tableData.value = tableData.value.reduce((cur, next) => {
+  images.value = images.value.reduce((cur, next) => {
     obj[next.url] ? "" : (obj[next.url] = true && cur.push(next));
     return cur;
   }, []);
 };
 const sort = () => {
-  tableData.value.sort((a, b) => {
-    return a.name.localeCompare(b.name, undefined, { numeric: true });
+  images.value.sort((a, b) => {
+    // return a.name.localeCompare(b.name, undefined, { numeric: true });
+    return a.name.localeCompare(b.name);
   });
 };
 // 校验参数
 const checkParams = () => {
-  if (!formData.value.topicBasic.content) {
-    return t("topic-create-content");
+  if (!images.value.length) {
+    return t("topic-create-image");
   }
   return false;
 };
 
 // 提交
 const getFormData = () => {
-  let list = tableData.value.map((item, index) => {
+  let list = images.value.map((item, index) => {
     return { ...item, order: index };
   });
   return {
@@ -89,8 +102,24 @@ const getFormData = () => {
     },
   };
 };
+function openViewer(index) {
+  $imageViewer.open(images.value, index);
+}
 defineExpose({
   getFormData,
   checkParams,
 });
 </script>
+
+<style scoped>
+.mask {
+  display: none;
+  background: rgba(0, 0, 0, 0.5);
+  transition: all 0.3s;
+  align-items: center;
+  justify-content: center;
+}
+.viewer:hover .mask {
+  display: flex;
+}
+</style>

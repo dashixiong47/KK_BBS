@@ -15,7 +15,7 @@ application:
   #卡密生成密钥
   redeemKey: 123456
   # 文件域名
-  fileHost: http://127.0.0.1:8080
+  fileHost: http://localhost:8080
 postgresql:
     host: 127.0.0.1
     port: 5432

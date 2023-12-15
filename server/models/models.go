@@ -65,10 +65,10 @@ type TopicBasic struct {
 
 // TopicVideo 视频
 type TopicVideo struct {
-	ID           uint         `json:"id" gorm:"primaryKey;AUTO_INCREMENT"`
-	TopicID      uint         `gorm:"unique;index"`                   // 外键，并且是唯一的
-	VideoID      *db.IntArray `json:"videoId" gorm:"type:integer[];"` // 视频
-	Introduction string       `json:"introduction" gorm:"size:255"`   // 简介
+	ID           uint   `json:"id" gorm:"primaryKey;AUTO_INCREMENT"`
+	TopicID      uint   `gorm:"unique;index"`                 // 外键，并且是唯一的
+	Videos       string `json:"videos" gorm:"type:jsonb;"`    // 视频
+	Introduction string `json:"introduction" gorm:"size:255"` // 简介
 }
 
 // TopicImage 图片

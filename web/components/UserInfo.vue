@@ -31,7 +31,7 @@
         </Cropping>
       </span>
       <div
-        class="overflow-hidden rounded-full absolute w-14 h-14 sm:w-20 sm:h-20 md:w-24 md:h-24 z-10 -bottom-4 left-1/2 -translate-x-1/2"
+        class="overflow-hidden rounded-full absolute w-20 h-20  sm:w-20 sm:h-20 md:w-24 md:h-24 z-10 -bottom-4 left-1/2 -translate-x-1/2"
       >
         <Avatar
           :url="userInfo.avatar"

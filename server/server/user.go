@@ -2,9 +2,9 @@ package server
 
 import (
 	"errors"
-	"github.com/dashixiong47/KK_BBS/data"
 	"github.com/dashixiong47/KK_BBS/db"
 	"github.com/dashixiong47/KK_BBS/models"
+	"github.com/dashixiong47/KK_BBS/services"
 )
 
 type UserServer struct {
@@ -12,7 +12,7 @@ type UserServer struct {
 
 // GetUserInfo 获取用户信息
 func (u *UserServer) GetUserInfo(id int) (any, error) {
-	return data.GetUserDetailInfo(id)
+	return services.GetUserDetailInfo(id)
 }
 
 // UpdateUserInfo 修改用户信息
@@ -31,7 +31,7 @@ func (u *UserServer) UpdateUserInfo(id int, nickname, avatar, background, introd
 	if introduction != "" {
 		tx = tx.Update("introduction", introduction)
 	}
-	err := data.RemoveUserRedis(id)
+	err := services.RemoveUserRedis(id)
 	if err != nil {
 		return nil, err
 	}
