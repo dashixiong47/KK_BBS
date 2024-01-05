@@ -38,12 +38,12 @@ export default {
         hls.loadSource(this.src);
         hls.attachMedia(video);
         hls.on(Hls.Events.MANIFEST_PARSED, () => {
-          video.play();
+          // video.play();
         });
       } else if (video.canPlayType("application/vnd.apple.mpegurl")) {
         video.src = this.src;
         video.addEventListener("loadedmetadata", function () {
-          this.play();
+          // this.play();
         });
       }
     }

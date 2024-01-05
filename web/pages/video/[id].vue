@@ -10,7 +10,7 @@
         <div>
           <h2 class="font-medium text-xl mt-5">{{ detail.title }}</h2>
           <div class="flex mt-5" v-if="detail.user">
-            <Avatar :url="detail.user?.avatar" />
+            <Avatar :url="detail.user?.avatar" :user-info="detail.user"/>
             <div class="w-full ml-2 flex items-center justify-between">
               <div class="flex flex-col items-start">
                 <KLink to="#" class="text-md font-bold font-main-color">

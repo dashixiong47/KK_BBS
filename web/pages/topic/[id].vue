@@ -6,7 +6,7 @@
       <div class="relative h-full col-span-9 sm:col-span-6">
         <Card>
           <div class="flex" v-if="detail.user">
-            <Avatar :url="detail.user?.avatar" />
+            <Avatar :url="detail.user?.avatar" :user-info="detail.user"/>
             <div class="w-full ml-2 flex items-center justify-between">
               <div class="flex flex-col items-start">
                 <KLink to="#" class="text-md font-bold font-main-color">
@@ -30,10 +30,7 @@
           <Card class="mb-5">
             <p class="border-b pb-2 mb-2 font-bold">附件1</p>
           </Card>
-          <Card>
-            <p class="border-b pb-2 mb-2 font-bold">附件</p>
-            <AttachmentList :topicId="route.params.id" />
-          </Card>
+          <AttachmentList :topicId="route.params.id" />
         </div>
       </div>
     </div>

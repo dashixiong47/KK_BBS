@@ -1,9 +1,12 @@
 <template>
-  <div
-    ref="imageContainer"
-    class="w-full overflow-hidden"
-    :style="{ height: props.height }"
-  ></div>
+  <div ref="imageContainer" class="w-full h-full overflow-hidden">
+    <!-- 显示默认图片，直到真实图片加载完成 -->
+    <img
+      v-if="showDefault"
+      src="/images/loading.png"
+      class="w-full h-full object-cover block"
+    />
+  </div>
 </template>
 
 <script setup>
@@ -18,16 +21,24 @@ const props = defineProps({
     type: Boolean,
     default: false,
   },
+  fillContainer: {
+    type: Boolean,
+    default: true,
+  },
 });
 const imageContainer = ref(null);
 const emit = defineEmits(["show"]);
+let show = ref(false);
+let showDefault = ref(true); // 状态控制默认图片的显示
 
 const loadImage = () => {
   const img = new Image();
   img.onload = () => {
-    img.className = "object-cover block";
+    img.className = props.fillContainer
+      ? "w-full h-full object-cover block"
+      : "max-w-full max-h-full";
     imageContainer.value.appendChild(img);
-    imageContainer.value.style.height = "auto"; // 移除最小高度限制
+    showDefault.value = false; // 图片加载后隐藏默认图片
   };
   img.src = props.source;
 };
@@ -37,9 +48,10 @@ const setupIntersectionObserver = () => {
     (entries) => {
       entries.forEach((entry) => {
         if (entry.isIntersecting) {
-          if (!imageContainer.value.firstChild) {
+          if (show.value === false) {
             loadImage();
           }
+          show.value = true;
           if (props.rolling) {
             emit("show");
           } else {
@@ -63,14 +75,8 @@ watch(
     if (imageContainer.value.firstChild) {
       imageContainer.value.removeChild(imageContainer.value.firstChild);
     }
+    showDefault.value = true; // 重置默认图片的显示状态
     loadImage();
   }
 );
 </script>
-
-<style>
-/* 你可以在这里添加额外的样式 */
-.placeholder {
-  /* 初始占位样式 */
-}
-</style>

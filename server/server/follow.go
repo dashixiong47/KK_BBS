@@ -5,6 +5,7 @@ import (
 	"github.com/dashixiong47/KK_BBS/db"
 	"github.com/dashixiong47/KK_BBS/models"
 	"github.com/dashixiong47/KK_BBS/services"
+	"github.com/dashixiong47/KK_BBS/utils"
 	"gorm.io/gorm"
 	"time"
 )
@@ -13,6 +14,10 @@ type FollowServer struct {
 }
 
 func (f *FollowServer) CreateFollow(userId, followId int) error {
+
+	if userId == followId {
+		return errors.New("can_not_follow_self")
+	}
 	// 检查用户是否存在
 	if !services.IsUser(userId) {
 		return errors.New("user_not_found")
@@ -57,4 +62,46 @@ func (f *FollowServer) CreateFollow(userId, followId int) error {
 		return errors.New("transaction_commit_error")
 	}
 	return nil
+}
+
+// GetFollowList 获取关注列表
+func (f *FollowServer) GetFollowList(userId int, paging utils.Paging) (any, error) {
+	if !services.IsUser(userId) {
+		return nil, errors.New("user_not_found")
+	}
+	var followList []models.Follow
+	var count int64
+	if err := paging.SetPaging(db.DB).Model(models.Follow{}).Where("user_id = ?", userId).Find(&followList).Count(&count).Error; err != nil {
+		return nil, errors.New("database_query_error")
+	}
+	var userList = make([]any, 0)
+	for _, follow := range followList {
+		info, _ := services.GetUserDetailInfo(int(follow.FollowID))
+		userList = append(userList, info)
+	}
+	var data = make(map[string]any)
+	data["list"] = userList
+	data["total"] = count
+	return data, nil
+}
+
+// GetFansList 获取粉丝列表
+func (f *FollowServer) GetFansList(userId int, paging utils.Paging) (any, error) {
+	if !services.IsUser(userId) {
+		return nil, errors.New("user_not_found")
+	}
+	var followList []models.Follow
+	var count int64
+	if err := paging.SetPaging(db.DB.Debug()).Model(models.Follow{}).Where("follow_id = ?", userId).Find(&followList).Count(&count).Error; err != nil {
+		return nil, errors.New("database_query_error")
+	}
+	var userList = make([]any, 0)
+	for _, fans := range followList {
+		info, _ := services.GetUserDetailInfo(int(fans.UserID))
+		userList = append(userList, info)
+	}
+	var data = make(map[string]any)
+	data["list"] = userList
+	data["total"] = count
+	return data, nil
 }

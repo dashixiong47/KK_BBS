@@ -18,15 +18,15 @@ let userStore = useUserStore();
 
 let isLogin = computed(() => userStore.isLogin);
 
-watch(
-  () => isLogin.value,
-  (val) => {
-    if (val) {
-      initSocket();
-    } else {
-      closeSocket();
-    }
-  },
-  { immediate: true }
-);
+// watch(
+//   () => isLogin.value,
+//   (val) => {
+//     if (val) {
+//       initSocket();
+//     } else {
+//       closeSocket();
+//     }
+//   },
+//   { immediate: true }
+// );
 </script>

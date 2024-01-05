@@ -9,6 +9,7 @@
       :alt="item.name"
       :rolling="true"
       @show="scrollToImage(item.order)"
+      :fillContainer="false"
     />
   </div>
 </template>

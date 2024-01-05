@@ -133,10 +133,10 @@ let tabs = [
     name: "关注",
     path: "/user/" + route.params.id + "/follow",
   },
-  // {
-  //   name: "粉丝",
-  //   path: "/user/" + route.params.id + "/fans",
-  // },
+  {
+    name: "粉丝",
+    path: "/user/" + route.params.id + "/fans",
+  },
   {
     name: "收藏",
     path: "/user/" + route.params.id + "/collect",
@@ -144,6 +144,10 @@ let tabs = [
   {
     name: "消息",
     path: "/user/" + route.params.id + "/message",
+  },
+  {
+    name: "个人中心",
+    path: "/user/" + route.params.id + "/account",
   },
 ];
 const getSlef = computed(() => userStore.getUserInfo.id === route.params.id);

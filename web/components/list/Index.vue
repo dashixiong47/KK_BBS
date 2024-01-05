@@ -24,7 +24,7 @@
 import { useGetTopicList, useCollect } from "~/api/server";
 import { useGroupStore } from "~/stores/init.js";
 import Topic from "./Topic.vue";
-import Img from "./Img.vue";
+import Image from "./Image.vue";
 import Text from "./Text.vue";
 import Video from "./Video.vue";
 let loading = ref(false);
@@ -54,7 +54,7 @@ let pages = ref({
 let typeOptions = {
   "-1": Topic,
   1: Topic,
-  2: Img,
+  2: Image,
   3: Video,
   4: Text,
 };

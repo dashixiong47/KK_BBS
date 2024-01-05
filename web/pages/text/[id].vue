@@ -6,7 +6,7 @@
       <div class="relative h-full col-span-9 sm:col-span-6">
         <Card>
           <div class="flex" v-if="detail.user">
-            <Avatar :url="detail.user?.avatar" />
+            <Avatar :url="detail.user?.avatar" :user-info="detail.user"/>
             <div class="w-full ml-2 flex items-center justify-between">
               <div class="flex flex-col items-start">
                 <KLink to="#" class="text-md font-bold font-main-color">

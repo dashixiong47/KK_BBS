@@ -68,10 +68,14 @@ export const unreadMessage = async (data) => {
     return await useRequest.get('/api/v1/message/unread', data);
 }
 // 读单个消息
-export const readMessage = async (id,data) => {
-    return await useRequest.post('/api/v1/message/read/'+id, data);
+export const readMessage = async (id, data) => {
+    return await useRequest.post('/api/v1/message/read/' + id, data);
 }
 // 读所有消息
-export const readMessageAll = async (id,data) => {
+export const readMessageAll = async (id, data) => {
     return await useRequest.post('/api/v1/message/read/all', data);
+}
+// 关注
+export const follow = async (id, data) => {
+    return await useRequest.post('/api/v1/follow/' + id, data);
 }

@@ -34,8 +34,22 @@
         </li>
       </ul>
     </div>
-    <div class="md:col-span-1 flex items-center justify-end ">
-      <KButton @click="toCreate">发表</KButton>
+    <div class="md:col-span-1 flex items-center justify-end">
+      <div class="flex-shrink-0">
+        <div v-if="isLogin" class="relative options">
+          <Tippy placement="bottom">
+            <Avatar
+              :showUserInfo="false"
+              :url="userInfo.avatar"
+              class="w-12 h-12 relative z-[10000] avatar"
+            />
+            <template #content>
+              <PanelPopover :userInfo="userInfo" class="w-64 -mt-5" />
+            </template>
+          </Tippy>
+        </div>
+        <KButton v-else @click="setLoginStatus" class="mr-5">登录</KButton>
+      </div>
       <KLink v-if="isLogin" :to="getPath + '/message'" class="relative">
         <Icon
           size="1.8rem"
@@ -48,15 +62,9 @@
           :class="{ message: unreadMessage }"
         ></Icon>
       </KLink>
-
+      <KButton @click="toCreate">投稿</KButton>
       <!-- <SwitcherTheme /> -->
 
-      <div class="flex-shrink-0 ">
-        <KLink v-if="isLogin" :to="getPath">
-          <Avatar :url="userInfo.avatar" class="w-12 h-12" />
-        </KLink>
-        <KButton v-else @click="setLoginStatus" class="ml-5">登录</KButton>
-      </div>
       <!-- <div class="absolute">1212</div> -->
     </div>
   </nav>
@@ -66,6 +74,7 @@
 <script setup>
 import { useLoginStore, useUserStore } from "~/stores/main.js";
 import { useMessageStore } from "~/stores/message.js";
+import "tippy.js/animations/scale.css";
 const messageStore = useMessageStore();
 const { addMessage } = useMessage();
 const loginStore = useLoginStore();
@@ -119,7 +128,9 @@ const toCreate = () => {
   addMessage("请先登录", "warning");
   setLoginStatus();
 };
-const getPath = computed(() => `/user/${userInfo.value.id}`);
+const getPath = computed(() => {
+  return `/user/${userInfo.value.id}`;
+});
 userStore.fetchUserInfo();
 messageStore.fetchUnreadMessage();
 </script>
@@ -138,4 +149,20 @@ messageStore.fetchUnreadMessage();
     transform: rotate(5deg);
   }
 }
+.options:hover .avatar {
+  position: relative;
+  top: 0;
+  transform: scale(1.2);
+  transition: all 0.3s ease-in-out;
+}
+/* .popover {
+  transition: opacity 0.3s ease-in-out;
+  width: 250px;
+  opacity: 0;
+  pointer-events: none;
+} */
+/* .options:hover .popover {
+  opacity: 1;
+  pointer-events: all;
+} */
 </style>

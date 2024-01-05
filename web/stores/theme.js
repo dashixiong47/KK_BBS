@@ -19,7 +19,7 @@ export const useThemeStore = defineStore('theme', {
             // 禁用色
             fontDisableColor: '#eaeaea',
             // 禁用背景色
-            bgDisableColor: '#f4f4f5',
+            bgDisableColor: '#e5e5e5',
             // 默认主背景色
             bgColor: '#e3edf7',
             // 遮罩颜色

@@ -7,7 +7,7 @@ import (
 	"github.com/dashixiong47/KK_BBS/config"
 	"github.com/dashixiong47/KK_BBS/db"
 	"github.com/dashixiong47/KK_BBS/models"
-	data2 "github.com/dashixiong47/KK_BBS/services"
+	"github.com/dashixiong47/KK_BBS/services"
 	"github.com/dashixiong47/KK_BBS/services/group"
 	"github.com/dashixiong47/KK_BBS/utils"
 	"github.com/dashixiong47/KK_BBS/utils/klog"
@@ -55,13 +55,13 @@ func (s *TopicServer) Create(post *models.Topic, attachments *[]models.Attachmen
 	}
 
 	// 每次创建新帖子的时候，都会在Redis里设置该帖子的点赞默认为0
-	err := data2.CreateTopicLike(int(post.ID))
+	err := services.CreateTopicLike(int(post.ID))
 	if err != nil {
 		tx.Rollback()
 		return "", errors.New("unknown")
 	}
 	//
-	err = data2.AddTopicIntegral(post.UserID, post.ID)
+	err = services.AddTopicIntegral(post.UserID, post.ID)
 	if err != nil {
 		tx.Rollback()
 		return "", err
@@ -113,15 +113,11 @@ func (s *TopicServer) GetTopicList(_type, groupId string, userId, selfUserId uin
 		userIDs = append(userIDs, doc.UserID)
 	}
 	// 查询用户信息
-	userDetails := make(map[uint]map[string]any)
-	for _, user := range data2.GetUserList(userIDs) {
-		userDetails[user.ID] = map[string]any{
-			"id":       db.GetStrID(user.ID),
-			"avatar":   user.Avatar,
-			"username": user.Username,
-			"nickname": user.Nickname,
-		}
+	userDetails := make(map[uint]any)
+	for _, user := range services.GetUserList(userIDs) {
+		userDetails[user.ID], err = services.GetUserDetailInfo(int(user.ID))
 	}
+	log.Println(userDetails)
 	var topicList []map[string]any
 	// 将详情填充到Post列表中
 	for _, topic := range docs {
@@ -135,14 +131,14 @@ func (s *TopicServer) GetTopicList(_type, groupId string, userId, selfUserId uin
 			"type":         topic.Type,
 			"summary":      topic.Summary,
 			"createdAt":    topic.Model.CreatedAt,
-			"view":         data2.GetTopicViewCount(topic.ID),
-			"comment":      data2.GetTopicCommentCount(topic.ID),
-			"commentState": data2.IsTopicComment(topic.ID, selfUserId),
-			"like":         data2.GetTopicLikeCount(topic.ID),
-			"likeState":    data2.IsTopicLike(topic.ID, selfUserId),
+			"view":         services.GetTopicViewCount(topic.ID),
+			"comment":      services.GetTopicCommentCount(topic.ID),
+			"commentState": services.IsTopicComment(topic.ID, selfUserId),
+			"like":         services.GetTopicLikeCount(topic.ID),
+			"likeState":    services.IsTopicLike(topic.ID, selfUserId),
 			"group":        group.GetGroupKey(topic.GroupID),
-			"collect":      data2.GetTopicCollectCount(topic.UserID),
-			"collectState": data2.IsTopicCollect(topic.ID, selfUserId),
+			"collect":      services.GetTopicCollectCount(topic.UserID),
+			"collectState": services.IsTopicCollect(topic.ID, selfUserId),
 		})
 	}
 	return map[string]any{
@@ -200,35 +196,26 @@ func (s *TopicServer) GetTopicDetail(topicId, userId int) (any, error) {
 		detail["texts"] = texts
 
 	}
-	// 查询用户信息
-	user, err := models.GetUser(doc.UserID)
-	if err != nil {
-		return nil, errors.New("user_not_found")
-	}
-	err = data2.TopicViewPlus(uint(topicId), doc.UserID)
+	err = services.TopicViewPlus(uint(topicId), doc.UserID)
 	if err != nil {
 		klog.Error("TopicViewPlus", err)
 	}
-
+	// 用户信息
+	var userInfo, _ = services.GetUserDetailInfo(int(doc.UserID))
 	return map[string]any{
-		"id": db.GetStrID(doc.ID),
-		"user": map[string]any{
-			"id":       db.GetStrID(user.ID),
-			"avatar":   user.Avatar,
-			"username": user.Username,
-			"nickname": user.Nickname,
-		},
+		"id":           db.GetStrID(doc.ID),
+		"user":         userInfo,
 		"title":        doc.Title,
 		"tags":         doc.Tags,
 		"covers":       doc.Covers,
 		"type":         doc.Type,
-		"view":         data2.GetTopicViewCount(uint(topicId)),
-		"like":         data2.GetTopicLikeCount(uint(topicId)),
-		"likeState":    data2.IsTopicLike(uint(topicId), doc.UserID),
-		"collect":      data2.GetTopicCollectCount(doc.UserID),
-		"collectState": data2.IsTopicCollect(uint(topicId), uint(userId)),
-		"comment":      data2.GetTopicCommentCount(uint(topicId)),
-		"commentState": data2.IsTopicComment(uint(topicId), uint(userId)),
+		"view":         services.GetTopicViewCount(uint(topicId)),
+		"like":         services.GetTopicLikeCount(uint(topicId)),
+		"likeState":    services.IsTopicLike(uint(topicId), doc.UserID),
+		"collect":      services.GetTopicCollectCount(doc.UserID),
+		"collectState": services.IsTopicCollect(uint(topicId), uint(userId)),
+		"comment":      services.GetTopicCommentCount(uint(topicId)),
+		"commentState": services.IsTopicComment(uint(topicId), uint(userId)),
 		"summary":      doc.Summary,
 		"createdAt":    doc.Model.CreatedAt,
 		"topicDetail":  detail,
@@ -238,7 +225,7 @@ func (s *TopicServer) GetTopicDetail(topicId, userId int) (any, error) {
 // LikeTopic 点赞帖子
 func (s *TopicServer) LikeTopic(topicId, userId int) error {
 	// 检查帖子是否存在
-	if !data2.IsTopic(topicId) {
+	if !services.IsTopic(topicId) {
 		return errors.New("topic_not_found")
 	}
 
@@ -275,7 +262,7 @@ func (s *TopicServer) LikeTopic(topicId, userId int) error {
 		}
 
 		// 增加帖子点赞计数
-		if err := data2.TopicLickPlus(topicId); err != nil {
+		if err := services.TopicLickPlus(topicId); err != nil {
 			tx.Rollback()
 			return errors.New("like_count_error")
 		}
@@ -312,7 +299,7 @@ func sendLikeMessageIfNecessary(topicId, userId int) error {
 // CollectTopic 收藏帖子
 func (s *TopicServer) CollectTopic(topicId, userId int) error {
 	// 检查帖子是否存在
-	if !data2.IsTopic(topicId) {
+	if !services.IsTopic(topicId) {
 		return errors.New("topic_not_found")
 	}
 
@@ -352,7 +339,7 @@ func (s *TopicServer) CollectTopic(topicId, userId int) error {
 	}
 
 	// 清除相关缓存
-	data2.ClearTopicCollectCountCache(uint(userId))
+	services.ClearTopicCollectCountCache(uint(userId))
 
 	// 提交事务
 	if err := tx.Commit().Error; err != nil {
@@ -403,7 +390,7 @@ func (s *TopicServer) GetCollectList(userId int, paging utils.Paging) (any, erro
 	}
 	// 查询用户信息
 	userDetails := make(map[uint]map[string]any)
-	for _, user := range data2.GetUserList(userIDs) {
+	for _, user := range services.GetUserList(userIDs) {
 		userDetails[user.ID] = map[string]any{
 			"id":       db.GetStrID(user.ID),
 			"avatar":   user.Avatar,
@@ -424,14 +411,14 @@ func (s *TopicServer) GetCollectList(userId int, paging utils.Paging) (any, erro
 			"type":         topic.Type,
 			"summary":      topic.Summary,
 			"createdAt":    topic.Model.CreatedAt,
-			"view":         data2.GetTopicViewCount(topic.ID),
-			"comment":      data2.GetTopicCommentCount(topic.ID),
-			"commentState": data2.IsTopicComment(topic.ID, uint(userId)),
-			"like":         data2.GetTopicLikeCount(topic.ID),
-			"likeState":    data2.IsTopicLike(topic.ID, uint(userId)),
+			"view":         services.GetTopicViewCount(topic.ID),
+			"comment":      services.GetTopicCommentCount(topic.ID),
+			"commentState": services.IsTopicComment(topic.ID, uint(userId)),
+			"like":         services.GetTopicLikeCount(topic.ID),
+			"likeState":    services.IsTopicLike(topic.ID, uint(userId)),
 			"group":        group.GetGroupKey(topic.GroupID),
-			"collect":      data2.GetTopicCollectCount(topic.UserID),
-			"collectState": data2.IsTopicCollect(topic.ID, uint(userId)),
+			"collect":      services.GetTopicCollectCount(topic.UserID),
+			"collectState": services.IsTopicCollect(topic.ID, uint(userId)),
 		})
 	}
 	return map[string]any{

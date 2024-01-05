@@ -1,6 +1,6 @@
 <template>
   <div class="flex mb-5">
-    <Avatar :url="detail.user?.avatar" />
+    <Avatar :url="detail.user?.avatar" :user-info="detail.user" />
     <div class="w-full ml-2 flex items-center justify-between">
       <div class="flex flex-col items-start">
         <KLink to="#" class="text-md font-bold font-main-color">
@@ -26,17 +26,15 @@
     >
       {{ detail.title }}
     </p>
-    <div class="font-secondary-color text-sm mb-5">
+    <div class="font-secondary-color text-sm mb-3">
       {{ detail.summary }}
     </div>
     <!-- <ul class="flex flex-row flex-wrap "> -->
-    <ul class="grid grid-cols-6">
+    <ul class="grid grid-cols-6 gap-2">
       <li
         v-for="(item, index) in images"
-        class="shadow-center rounded-2xl pt-[66.67%] relative flex items-center justify-center m-2 overflow-hidden"
-        
+        class="shadow-center rounded-2xl pt-[66.67%] relative flex items-center justify-center overflow-hidden"
       >
-      
         <KImage
           class="object-cover absolute inset-0"
           :source="getPath(item)"

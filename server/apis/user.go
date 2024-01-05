@@ -23,9 +23,10 @@ func (u *User) Get() utils.ResponseData {
 	if authMiddleware, data := middleware.AuthMiddleware(u.Ctx); !authMiddleware {
 		return *data
 	}
-	value, _ := u.Ctx.Get("id")
+	intUserId := utils.UserIDInt(u.Ctx)
+
 	var userInfo server.UserServer
-	info, err := userInfo.GetUserInfo(int(value.(float64)))
+	info, err := userInfo.GetUserInfo(intUserId)
 	if err != nil {
 		return utils.JsonParameterError(err)
 	}

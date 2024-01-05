@@ -19,7 +19,8 @@ export default defineNuxtConfig({
   plugins: [
     '~/plugins/global-directives.js',
     '~/plugins/image-viewer-plugin.js',
-    '~/plugins/vconsole.client.js'
+    '~/plugins/vconsole.client.js',
+    '~/plugins/tippy.js'
   ],
   // head() {
   //   const i18nHead = this.$nuxtI18nHead({ addSeoAttributes: true });

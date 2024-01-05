@@ -18,7 +18,7 @@ type Model struct {
 type User struct {
 	ID           uint         `json:"id" gorm:"primaryKey;AUTO_INCREMENT"`
 	Username     string       `json:"username" gorm:"size:255;not null;unique;index:index_username"` // 用户名
-	Password     string       `json:"password" gorm:"size:255;not null"`                             // 用户密码
+	Password     string       `json:"-" gorm:"size:255;not null"`                                    // 用户密码
 	Email        string       `json:"email" gorm:"size:255;index:index_email"`                       // 用户邮箱
 	Phone        string       `json:"phone" gorm:"size:11;"`                                         // 用户手机号
 	Avatar       string       `json:"avatar" gorm:"size:255;"`                                       // 用户头像

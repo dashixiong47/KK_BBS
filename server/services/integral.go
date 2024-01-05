@@ -37,6 +37,7 @@ func AddIntegral(userId uint, _type, num, source int, sourceID uint, remake stri
 		tx.Rollback()
 		return err
 	}
+
 	var doc models.IntegralLog
 	doc.UserID = userId
 	doc.Type = _type

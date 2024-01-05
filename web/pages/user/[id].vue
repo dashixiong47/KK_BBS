@@ -1,11 +1,8 @@
 <template>
   <div class="">
     <UserInfo></UserInfo>
-    <div class="pt-5 grid grid-cols-12 gap-5">
-      <CardUserCard class="col-span-3 h-96 sticky top-0"> </CardUserCard>
-      <div class="col-span-9">
-        <NuxtPage></NuxtPage>
-      </div>
+    <div class="pt-5">
+      <NuxtPage></NuxtPage>
     </div>
   </div>
 </template>
