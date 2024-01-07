@@ -22,7 +22,7 @@
           v-for="(val, key) of colorObj"
         >
           <label class="font-main-color w-32">{{ val }}</label>
-          <Popover>
+          <!-- <Popover>
             <div
               class="w-10 h-5 border border-base"
               :style="{
@@ -35,7 +35,7 @@
                 @change="(v) => changeColor(key, v)"
               />
             </template>
-          </Popover>
+          </Popover> -->
         </div>
       </div>
     </template>

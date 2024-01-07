@@ -7,6 +7,7 @@ import (
 	"github.com/dashixiong47/KK_BBS/services"
 	"github.com/dashixiong47/KK_BBS/utils"
 	"gorm.io/gorm"
+	"log"
 	"time"
 )
 
@@ -69,14 +70,21 @@ func (f *FollowServer) GetFollowList(userId int, paging utils.Paging) (any, erro
 	if !services.IsUser(userId) {
 		return nil, errors.New("user_not_found")
 	}
-	var followList []models.Follow
+	var followIdList []uint
 	var count int64
-	if err := paging.SetPaging(db.DB).Model(models.Follow{}).Where("user_id = ?", userId).Find(&followList).Count(&count).Error; err != nil {
+	if err := paging.SetPaging(db.DB).Model(models.Follow{}).
+		Select("follow_id").
+		Where("user_id = ?", userId).Scan(&followIdList).
+		Count(&count).Error; err != nil {
 		return nil, errors.New("database_query_error")
 	}
+	followStatus := services.GetFollowStatus(uint(userId), followIdList)
+	log.Println(followIdList)
 	var userList = make([]any, 0)
-	for _, follow := range followList {
-		info, _ := services.GetUserDetailInfo(int(follow.FollowID))
+	for _, followId := range followIdList {
+
+		info, _ := services.GetUserDetailInfo(int(followId))
+		info.(map[string]any)["isFollow"] = followStatus[followId]
 		userList = append(userList, info)
 	}
 	var data = make(map[string]any)
@@ -90,14 +98,21 @@ func (f *FollowServer) GetFansList(userId int, paging utils.Paging) (any, error)
 	if !services.IsUser(userId) {
 		return nil, errors.New("user_not_found")
 	}
-	var followList []models.Follow
+	var fansIdList []uint
 	var count int64
-	if err := paging.SetPaging(db.DB.Debug()).Model(models.Follow{}).Where("follow_id = ?", userId).Find(&followList).Count(&count).Error; err != nil {
+	if err := paging.SetPaging(db.DB).
+		Model(models.Follow{}).
+		Select("user_id").
+		Where("follow_id = ?", userId).
+		Scan(&fansIdList).
+		Count(&count).Error; err != nil {
 		return nil, errors.New("database_query_error")
 	}
+	followStatus := services.GetFollowStatus(uint(userId), fansIdList)
 	var userList = make([]any, 0)
-	for _, fans := range followList {
-		info, _ := services.GetUserDetailInfo(int(fans.UserID))
+	for _, fansId := range fansIdList {
+		info, _ := services.GetUserDetailInfo(int(fansId))
+		info.(map[string]any)["isFollow"] = followStatus[fansId]
 		userList = append(userList, info)
 	}
 	var data = make(map[string]any)

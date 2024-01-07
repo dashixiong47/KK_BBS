@@ -1,4 +1,6 @@
 <script setup>
+import { follow } from "~/api";
+const { addMessage } = useMessage();
 const { getPath } = usePath();
 let props = defineProps({
   size: {
@@ -26,6 +28,14 @@ const sizeClass = computed(() => {
 const getRouterPath = computed(() => {
   return `/user/${props.userInfo.id}`;
 });
+const followUser = async () => {
+  try {
+    await follow(props.userInfo.id);
+    props.userInfo.isFollow = !props.userInfo.isFollow;
+  } catch (error) {
+    addMessage(error.message, "error");
+  }
+};
 </script>
 
 <template>
@@ -60,7 +70,10 @@ const getRouterPath = computed(() => {
               <Icon name="healthicons:coins-outline"></Icon>
             </span>
           </span>
-          <p class="mt-2 truncate w-full">{{ userInfo.introduction }}</p>
+
+          <p class="mt-2 truncate w-full text-center">
+            {{ userInfo.introduction }}
+          </p>
           <div class="w-full flex justify-between mt-2">
             <KLink :to="getRouterPath" class="flex flex-col items-center">
               <span class="font-bold">{{ userInfo.topicTotal }}</span>
@@ -80,6 +93,27 @@ const getRouterPath = computed(() => {
               <span class="font-bold">{{ userInfo.fans }}</span>
               <span class="text-xs">粉丝</span>
             </KLink>
+          </div>
+          <div class="w-full flex items-center justify-between mt-2">
+            <KButton
+              size="mini"
+              @click="followUser(userInfo.id)"
+              class="flex items-center"
+            >
+              {{ userInfo.isFollow ? "已关注" : "关注" }}
+              <Icon
+                class="ml-1"
+                :name="
+                  userInfo.isFollow
+                    ? 'ep:circle-check-filled'
+                    : 'ep:circle-check'
+                "
+              ></Icon>
+            </KButton>
+            <KButton size="mini" class="flex items-center">
+              私信
+              <Icon class="ml-1" name="ep:chat-dot-round"></Icon>
+            </KButton>
           </div>
         </div>
       </template>

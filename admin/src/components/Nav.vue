@@ -52,6 +52,7 @@ function quit() {
 async function getUser() {
   try {
     const { data } = await userInfo();
+    console.log(data,"data");
     userInfoStore.setUserInfo(data);
   } catch (error) {}
 }

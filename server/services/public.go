@@ -51,3 +51,14 @@ func EnsureDir(dirName string) {
 		}
 	}
 }
+
+// GetFollowStatus 获取自己是否关注了某个用户 可以是多个用户
+func GetFollowStatus(userId uint, followIds []uint) map[uint]bool {
+	var follows []models.Follow
+	db.DB.Where("user_id = ? AND follow_id IN ?", userId, followIds).Find(&follows)
+	var followMap = make(map[uint]bool)
+	for _, v := range follows {
+		followMap[v.FollowID] = true
+	}
+	return followMap
+}

@@ -112,15 +112,22 @@ func (s *TopicServer) GetTopicList(_type, groupId string, userId, selfUserId uin
 	for _, doc := range docs {
 		userIDs = append(userIDs, doc.UserID)
 	}
+	followState := make(map[uint]bool)
+	if selfUserId != 0 {
+		// 关注状态
+		followState = services.GetFollowStatus(selfUserId, userIDs)
+	}
 	// 查询用户信息
 	userDetails := make(map[uint]any)
 	for _, user := range services.GetUserList(userIDs) {
 		userDetails[user.ID], err = services.GetUserDetailInfo(int(user.ID))
 	}
-	log.Println(userDetails)
 	var topicList []map[string]any
 	// 将详情填充到Post列表中
 	for _, topic := range docs {
+		if selfUserId != 0 {
+			userDetails[topic.UserID].(map[string]any)["isFollow"] = followState[topic.UserID]
+		}
 		topicList = append(topicList, map[string]any{
 			"id":           db.GetStrID(topic.ID),
 			"user":         userDetails[topic.UserID],

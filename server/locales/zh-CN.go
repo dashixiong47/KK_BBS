@@ -47,6 +47,7 @@ var ZHCN = map[string]string{
 	"file_size_exceeds_limit":           "文件大小超出限制",
 	"failed_to_open_file":               "打开文件失败",
 	"save_file_info_error":              "保存文件信息失败",
+	"can_not_follow_self":               "不能关注自己",
 	//admin
 	"create_redeem_code_error": "创建兑换码失败",
 }

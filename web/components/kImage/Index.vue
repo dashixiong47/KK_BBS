@@ -1,11 +1,11 @@
 <template>
-  <div ref="imageContainer" class="w-full h-full overflow-hidden">
+  <div ref="imageContainer" class="w-full h-full overflow-hidden bg-[#e3edf7]">
     <!-- 显示默认图片，直到真实图片加载完成 -->
-    <img
+    <!-- <img
       v-if="showDefault"
       src="/images/loading.png"
       class="w-full h-full object-cover block"
-    />
+    /> -->
   </div>
 </template>
 

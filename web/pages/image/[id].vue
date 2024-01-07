@@ -28,8 +28,10 @@
       <div class="sm:col-span-3 sm:block m-1">
         <div class="sticky top-0">
           <Card class="mb-5">
-            <p class="border-b pb-2 mb-2 font-bold">图片列表</p>
-            <ul>
+            <p class="border-b pb-2 mb-2 font-bold">
+              图片列表-{{ detail.topicDetail.images.length }}张
+            </p>
+            <ul class="max-h-40 overflow-y-auto">
               <li
                 v-for="item in detail.topicDetail.images"
                 class="cursor-pointer truncate rounded-xl overflow-hidden px-2 hover:bg-[--illuminate-color] hover:text-white"

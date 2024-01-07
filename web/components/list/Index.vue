@@ -38,8 +38,8 @@ let props = defineProps({
     default: "",
   },
   type: {
-    type: Number,
-    default: "-1",
+    type: [Number, String],
+    default: -1,
   },
   initFunc: {
     type: Number,

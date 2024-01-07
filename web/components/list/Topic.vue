@@ -18,7 +18,7 @@ let props = defineProps({
     default: "",
   },
   type: {
-    type: Number,
+    type: [Number, String],
     default: "",
   },
   list: {

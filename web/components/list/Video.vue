@@ -20,7 +20,7 @@
           class="flex truncate text-xs text-[--font-secondary-color] dark:text-[--dark-font-secondary-color]"
         >
           <span class="block truncate w-[70%]">{{ item.user.nickname }}</span>
-          <span class="block w-[30%]">{{ getRelativeTime(item.createdAt) }}</span>
+          <span class="block w-[30%] text-right">{{ getRelativeTime(item.createdAt) }}</span>
         </div>
       </KLink>
     </li>

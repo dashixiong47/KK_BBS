@@ -19,7 +19,7 @@
           <span class="font-bold">{{ userInfo.follow }}</span>
           <span class="text-xs">关注</span>
         </KLink>
-        <KLink :to="getRouterPath + '/fans'" class="flex flex-col items-center">
+        <KLink :to="getPath + '/fans'" class="flex flex-col items-center">
           <span class="font-bold">{{ userInfo.fans }}</span>
           <span class="text-xs">粉丝</span>
         </KLink>
